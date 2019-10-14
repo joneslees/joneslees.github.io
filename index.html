@@ -101,7 +101,1354 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/12/hello-world/" data-id="ck1odx4330000r8tq6vpznhfm" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/10/12/hello-world/" data-id="ck1oej6hi000hdstqsmgikd4g" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/10/12/e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2/" class="article-date">
+  <time datetime="2019-10-12T01:32:07.000Z" itemprop="datePublished">2019-10-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/苦逼之旅/">苦逼之旅</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/12/e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2/">真正的inotify+rsync实时同步 彻底告别同步慢</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>我们公司在用inotify+rsync做实时同步，来解决分布式集群文件一致性的问题。但当web文件越来越多(百万级数量html,jpg等小 文件)，同步就越来越慢，根本做不到实时，按照网上的调优方法都尝试过，问题根本没有解决。经过我一翻细致研究，终于把慢的核心问题研究明白，先总结一句 inotifywait响应不会有延迟，rsync也很快。大家同样有慢的烦恼，那是因为网上的inotify+rsync的教程都是坑。下面我们来分 析。</p>
+<h3 id="inotifywait-单独分析"><a href="#inotifywait-单独分析" class="headerlink" title="inotifywait 单独分析"></a>inotifywait 单独分析</h3><p>1</p>
+<p>/usr/local/bin/inotifywait -mrq –format ‘%Xe %w%f’ -e modify,create,delete,attrib /data/</p>
+<p>执行上面命令，是让inotifywait监听/data/目录，当监听到有发生modify,create,delete,attrib等事件发生时，按%Xe %w%f的格式输出。</p>
+<p>在/data/目录touch几个文件</p>
+<p>1</p>
+<p>touch /data/{1..5}</p>
+<p>观看inotify输出</p>
+<p>12345</p>
+<p>ATTRIB /data/1           – 表示发生了ATTRIB事件 路径为/data/1ATTRIB /data/2ATTRIB /data/3ATTRIB /data/4ATTRIB /data/5</p>
+<p>知道上面的输出效果之后 我们应该想得到，可以用rsync获取inotifywait监控到的文件列表来做指定的文件同步，而不是每次都由rsync做全目录扫描来判断文件是否存在差异。</p>
+<h3 id="网上的inotify-rsync分析"><a href="#网上的inotify-rsync分析" class="headerlink" title="网上的inotify+rsync分析"></a>网上的inotify+rsync分析</h3><p>我们来看网上的教程，我加了注释。(网上所有的教程基本都一模一样，尽管写法不一样，致命点都是一样的)</p>
+<p>123456</p>
+<p>#!/bin/bash /usr/bin/inotifywait -mrq –format ‘%w%f’-e create,close_write,delete /backup |while read file#把发生更改的文件列表都接收到file 然后循环，但有什么鬼用呢？下面的命令都没有引用这个$file 下面做的是全量rsyncdo     cd /backup &amp;&amp; rsync -az –delete /backup/ rsync_<a href="mailto:backup@192.168.24.101" target="_blank" rel="noopener">backup@192.168.24.101</a>::backup/–password-file=/etc/rsync.password done</p>
+<p>#注意看 这里的rsync 每次都是全量的同步(这就坑爹了)，而且 file列表是循环形式触发rsync ，等于有10个文件发生更改，就触发10次rsync全量同步(简直就是噩梦)，那还不如直接写个死循环的rsync全量同步得了。</p>
+<p>#有很多人会说 日志输出那里明明只有差异文件的同步记录。其实这是rsync的功能，他本来就只会输出有差异需要同步的文件信息。不信你直接拿这句rsync来跑试试。</p>
+<p>#这种在需要同步的源目录文件量很大的情况下，简直是不堪重负。不仅耗CPU还耗时，根本不可以做到实时同步。</p>
+<p>备注：backup为rsync server配置module，除了编写脚本以外，还需要配置一个rsync server，rsync server配置参考《<a href="http://www.ttlsa.com/linux/rsync-install-on-linux/" target="_blank" rel="noopener">http://www.ttlsa.com/linux/rsync-install-on-linux/</a>》</p>
+<h3 id="改良方法"><a href="#改良方法" class="headerlink" title="改良方法"></a>改良方法</h3><p>要做到实时，就必须要减少rsync对目录的递归扫描判断，尽可能的做到只同步inotify监控到已发生更改的文件。结合rsync的特性，所以这里要分开判断来实现一个目录的增删改查对应的操作。</p>
+<p>脚本如下</p>
+<p>123456789101112131415161718192021222324252627282930313233343536373839404142</p>
+<p>#!/bin/bashsrc=/data/                           # 需要同步的源路径des=data                             # 目标服务器上 rsync –daemon 发布的名称，rsync –daemon这里就不做介绍了，网上搜一下，比较简单。rsync_passwd_file=/etc/rsyncd.passwd            # rsync验证的密码文件ip1=192.168.0.18                 # 目标服务器1ip2=192.168.0.19                 # 目标服务器2user=root                            # rsync –daemon定义的验证用户名cd ${src}                              # 此方法中，由于rsync同步的特性，这里必须要先cd到源目录，inotify再监听 ./ 才能rsync同步后目录结构一致，有兴趣的同学可以进行各种尝试观看其效果/usr/local/bin/inotifywait -mrq –format  ‘%Xe %w%f’ -e modify,create,delete,attrib,close_write,move ./ | while read file         # 把监控到有发生更改的”文件路径列表”循环do        INO_EVENT=$(echo $file | awk ‘{print $1}’)      # 把inotify输出切割 把事件类型部分赋值给INO_EVENT        INO_FILE=$(echo $file | awk ‘{print $2}’)       # 把inotify输出切割 把文件路径部分赋值给INO_FILE        echo “——————————-$(date)————————————“        echo $file        #增加、修改、写入完成、移动进事件        #增、改放在同一个判断，因为他们都肯定是针对文件的操作，即使是新建目录，要同步的也只是一个空目录，不会影响速度。        if [[ $INO_EVENT =~ ‘CREATE’ ]] || [[ $INO_EVENT =~ ‘MODIFY’ ]] || [[ $INO_EVENT =~ ‘CLOSE_WRITE’ ]] || [[ $INO_EVENT =~ ‘MOVED_TO’ ]]         # 判断事件类型        then                echo ‘CREATE or MODIFY or CLOSE_WRITE or MOVED_TO’                rsync -avzcR –password-file=${rsync_passwd_file} $(dirname ${INO_FILE}) ${user}@${ip1}::${des} &amp;&amp;         # INO_FILE变量代表路径哦  -c校验文件内容                rsync -avzcR –password-file=${rsync_passwd_file} $(dirname ${INO_FILE}) ${user}@${ip2}::${des}                 #仔细看 上面的rsync同步命令 源是用了$(dirname ${INO_FILE})变量 即每次只针对性的同步发生改变的文件的目录(只同步目标文件的方法在生产环境的某些极端环境下会漏文件 现在可以在不漏文件下也有不错的速度 做到平衡) 然后用-R参数把源的目录结构递归到目标后面 保证目录结构一致性        fi        #删除、移动出事件        if [[ $INO_EVENT =~ ‘DELETE’ ]] || [[ $INO_EVENT =~ ‘MOVED_FROM’ ]]        then                echo ‘DELETE or MOVED_FROM’                rsync -avzR –delete –password-file=${rsync_passwd_file} $(dirname ${INO_FILE}) ${user}@${ip1}::${des} &amp;&amp;                rsync -avzR –delete –password-file=${rsync_passwd_file} $(dirname ${INO_FILE}) ${user}@${ip2}::${des}                #看rsync命令 如果直接同步已删除的路径${INO_FILE}会报no such or directory错误 所以这里同步的源是被删文件或目录的上一级路径，并加上–delete来删除目标上有而源中没有的文件，这里不能做到指定文件删除，如果删除的路径越靠近根，则同步的目录月多，同步删除的操作就越花时间。这里有更好方法的同学，欢迎交流。        fi        #修改属性事件 指 touch chgrp chmod chown等操作        if [[ $INO_EVENT =~ ‘ATTRIB’ ]]        then                echo ‘ATTRIB’                if [ ! -d “$INO_FILE” ]                 # 如果修改属性的是目录 则不同步，因为同步目录会发生递归扫描，等此目录下的文件发生同步时，rsync会顺带更新此目录。                then                        rsync -avzcR –password-file=${rsync_passwd_file} $(dirname ${INO_FILE}) ${user}@${ip1}::${des} &amp;&amp;                                    rsync -avzcR –password-file=${rsync_passwd_file} $(dirname ${INO_FILE}) ${user}@${ip2}::${des}                fi        fidone</p>
+<h3 id="每两小时做1次全量同步"><a href="#每两小时做1次全量同步" class="headerlink" title="每两小时做1次全量同步"></a>每两小时做1次全量同步</h3><p>因为inotify只在启动时会监控目录，他没有启动期间的文件发生更改，他是不知道的，所以这里每2个小时做1次全量同步，防止各种意外遗漏，保证目录一致。</p>
+<p>12</p>
+<p>crontab -e* */2 * * * rsync -avz –password-file=/etc/rsync-client.pass /data/ <a href="mailto:root@192.168.0.18" target="_blank" rel="noopener">root@192.168.0.18</a>::data &amp;&amp; rsync -avz –password-file=/etc/rsync-client.pass /data/ <a href="mailto:root@192.168.0.19" target="_blank" rel="noopener">root@192.168.0.19</a>::data</p>
+<p>改良后我们公司这种百万级小文件也能做到实施同步了。</p>
+<h3 id="下面附上inotify的参数说明"><a href="#下面附上inotify的参数说明" class="headerlink" title="下面附上inotify的参数说明"></a>下面附上inotify的参数说明</h3><p>inotify介绍– 是一种强大的、细颗粒的、异步的文件系统监控机制，<em>&amp;####&amp;*_0_\</em>&amp;####&amp;*内核从2.6.13起，加入Inotify可以监控文件系统中添加、删除、修改移动等各种事件，利用这个内核接口，就可以监控文件系统下文件的各种变化情况。</p>
+<p><strong>inotifywait 参数说明</strong></p>
+<p>参数名称</p>
+<p>参数说明</p>
+<p>-m,–monitor</p>
+<p>始终保持事件监听状态</p>
+<p>-r,–recursive</p>
+<p>递归查询目录</p>
+<p>-q,–quiet</p>
+<p>只打印监控事件的信息</p>
+<p>–excludei</p>
+<p>排除文件或目录时，不区分大小写</p>
+<p>-t,–timeout</p>
+<p>超时时间</p>
+<p>–timefmt</p>
+<p>指定时间输出格式</p>
+<p>–format</p>
+<p>指定时间输出格式</p>
+<p>-e,–event</p>
+<p>后面指定删、增、改等事件</p>
+<p><strong>inotifywait events事件说明</strong></p>
+<p>事件名称</p>
+<p>事件说明</p>
+<p>access</p>
+<p>读取文件或目录内容</p>
+<p>modify</p>
+<p>修改文件或目录内容</p>
+<p>attrib</p>
+<p>文件或目录的属性改变</p>
+<p>close_write</p>
+<p>修改真实文件内容</p>
+<p>close_nowrite</p>
+<p>close</p>
+<p>open</p>
+<p>文件或目录被打开</p>
+<p>moved_to</p>
+<p>文件或目录移动到</p>
+<p>moved_from</p>
+<p>文件或目录从移动</p>
+<p>move</p>
+<p>移动文件或目录移动到监视目录</p>
+<p>create</p>
+<p>在监视目录下创建文件或目录</p>
+<p>delete</p>
+<p>删除监视目录下的文件或目录</p>
+<p>delete_self</p>
+<p>unmount</p>
+<p>卸载文件系统</p>
+<h3 id="优化-Inotify"><a href="#优化-Inotify" class="headerlink" title="优化** Inotify**"></a>优化** Inotify**</h3><p># 在/proc/sys/fs/inotify目录下有三个文件，对inotify机制有一定的限制</p>
+<p>12345</p>
+<p>[root@web ~]# ll /proc/sys/fs/inotify/总用量0-rw-r–r–1 root root 09月923:36 max_queued_events-rw-r–r–1 root root 09月923:36 max_user_instances-rw-r–r–1 root root 09月923:36 max_user_watches</p>
+<p>—————————–max_user_watches #设置inotifywait或inotifywatch命令可以监视的文件数量(单进程)max_user_instances #设置每个用户可以运行的inotifywait或inotifywatch命令的进程数max_queued_events #设置inotify实例事件(event)队列可容纳的事件数量—————————-</p>
+<p>12</p>
+<p>[root@web ~]# echo 50000000&gt;/proc/sys/fs/inotify/max_user_watches – 把他加入/etc/rc.local就可以实现每次重启都生效[root@web ~]# echo 50000000&gt;/proc/sys/fs/inotify/max_queued_events</p>
+<h3 id="作者信息-http-www-ttlsa-com-web-let-infotify-rsync-fast"><a href="#作者信息-http-www-ttlsa-com-web-let-infotify-rsync-fast" class="headerlink" title="作者信息 http://www.ttlsa.com/web/let-infotify-rsync-fast/"></a><a href="http://www.ttlsa.com/web/let-infotify-rsync-fast/" target="_blank" rel="noopener">作者信息</a> <a href="http://www.ttlsa.com/web/let-infotify-rsync-fast/" target="_blank" rel="noopener">http://www.ttlsa.com/web/let-infotify-rsync-fast/</a></h3>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/10/12/e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2/" data-id="ck1oej6gw0005dstq6otxehlp" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f/" class="article-date">
+  <time datetime="2019-10-12T01:30:28.000Z" itemprop="datePublished">2019-10-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/苦逼之旅/">苦逼之旅</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f/">10 分钟为你搭建一个超好用的 cmdb 系统</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>CMDB 是什么，作为 IT 工程师的你想必已经听说过了，或者已经烂熟了，容我再介绍一下，以防有读者还不知道。CMDB 的全称是 Configuration Management Data Base，翻译下就是配置管理数据库，它存储与管理企业 IT 架构中设备的各种配置信息，它支撑服务流程的运转、发挥着配置信息的价值。在今天，无论是自动化运维、标准化运维、DevOps、甚至是时髦的智能运维，其实都离开不 CMDB，可以说 CMDB 是运维体系的基石，有了配置信息数据库，后面各种标准、流程都可以建立在 CMDB 基础之上，从而实现真正的标准化、自动化、智能化运维，节约运维成本的同时，也降低运维流程混乱带来的操作风险。</p>
+<p>今天分享一个开源的 cmdb 系统的搭建过程，通过这一系列搭建的过程你不仅可以获得一个支持全文检索、自带 restful api 的 cmdb 系统，而且还可以学到不少时髦的技术。</p>
+<p><strong>后端技术：</strong></p>
+<ul>
+<li>Python3</li>
+<li>Django</li>
+<li>Django REST framework</li>
+<li>Elasticsearch</li>
+<li>uwsgi</li>
+<li>Nginx</li>
+<li>Docker</li>
+</ul>
+<p><strong>前端技术：</strong></p>
+<ul>
+<li>Vue</li>
+<li>Element-ui</li>
+<li>Vue-Router</li>
+<li>Vuex</li>
+<li>Axios</li>
+</ul>
+<p>先看一下这个 CMDB 系统的容颜，设计上参考了饿了么内部的 cmdb 系统:</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-e02b24f78d317df2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt></p>
+<p>open-cmdb</p>
+<p>基本功能有：热添加删除表、自定义字段类型，方便增删改查的前端界面，强大的搜索查找能力（后端使用elasticsearch存储数据 ） 可以配合 kibana 使用，查看数据的删除修改记录、历史版本等，还带有表级权限管理，开放所有 API。</p>
+<p>github 仓库<br>后端：<a href="https://github.com/open-cmdb/cmdb" target="_blank" rel="noopener">https://github.com/open-cmdb/cmdb</a><br>前端：<a href="https://github.com/open-cmdb/cmdb-web" target="_blank" rel="noopener">https://github.com/open-cmdb/cmdb-web</a>  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-ac4482d98e5b4a02.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/740/format/webp" alt></p>
+<p>下面介绍两种方法搭建此开源 cmdb 系统 ，一个是使用 Docker，适用于 linux 操作系统 ，另一个是不使用 Docker，适用于 windows 和 linux 。最后介绍下 vue 环境的搭建。</p>
+<h3 id="1-使用-Docker"><a href="#1-使用-Docker" class="headerlink" title="1. 使用 Docker"></a>1. 使用 Docker</h3><p>如果你熟悉容器技术，推荐使用此方法，不过最新的 Docker 目前还不支持大多数的 windows 版本，因此如果使用容器，请使用 ubuntu 或 centos 等 Linux 操作系统。首先要安装 Docker，安装 Docker 的方法请参考我之前的一篇文章<a href="https://www.jianshu.com/p/46334b8e13bf" target="_blank" rel="noopener">docker容器从入门到痴迷</a>，或直接网上搜索对应操作系统的安装方法对着做即可，没有难度。</p>
+<h4 id="环境准备："><a href="#环境准备：" class="headerlink" title="环境准备："></a>环境准备：</h4><p>1、一台可以访问互联网的 linux 服务器 内存最好 &gt;= 4G ，并创建一个具有 sudo 权限的普通用户，<em>注意要有 yum 命令，如果没有可以安装下_。<br>2、一个 cmdb 专用的邮箱，用于发送密码和验证码，如果使用163、qq等第三方邮箱请在设置里面打开POP3/SMTP/IMAP服务并生成授权码。_如果不使用注册和忘记密码功能，也可以不准备</em></p>
+<h4 id="一键安装"><a href="#一键安装" class="headerlink" title="一键安装"></a>一键安装</h4><p>将下述代码保存到 install_cmdb.py 并执行 sudo python3 install_cmdb.py 即可一键安装。</p>
+<pre><code># -*- coding: utf-8 -*-
+import os
+import subprocess
+import argparse
+import time
+
+def base(cmd):
+    if subprocess.call(cmd, shell=True):
+        raise Exception(&quot;{} 执行失败&quot;.format(cmd))
+
+def install_docker():
+    base(&quot;sudo yum install -y yum-utils device-mapper-persistent-data lvm2&quot;)
+    base(&quot;sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo&quot;)
+    base(&quot;sudo yum makecache fast&quot;)
+    base(&quot;sudo yum -y install docker-ce&quot;)
+    if(not os.path.exists(&quot;/etc/docker&quot;)):
+        base(&quot;mkdir -p /etc/docker&quot;)
+    with open(&quot;/etc/docker/daemon.json&quot;, &quot;w&quot;) as f:
+        f.write(&apos;{\n    &quot;registry-mirrors&quot;: [&quot;https://9f4w4icn.mirror.aliyuncs.com&quot;] \n}&apos;)
+    base(&quot;sudo systemctl daemon-reload&quot;)
+    base(&quot;sudo systemctl start docker&quot;)
+
+def create_dir():
+    if (not os.path.exists(&quot;/var/cmdb/db&quot;)):
+        base(&quot;sudo mkdir -p /var/cmdb/db&quot;)
+    if (not os.path.exists(&quot;/var/cmdb/es&quot;)):
+        base(&quot;sudo mkdir -p /var/cmdb/es&quot;)
+
+def run_db_container():
+    base(&quot;sudo docker run --name cmdb-db -d -e MYSQL_ROOT_PASSWORD=cmdbcmdb -v /var/cmdb/db:/var/lib/mysql mysql:5.7.21&quot;)
+
+def run_es_container():
+    base(&quot;sudo docker run --name cmdb-es -d -v /var/cmdb/es:/usr/share/elasticsearch/data elasticsearch:5.6.8&quot;)
+
+def init_db():
+    base(&quot;sudo docker run -it --rm --link cmdb-db -e ENV=PRO -e DB_HOST=cmdb-db -e DB_PORT=3306 -e DB_USERNAME=root -e DB_PASSWORD=cmdbcmdb -e DB_NAME=cmdb mingmingtang/cmdb init-db&quot;)
+
+def run_cmdb_container(site_url, email_host, email_port, email_username, email_password):
+    base(&quot;sudo docker run -d --name cmdb --link cmdb-db --link cmdb-es -p 80:80 -e ENV=PRO -e SITE_URL={} -e DB_HOST=cmdb-db -e DB_PORT=3306 -e DB_USERNAME=root -e DB_PASSWORD=cmdbcmdb -e DB_NAME=cmdb -e ELASTICSEARCH_HOSTS=cmdb-es -e EMAIL_HOST={} -e EMAIL_PORT={} -e EMAIL_USERNAME={} -e EMAIL_PASSWORD={} mingmingtang/cmdb start&quot;.format(site_url, email_host, email_port, email_username, email_password))
+
+def input_para(help):
+    value = &quot;&quot;
+    while(not value):
+        value = raw_input(help)
+    return value
+
+if __name__ == &apos;__main__&apos;:
+    if(os.geteuid() != 0):
+        raise(&quot;请以root权限运行&quot;)
+    site_url = input_para(&quot;请输入网站域名或IP（http://cmdb.xxx.com）：&quot;)
+    email_host = input_para(&quot;网站邮箱服务器（smtp.163.com）：&quot;)
+    email_port = input_para(&quot;邮箱服务器端口（25）：&quot;)
+    email_username = input_para(&quot;邮箱用户名（cmdb@163.com）：&quot;)
+    email_password = input_para(&quot;邮箱密码|独立授权码（P@ssw0rd）：&quot;)
+
+    print(&quot;开始安装docker&quot;)
+    install_docker()
+    print(&quot;开始创建目录&quot;)
+    create_dir()
+    print(&quot;开始运行mysql容器&quot;)
+    run_db_container()
+    print(&quot;开始运行elasticsearch容器&quot;)
+    run_es_container()
+    print(&quot;等待数据库启动完成(10s)&quot;)
+    time.sleep(10)
+    print(&quot;开始初始化数据库&quot;)
+    init_db()
+    print(&quot;开始运行cmdb&quot;)
+    run_cmdb_container(site_url, email_host, email_port, email_username, email_password)
+    print(&quot;完成！&quot;)</code></pre><p>输入网站地址和邮箱信息开始安装，如下图所示：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-50e98a3d3c3a06e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt></p>
+<p>如果一切顺利一会儿后您将看到安装完成，如果失败了可能就要调整一些系统参数并删除已运行的容器重新执行了，不过根据我的安装经验，基本不会出错，容器还是非常方便部署的。  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-bd3b48e95280ab30.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt></p>
+<p>执行下述命令</p>
+<pre><code>sudo docker ps</code></pre><p>将看到三个正在运行的容器，分别是 cmdb，cmdb-es，cmdb-db，如下图所示  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-e39702b9f27b6201.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt></p>
+<p>其中 cmdb 运行着 web 服务器（nginx，uwsgi，django，vue.js），cmdb-es 运行着 Elasticsearch 全文检索引擎，也存储你的配置信息，cmdb-db 运行着 mysql，保存着 web 服务器的元数据（django 的知识库）。</p>
+<p>在浏览器中输入”localhost” 尽情的开始享用吧。</p>
+<h3 id="2-不使用-Docker"><a href="#2-不使用-Docker" class="headerlink" title="2. 不使用 Docker"></a>2. 不使用 Docker</h3><p>下面的内容主要是分享给 windows 用户的，linux 用户也可以对比操作。使用 Docker 虽然方便部署，但它屏蔽了一些细节，不利于二次开发和问题排查。在不使用 Docker 的情况下，我们不仅要装软件，还要安装依赖，配置环境，虽然麻烦，但是可以学到更多知识，出了问题也可以很快定位，更能加深对项目框架的理解，这点付出也是值得的。</p>
+<h4 id="（1）安装-mysql，创建数据库，配置权限"><a href="#（1）安装-mysql，创建数据库，配置权限" class="headerlink" title="（1）安装 mysql，创建数据库，配置权限"></a>（1）安装 mysql，创建数据库，配置权限</h4><p>如果你的本机已经安装 mysql，则不心再安装，直接创建数据库，配置权限即可。</p>
+<ol>
+<li>安装 mysql</li>
+</ol>
+<p>从网官下载最新的 MySQL Community Server [<a href="https://dev.mysql.com/downloads/mysql/%5D" target="_blank" rel="noopener">https://dev.mysql.com/downloads/mysql/]</a><br>比如我下载的是 mysql-8.0.12-winx64.zip ，这是个免安装版本，直接解压到你想安装的目录内，并在里面新建 my.ini 文件，位置如下图所示：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-849155aad3f08d67.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/699/format/webp" alt></p>
+<p>image.png</p>
+<p>my.ini 的文件内容如下所示：</p>
+<pre><code>[mysqld]
+# 设置3306端口
+port=3306
+# 设置mysql的安装目录
+basedir=D:\program\mysql\mysql-8.0.12-winx64
+# 设置mysql数据库的数据的存放目录
+datadir=D:\program\mysql\mysql-8.0.12-winx64\data
+# 允许最大连接数
+max_connections=200
+# 允许连接失败的次数。这是为了防止有人从该主机试图攻击数据库系统
+max_connect_errors=10
+# 服务端使用的字符集默认为UTF8
+character-set-server=utf8
+# 创建新表时将使用的默认存储引擎
+default-storage-engine=INNODB
+# 默认使用“mysql_native_password”插件认证
+default_authentication_plugin=mysql_native_password
+[mysql]
+# 设置mysql客户端默认字符集
+default-character-set=utf8
+[client]
+# 设置mysql客户端连接服务端时默认使用的端口
+port=3306
+default-character-set=utf8</code></pre><p>请注意下面的路径设置要正确，</p>
+<pre><code># 设置mysql的安装目录
+basedir=D:\program\mysql\mysql-8.0.12-winx64
+# 设置mysql数据库的数据的存放目录
+datadir=D:\program\mysql\mysql-8.0.12-winx64\data</code></pre><p><em>如果你想从任意一个命令窗口启动 mysql，请把 D:\program\mysql\mysql-8.0.12-winx64\bin 加入环境变量。</em>*</p>
+<p>这个配置文件 my.ini 一定要<strong>保存为 gbk 格式</strong>，否则会报错，我费了好长时间才发现这个问题。</p>
+<p>接下来在MySQL安装目录的 bin 目录（D:\program\mysql\mysql-8.0.12-winx64\bin）下以<strong>管理员权限</strong>执行命令：mysqld –initialize –console；执行完成后，在输出信息中会打印 root 用户的初始密码，比如</p>
+<pre><code>[Server] A temporary password is generated for root@localhost: rIafvf5f5G,a</code></pre><p>表示临时密码为 rIafvf5f5G,a ，用于 root 用户第一次登陆，之后再修改 root 用户的密码。</p>
+<p>这一步执行后完成初始化操作，并在安装目录下生成 data 文件夹，用于存放数据。执行</p>
+<pre><code>mysqld --install</code></pre><p>完成 mysql 服务的安装，安装完成之后，就可以通过命令 net start mysql 即启动 mysql 的服务了。通过命令 net stop mysql 停止服务。通过命令 sc delete mysql /mysqld -remove 卸载 mysql 服务。接下来就可以建库、用户、分配权限了。</p>
+<p>修改 root 密码：<br>在 mysql 安装目录的 bin 目录下执行命令：mysql -u root -p 然后输入上面的密码，进入 mysql 环境，执行</p>
+<pre><code>ALTER USER &apos;root&apos;@&apos;localhost&apos; IDENTIFIED WITH mysql_native_password BY &apos;新密码&apos;;</code></pre><p>注意命令尾的“；”一定要有，这是 mysql 的语法，<br>管理员 root 的 host 是 localhost，代表仅限 localhost 登录访问。如果要允许开放其他 ip 登录，则需要添加新的 host。如果要允许所有 ip 访问，可以直接修改成“%”；</p>
+<pre><code>ALTER USER &apos;root&apos;@&apos;%&apos; IDENTIFIED  BY &apos;远程登陆密码&apos;;</code></pre><ol>
+<li>创建数据库，并分配用户权限</li>
+</ol>
+<p>使用 root 用户登陆 mysql 并执行</p>
+<pre><code>mysql&gt;create database cmdb;</code></pre><p>即可创建数据库 cmdb，但是这个数据库只能有 root 访问，如果要使用其他用户访问，则先新建用户，例如让 aaron 用户可以完全控制 cmdb</p>
+<pre><code>mysql&gt;CREATE USER &apos;aaron&apos;@&apos;%&apos; IDENTIFIED  BY &apos;aaron&apos;;
+Query OK, 0 rows affected (0.48 sec)
+mysql&gt; grant all on cmdb.* to  &apos;aaron&apos;@&apos;%&apos;;
+Query OK, 0 rows affected (0.23 sec)</code></pre><p>至此 mysql 已安装配置完毕。</p>
+<h4 id="（2）安装-Elasticsearch"><a href="#（2）安装-Elasticsearch" class="headerlink" title="（2）安装 Elasticsearch"></a>（2）安装 Elasticsearch</h4><p>全文搜索属于最常见的需求，开源的 Elasticsearch （以下简称 Elastic）是目前全文搜索引擎的首选。<br>它可以快速地储存、搜索和分析海量数据。维基百科、Stack Overflow、Github 都采用它。安装 Elasticsearch 非常简单，官网下载解压，进入其 bin 目录运行如下图所示的 bat 文件即可 ：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-1c1ca717878ce3b4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/508/format/webp" alt></p>
+<p>它是一个 java 编写的程序，如果要修改占用内存的大小，请找到配置文件，例如修改为 -Xmx10g -Xms10g 表示初始化 10 个 G 的内存空间给 Elasticsearch ，Elasticsearch 最大使用的内存也是 10G，一般情况下，设置为内存的一半大小，但最好不超过 32 G，根据需求，生产环境适合调大，测试环境适当调小。</p>
+<p>如果运行失败，说明本机没有安装 java，或者没有正确地配置 java 环境变量，这些操作也非常简单，网上到处都是，不在此详述。</p>
+<h4 id="（3）运行-cmdb-后端-api-服务、前端-ui"><a href="#（3）运行-cmdb-后端-api-服务、前端-ui" class="headerlink" title="（3）运行 cmdb 后端 api 服务、前端 ui"></a>（3）运行 cmdb 后端 api 服务、前端 ui</h4><p>首先准备 Python3 的环境，这个也很简单，直接官网下载，运行即可，记得把 Python.exe 所在的路径添加到 Path 变量中。</p>
+<p>如果你的电脑里有多个项目，为防止项目的依赖包版本冲突，建议使用 virtualenv 来为每个项目前创建一个虚拟的 Python 环境，将各自的依赖包装在自己的虚拟环境里。</p>
+<p>（1）部署后端</p>
+<p>执行以下命令，注意命令后面的注释。</p>
+<pre><code>git clone https://github.com/open-cmdb/cmdb.git
+cd cmdb
+#如创建了虚拟环境，请先激活
+pip install  -r requirements.txt #如果这一步有包安装失败，提示却少 microsoft visual c++ 14.0 的话，请在网站 https://www.lfd.uci.edu/~gohlke/pythonlibs/ 上查找相应的whl文件，直接 pip install .whl文件即可。</code></pre><p><strong>接下来修改3个文件</strong></p>
+<ol>
+<li><p>修改 apps/mgmt/views.py 文件，注释掉 “ from . import initialize ”这一行。</p>
+</li>
+<li><p>修改 manage.py<br>将 APP_NAME = BASE_DIR.rsplit(“/“, 1)[-1] 修改为<br>APP_NAME = BASE_DIR.rsplit(“\“, 1)[-1] ，这是因为windows的路径\ 在python 里会变成 \。</p>
+</li>
+<li><p>修改 cmdb/settings.py 文件，修改mysql 数据库的配置信息如下所示：</p>
+<p>DATABASES = {<br>  ‘default’: {</p>
+<pre><code>&apos;ENGINE&apos;: &apos;django.db.backends.mysql&apos;,
+&apos;NAME&apos;: &quot;cmdb&quot;,
+&quot;HOST&quot;: &quot;127.0.0.1&quot;,
+&quot;PORT&quot;: 3306,
+&quot;USER&quot;: &quot;aaron&quot;,
+&quot;PASSWORD&quot;: &quot;aaron&quot;</code></pre><p>  }<br>}</p>
+</li>
+</ol>
+<p>接着在命令窗口继续执行以下操作：请关注注释内容。</p>
+<pre><code>python manage.py makemigrations 
+python manage.py migrate
+python manage.py cmdb_create_superuser #这一步创建一可以登陆的管理员用户
+#修改 apps/mgmt/views.py 文件，取消注释“ from . import initialize ”
+python manage.py runserver #这一步启动后端的 api 服务</code></pre><p>此时一个后端的服务已经启动了，在浏览器中打开 “127.0.0.1:8000”就可以看到 api 的接口了。  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-43bb6d9e1605376c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/966/format/webp" alt></p>
+<p>（2）使用 nginx 部署前端并连接后端 api 服务</p>
+<p>在命令容器执行以下命令：</p>
+<pre><code>git clone https://github.com/open-cmdb/cmdb-web.git</code></pre><p>获取前端的源代码，然后下载下载 ngnix 压缩包，并解压至安装目录，修改配置文件 nginx.conf，添加如下 server 配置：</p>
+<pre><code>server {
+    listen 8080;
+    server_name localhost;
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+    root html;
+    }
+
+    root E:\GitHub\cmdb-web\dist;
+    index index.html;
+    location / {
+    try_files $uri $uri/ @router;
+    index index.html;
+    }
+
+    location @router {
+    rewrite ^.*$ /index.html last;
+    }
+
+    location ~ /api{
+    proxy_pass http://127.0.0.1:8000;
+    }
+}</code></pre><p>其中以配置</p>
+<pre><code>location ~ /api{
+      proxy_pass http://127.0.0.1:8000;
+      }</code></pre><p>让前台发过来中以 api 开头的 url 请求都转发至 <a href="http://127.0.0.1:8000" target="_blank" rel="noopener">http://127.0.0.1:8000</a> 进行解析，即第一步部署的 django 项目，这样就连接了前端和后端。然后我们在 nginx.exe 所在的目录下启动 nginx 服务。  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-fd16d5d52f15d1cc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/355/format/webp" alt></p>
+<p>接下来在浏览器中输入 127.0.0.1:8080 即可正常访问本文开始处的 cmdb 系统，您可以尝试下强大的搜索功能及增删改功能。  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-3cb9e754a6c696fa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt></p>
+<p>点击右上方【API 文档】 可以访问 cmdb 的接口文档，非常方便。  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-85596180e69c2848.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt></p>
+<p>至此系统搭建完毕。如果要用于生产环境，请使用 linux 操作系统，并使用 uwsgi 来驱动 django 项目。</p>
+<h3 id="3-Vue-环境搭建"><a href="#3-Vue-环境搭建" class="headerlink" title="3. Vue 环境搭建"></a>3. Vue 环境搭建</h3><p>我想你不会仅仅满足于将别人的项目下载下来能运行就行了，你肯定想对其进行改造来满足自己的需求。因此你可能会需要修改前端或后端，后端的修改其实上面部署的已经可以了，你可以直接阅读 django 项目的源代码进行修改调试。如果要修改前端代码进行调试，你就需要搭建 Vue 环境。</p>
+<p>你可能会问了，Vue 是个啥？Vue 是一个 javascript 框架，如果说 jQuery，你可能就知道了，使用方法是类似的，在 html 上引入一行 javascript 的文件，就可以使用框架的特性了。 Vue 是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue 被设计为可以自底向上逐层应用。Vue 的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。另一方面，当与现代化的工具链以及各种支持类库结合使用时，Vue 也完全能够为复杂的单页应用提供驱动。<br>学习 vue 需要有 html、css、javascript 基础<br>新手可以通过 html 上引入 Vue 的 js 文件来使用 vue，如下所示：</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;title&gt;Vue 测试实例 &lt;/title&gt;
+    &lt;script src=&quot;https://cdn.staticfile.org/vue/2.4.2/vue.min.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;app&quot;&gt;
+    &lt;p&gt;{ { message }}&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    new Vue({
+      el: &apos;#app&apos;,
+      data: {
+        message: &apos;Hello Vue.js!&apos;
+      }
+})
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre><p>但是在较复杂的项目中，还是要使用工具来帮助我们管理项目的层级及文件之间的依赖关系，这就需要使用 vue 的命令行工具 vue-cli ，vue-cli 需要 npm 工具来安装，npm 工具集成在 node.js 中，因此需要安装 node.js。<br>安装 node.js 非常简单，直接官网下载解压即可使用：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-b082f2cb1fbf57eb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/662/format/webp" alt></p>
+<p>将 npm 所在路径添加到环境变量 Path 中，你就可以在任意的命令窗口使用 npm 命令了。<br>1、安装 vue-cli</p>
+<p>先安装淘宝镜像，大家都知道国内直接使用 npm 的官方镜像是非常慢的，这里推荐使用淘宝 NPM 镜像。</p>
+<pre><code>npm install -g cnpm --registry=https://registry.npm.taobao.org</code></pre><p>执行结果如下：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-9c903138bb1b48a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/960/format/webp" alt></p>
+<p>这样就可以使用 cnpm 命令来安装模块了：使用 cnpm 安装 vue-cli  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-8cb3e74991ade140.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/951/format/webp" alt></p>
+<p>然后我们就可以使用 vue init webpack my-project 命令来来建一个项目 my-project，这里需要进行一些配置，可以直接回车来使用默认配置，如下图所示：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-84c1b6312faad907.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/761/format/webp" alt></p>
+<p>等待其初始化完毕后，进入项目，执行以下命令：</p>
+<pre><code>C:\Users\xx&gt;cd my-project
+C:\Users\xx\my-project&gt;cnpm install
+C:\Users\xx\my-project&gt;cnpm run dev</code></pre><p>此时会自动 build ，运行成功后会打印如下信息表示服务已正常启动：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-db841f4d43304654.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/567/format/webp" alt></p>
+<p>3compliesucce.png</p>
+<p>此时打开浏览器，输入 <a href="http://localhost:8081/" target="_blank" rel="noopener">http://localhost:8081</a>，即可看到 my-project 在浏览器中的展示。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-fb5d30eab2371c0f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/759/format/webp" alt></p>
+<p>如果要把这个页面部署在 nginx 服务器上，你还需要 build 命令来生成静态资源，如下图所示：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-7702aaf634e4e1e0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/960/format/webp" alt></p>
+<p>image.png  </p>
+<p>此时会在 my-project 下生成 dist 目录，相当于我们写程序编译生成的目标文件。my-project 下的内容及说明如下图所示：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-27e87244c03dce40.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/496/format/webp" alt></p>
+<p>Snipaste_2018-10-26_06-47-24.png<br>此时已经可以开启你的 vue 之旅了。</p>
+<p>当学会了 Vue 之后，你就可以修改本项目的前端源代码来满足自己的需求了，进入 src 目录，查看并修改源代码之后，进入 cmdb_web 的项目目录，执行</p>
+<pre><code># 安装依赖，如果慢可换成 cnpm
+npm install
+# 启动服务，默认端口为8080，如果被占用会自动选取一个未被占用的端口
+npm run dev
+# 建立静态文件，可以放在 nginx 上运行
+npm run build
+# 查看建立报告
+npm run build --report</code></pre><p>即可将生成的 dist 部署到 web 服务器了。</p>
+<p>也许你会认为这样实在太麻烦了，不如自己动手写一个 cmdb 系统，如果时间允许当然可以自己写，但是我不推荐这样做，上述这些操作其实都很简单，在熟悉之后就像打字一样容易，而且自己写一个同样效果的系统要直接拿优秀的代码来改造要慢得多，大神例外。作为一般程序员我们应该避免重复造轮子，学会站在巨人的肩膀上。因此开发一个项目最好是找 github 上类似的优秀开源项目，借鉴其优良设计，甚至可以直接拿来做二次开发，这才是最高效的做法。</p>
+<p>（完）</p>
+<p>转载自<a href="https://www.jianshu.com/p/80d233588bd4" target="_blank" rel="noopener">https://www.jianshu.com/p/80d233588bd4</a> 还没有时间试</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f/" data-id="ck1oej6gi0000dstq0ektab1b" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f/" class="article-date">
+  <time datetime="2019-10-11T08:34:05.000Z" itemprop="datePublished">2019-10-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Python/">Python</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f/">用Python做窗口化滚动点名系统</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>先上图看效果:</p>
+<p><img src="https://images2015.cnblogs.com/blog/1176578/201706/1176578-20170621154007320-936394311.gif" alt></p>
+<p>主要思路:</p>
+<p>1.用Python内置模块做图形界面;</p>
+<p>2.用时间产生随机数,作为下标更新名字;</p>
+<p>3.有需要可以用Pyinstaller打包为.EXE格式,方便其他用户使用.</p>
+<p>代码如下:</p>
+<p><a href="void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p>
+<p>from tkinter import *<br>import time</p>
+<p>class RandomName(Frame):<br>    def __init__(self, parent=None, **kw):<br>        Frame.__init__(self, parent, kw)<br>        self.name_list = []<br>        self._start = 0.0<br>        self._elapsedtime = 0.0<br>        self._running = False<br>        self.timestr = StringVar()<br>        self.makeWidgets()</p>
+<pre><code>def makeWidgets(self):
+    #  定义标签栏
+    l = Label(self, textvariable=self.timestr, font=(&quot;Arial, 35&quot;))
+    self.set\_name(self.\_elapsedtime)
+    l.pack(side=TOP)
+
+def update(self):
+    # 更新显示内容
+    self.\_elapsedtime = time.time() - self.\_start
+    self.set\_name(self.\_elapsedtime)  # 设置显示内容
+    self._timer = self.after(50, self.update)  # 刷新界面
+
+def set_name(self, elap):
+    # 随机产生姓名
+    cur = int(elap * 100 % 30)
+    name_list = \[&apos;王生安&apos;, &apos;李鑫灏&apos;, &apos;薛佛世&apos;, &apos;蔡壮保&apos;, &apos;钱勤堃&apos;, &apos;潘恩依&apos;, &apos;陈国柏&apos;, &apos;魏皑虎&apos;,
+                 &apos;周卓浩&apos;, &apos;汤辟邦&apos;, &apos;张顺谷&apos;, &apos;张悌斯&apos;, &apos;张灶冲&apos;, &apos;易江维&apos;, &apos;孙来笙&apos;, &apos;饶展林&apos;,
+                 &apos;岳列洋&apos;, &apos;时党舒&apos;, &apos;周迟蒲&apos;, &apos;廉梦容&apos;, &apos;张淮森&apos;, &apos;夏劲釜&apos;, &apos;王好隐&apos;, &apos;刘昼星&apos;,
+                 &apos;池荣弈&apos;, &apos;邹包幼&apos;, &apos;王施峪&apos;, &apos;武慎萌&apos;, &apos;范千皋&apos;, &apos;潘佩焱&apos;\]
+    self.timestr.set(name_list\[cur\])
+
+def Start(self):
+    # 开始
+    if not self._running:
+        self.\_start = time.time() - self.\_elapsedtime
+        self.update()
+        self._running = True
+
+def Stop(self):
+    # 暂停
+    if self._running:
+        self.after\_cancel(self.\_timer)
+        self.\_elapsedtime = time.time() - self.\_start
+        self.set\_name(self.\_elapsedtime)
+        self._running = False
+
+def name_label(self):
+    # 显示窗口
+    self.pack(side=TOP)
+    Button(self, text=&apos;start&apos;, command=self.Start, width=10, height=2).pack(side=LEFT)
+    Button(self, text=&apos;stop&apos;, command=self.Stop, width=10, height=2).pack(side=LEFT)</code></pre><p>if __name__ == ‘__main__‘:<br>    root = Tk()<br>    root.title(“Aloe”)<br>    root.geometry(‘250x150’)<br>    sw = RandomName(root)<br>    sw.name_label()<br>    root.mainloop()</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f/" data-id="ck1oej6he000ddstqt534xy63" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f/" class="article-date">
+  <time datetime="2019-10-10T01:11:49.000Z" itemprop="datePublished">2019-10-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/苦逼之旅/">苦逼之旅</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f/">修改CentOS7网卡名称为传统名称eth0格式</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>起因，很多使用CentOS7以前系统的小伙伴装完CentOS7以后发现了一个问题，那就是网卡名改变为了“en016777736”，而不是以前的eth0的简易模式了，如图：</p>
+<p><a href="https://s5.51cto.com/wyfs02/M02/9B/8E/wKioL1lkeU6B5lHzAABMryQXEEE979.png" target="_blank" rel="noopener"><img src="https://s5.51cto.com/wyfs02/M02/9B/8E/wKioL1lkeU6B5lHzAABMryQXEEE979.png" alt="wKioL1lkeU6B5lHzAABMryQXEEE979.png"></a></p>
+<p>   这是为什么呢？开发者吃饱撑的么？当然不是。</p>
+<p>   以往的CentOS7以前的系统网卡命名虽然简单方便，但也会带来一些问题，例如，当eth0接口对应的网卡出问题以后，更换掉新网卡后新网卡的名字就可能不是eth0了。而CentOS7使用了新的网卡命名模式接口名称被自动基于固件，拓扑结构和位置信息来确定。即使添加或移除网络设备，接口名称仍然保持固定，而无需重新枚举，和坏掉的硬件可以无缝替换。</p>
+<p>  虽然新的命名有好处，但是新的接口名称命名方案比传统的eth0相比看起来更难使用，出于习惯，很多网友想修改网卡名称，下面为大家介绍如何在CentOS7或RHEL7命名网络接口。</p>
+<h3 id="1-调整网卡名称"><a href="#1-调整网卡名称" class="headerlink" title="1.调整网卡名称"></a>1.调整网卡名称</h3><p>[root@oldboy tools]# cd/etc/sysconfig/network-scripts/         #&lt;==进入网卡文件目录。</p>
+<p>[root@oldboy network-scripts]# mv mv ifcfg-eno16777736ifcfg-eth0 #&lt;==进重命名网卡名称。</p>
+<h3 id="2-调整网卡的配置信息"><a href="#2-调整网卡的配置信息" class="headerlink" title="2.调整网卡的配置信息"></a>2.调整网卡的配置信息</h3><p>[root@oldboy network-scripts]# cat ifcfg-eth0 #&lt;==修改后的结果如下。</p>
+<p>TYPE=Ethernet</p>
+<p>BOOTPROTO=none</p>
+<p>DEFROUTE=yes</p>
+<p>IPV4_FAILURE_FATAL=no</p>
+<p>IPV6INIT=yes</p>
+<p>IPV6_AUTOCONF=yes</p>
+<p>IPV6_DEFROUTE=yes</p>
+<p>IPV6_FAILURE_FATAL=no</p>
+<p>NAME=eth0   #&lt;==修改为eth0。</p>
+<p>UUID=3e8d1581-84bd-44e8-ae70-467fa29e2585</p>
+<p>DEVICE=eth0 #&lt;==修改为eth0。</p>
+<p>ONBOOT=yes</p>
+<p>DNS1=10.0.0.2</p>
+<p>IPADDR=10.0.0.201</p>
+<p>PREFIX=24</p>
+<p>GATEWAY=10.0.0.2</p>
+<p>IPV6_PEERDNS=yes</p>
+<p>IPV6_PEERROUTES=yes</p>
+<p>IPV6_PRIVACY=no</p>
+<h3 id="3-修改并生成grub配置"><a href="#3-修改并生成grub配置" class="headerlink" title="3.修改并生成grub配置"></a>3.修改并生成grub配置</h3><p>修改后的结果如下，也可以在安装系统或开机启动时进行调整。</p>
+<p>[root@oldboy network-scripts]# cat /etc/sysconfig/grub</p>
+<p>GRUB_TIMEOUT=5</p>
+<p>GRUB_DISTRIBUTOR=”$(sed ‘s, release .*$,,g’/etc/system-release)”</p>
+<p>GRUB_DEFAULT=saved</p>
+<p>GRUB_DISABLE_SUBMENU=true</p>
+<p>GRUB_TERMINAL_OUTPUT=”console”</p>
+<p>GRUB_CMDLINE_LINUX=”crashkernel=128M rhgb <strong>net.ifnames=0 biosdevname=0</strong> quiet”  #&lt;==黄色底纹内容是添加的。</p>
+<p>GRUB_DISABLE_RECOVERY=”true”</p>
+<p>[root@linux-node2 ~]# grub2-mkconfig -o/boot/grub2/grub.cfg    #&lt;==生成grub启动菜单。</p>
+<p>Generating grub configuration file …</p>
+<p>Found linux p_w_picpath: /boot/vmlinuz-3.10.0-229.el7.x86_64</p>
+<p>Found initrd p_w_picpath:/boot/initramfs-3.10.0-229.el7.x86_64.img</p>
+<p>Found linux p_w_picpath:/boot/vmlinuz-0-rescue-1100f7e6c97d4afaad2e396403ba7f61</p>
+<p>Found initrd p_w_picpath:/boot/initramfs-0-rescue-1100f7e6c97d4afaad2e396403ba7f61.img</p>
+<p>Done</p>
+<h3 id="4-验证是否修改结果"><a href="#4-验证是否修改结果" class="headerlink" title="4.验证是否修改结果"></a>4.验证是否修改结果</h3><p>[root@oldboy network-scripts]# reboot #&lt;==必须重启系统。</p>
+<p>[root@linux-node2 ~]# yum install net-tools -y #&lt;== centos7默认没有ifconfig 需要安装net-tools包</p>
+<p>[root@oldboy network-scripts]# ifconfig                   #&lt;==再次查看网卡信息</p>
+<p><strong>eth0</strong>: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</p>
+<pre><code>inet10.0.0.201  netmask 255.255.255.0  broadcast 10.0.0.255
+
+inet6fe80::20c:29ff:feae:ef19  prefixlen64  scopeid 0x20&lt;link&gt;
+
+ether00:0c:29:ae:ef:19  txqueuelen 1000  (Ethernet)
+
+RX packets36248  bytes 2319009 (2.2 MiB)
+
+RXerrors 0  dropped 0  overruns 0 frame 0
+
+TXpackets 43090  bytes 67555745 (64.4 MiB)
+
+TXerrors 0  dropped 0 overruns 0  carrier 0 collisions 0</code></pre><p>其实开发还是吃饱撑的，开发费很大劲开发，最后我们还得改回来使用，大家说是不？</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f/" data-id="ck1oej6gt0003dstqv6qh584w" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-linux-e5-90-84-e7-9b-ae-e5-bd-95-e5-8f-8a-e6-af-8f-e4-b8-aa-e7-9b-ae-e5-bd-95-e7-9a-84-e8-af-a6-e7-bb-86-e4-bb-8b-e7-bb-8d" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/10/10/linux-e5-90-84-e7-9b-ae-e5-bd-95-e5-8f-8a-e6-af-8f-e4-b8-aa-e7-9b-ae-e5-bd-95-e7-9a-84-e8-af-a6-e7-bb-86-e4-bb-8b-e7-bb-8d/" class="article-date">
+  <time datetime="2019-10-10T01:11:11.000Z" itemprop="datePublished">2019-10-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/苦逼之旅/">苦逼之旅</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/10/linux-e5-90-84-e7-9b-ae-e5-bd-95-e5-8f-8a-e6-af-8f-e4-b8-aa-e7-9b-ae-e5-bd-95-e7-9a-84-e8-af-a6-e7-bb-86-e4-bb-8b-e7-bb-8d/">Linux各目录及每个目录的详细介绍</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>【常见目录说明】</p>
+<p>目录</p>
+<p>/bin</p>
+<p>存放二进制可执行文件(ls,cat,mkdir等)，常用命令一般都在这里。</p>
+<p>/etc</p>
+<p>存放系统管理和配置文件</p>
+<p>/home</p>
+<p>存放所有用户文件的根目录，是用户主目录的基点，比如用户user的主目录就是/home/user，可以用~user表示 </p>
+<p>/usr</p>
+<p>用于存放系统应用程序，比较重要的目录/usr/local 本地系统管理员软件安装目录（安装系统级的应用）。这是最庞大的目录，要用到的应用程序和文件几乎都在这个目录。/usr/x11r6 存放x window的目录/usr/bin 众多的应用程序  /usr/sbin 超级用户的一些管理程序  /usr/doc linux文档  /usr/include linux下开发和编译应用程序所需要的头文件  /usr/lib 常用的动态链接库和软件包的配置文件  /usr/man 帮助文档  /usr/src 源代码，linux内核的源代码就放在/usr/src/linux里  /usr/local/bin 本地增加的命令  /usr/local/lib 本地增加的库</p>
+<p>/opt</p>
+<p>额外安装的可选应用程序包所放置的位置。一般情况下，我们可以把tomcat等都安装到这里。</p>
+<p>/proc</p>
+<p>虚拟文件系统目录，是系统内存的映射。可直接访问这个目录来获取系统信息。</p>
+<p>/root</p>
+<p>超级用户（系统管理员）的主目录（特权阶级^o^）</p>
+<p>/sbin</p>
+<p>存放二进制可执行文件，只有root才能访问。这里存放的是系统管理员使用的系统级别的管理命令和程序。如ifconfig等。</p>
+<p>/dev</p>
+<p>用于存放设备文件。</p>
+<p>/mnt</p>
+<p>系统管理员安装临时文件系统的安装点，系统提供这个目录是让用户临时挂载其他的文件系统。</p>
+<p>/boot</p>
+<p>存放用于系统引导时使用的各种文件</p>
+<p>/lib</p>
+<p>存放跟文件系统中的程序运行所需要的共享库及内核模块。共享库又叫动态链接共享库，作用类似windows里的.dll文件，存放了根文件系统程序运行所需的共享文件。</p>
+<p>/tmp</p>
+<p>用于存放各种临时文件，是公用的临时文件存储点。</p>
+<p>/var</p>
+<p>用于存放运行时需要改变数据的文件，也是某些大文件的溢出区，比方说各种服务的日志文件（系统启动日志等。）等。</p>
+<p>/lost+found</p>
+<p>这个目录平时是空的，系统非正常关机而留下“无家可归”的文件（windows下叫什么.chk）就在这里</p>
+<p>Linux目录和Windows目录有着很大的不同，Linux目录类似一个树，最顶层是其根目录，如下图：</p>
+<p><img src="https://images2018.cnblogs.com/blog/947592/201804/947592-20180405211353803-661408064.jpg" alt></p>
+<p>/bin 二进制可执行命令</p>
+<p>/dev 设备特殊文件<br>/etc 系统管理和配置文件<br>/etc/rc.d 启动的配置文件和脚本<br>/home 用户主目录的基点，比如用户user的主目录就是/home/user，可以用~user表示<br>/lib 标准程序设计库，又叫动态链接共享库，作用类似windows里的.dll文件<br>/sbin 超级管理命令，这里存放的是系统管理员使用的管理程序<br>/tmp 公共的临时文件存储点<br>/root 系统管理员的主目录<br>/mnt 系统提供这个目录是让用户临时挂载其他的文件系统<br>/lost+found这个目录平时是空的，系统非正常关机而留下“无家可归”的文件（windows下叫什么.chk）就在这里<br>/proc 虚拟的目录，是系统内存的映射。可直接访问这个目录来获取系统信息。<br>/var 某些大文件的溢出区，比方说各种服务的日志文件<br>/usr 最庞大的目录，要用到的应用程序和文件几乎都在这个目录，其中包含：</p>
+<p>/usr/x11R6 存放x window的目录<br>/usr/bin 众多的应用程序<br>/usr/sbin 超级用户的一些管理程序<br>/usr/doc linux文档<br>/usr/include linux下开发和编译应用程序所需要的头文件<br>/usr/lib 常用的动态链接库和软件包的配置文件<br>/usr/man 帮助文档<br>/usr/src 源代码，linux内核的源代码就放在/usr/src/linux里<br>/usr/local/bin 本地增加的命令<br>/usr/local/lib 本地增加的库根文件系统</p>
+<p>通常情况下，根文件系统所占空间一般应该比较小，因为其中的绝大部分文件都不需要经常改动，而且包括严格的文件和一个小的不经常改变的文件系统不容易损坏。<br>除了可能的一个叫/ vmlinuz标准的系统引导映像之外，根目录一般不含任何文件。所有其他文件在根文件系统的子目录中。  </p>
+<ol>
+<li>/bin目录<br>/ b i n目录包含了引导启动所需的命令或普通用户可能用的命令(可能在引导启动后)。这些命令都是二进制文件的可执行程序( b i n是b i n a r y - -二进制的简称)，多是系统中重要的系统文件。  </li>
+<li>/sbin目录<br>/ s b i n目录类似/bin ，也用于存储二进制文件。因为其中的大部分文件多是系统管理员使用的基本的系统程序，所以虽然普通用户必要且允许时可以使用，但一般不给普通用户使用。  </li>
+<li>/etc目录<br>/ e t c目录存放着各种系统配置文件，其中包括了用户信息文件/ e t c / p a s s w d，系统初始化文件/ e t c / r c等。l i n u x正是*这些文件才得以正常地运行。  </li>
+<li>/root目录<br>/root 目录是超级用户的目录。  </li>
+<li>/lib目录<br>/ l i b目录是根文件系统上的程序所需的共享库，存放了根文件系统程序运行所需的共享文件。这些文件包含了可被许多程序共享的代码，以避免每个程序都包含有相同的子程序的副本，故可以使得可执行文件变得更小，节省空间。  </li>
+<li>/lib/modules 目录<br>/lib/modules 目录包含系统核心可加载各种模块，尤其是那些在恢复损坏的系统时重新引导系统所需的模块(例如网络和文件系统驱动)。  </li>
+<li>/dev目录<br>/ d e v目录存放了设备文件，即设备驱动程序，用户通过这些文件访问外部设备。比如，用户可以通过访问/ d e v / m o u s e来访问鼠标的输入，就像访问其他文件一样。  </li>
+<li>/tmp目录<br>/tmp 目录存放程序在运行时产生的信息和数据。但在引导启动后，运行的程序最好使用/ v a r / t m p来代替/tmp ，因为前者可能拥有一个更大的磁盘空间。  </li>
+<li>/boot目录<br>/ b o o t目录存放引导加载器(bootstrap loader)使用的文件，如l i lo，核心映像也经常放在这里，而不是放在根目录中。但是如果有许多核心映像，这个目录就可能变得很大，这时使用单独的文件系统会更好一些。还有一点要注意的是，要确保核心映像必须在i d e硬盘的前1 0 2 4柱面内。  </li>
+<li>/mnt目录<br>/ m n t目录是系统管理员临时安装( m o u n t )文件系统的安装点。程序并不自动支持安装到/mnt 。/mnt 下面可以分为许多子目录，例如/mnt/dosa 可能是使用m s d o s文件系统的软驱，而/mnt/exta 可能是使用e x t 2文件系统的软驱，/mnt/cdrom 光驱等等。  </li>
+<li>/proc, /usr,/var,/home目录<br>其他文件系统的安装点。</li>
+</ol>
+<p>下面详细介绍；</p>
+<p>/etc文件系统</p>
+<p>/etc 目录包含各种系统配置文件，下面说明其中的一些。其他的你应该知道它们属于哪个程序，并阅读该程序的m a n页。许多网络配置文件也在/etc 中。  </p>
+<ol>
+<li>/etc/rc或/etc/rc.d或/etc/rc?.d<br>启动、或改变运行级时运行的脚本或脚本的目录。  </li>
+<li>/etc/passwd<br>用户数据库，其中的域给出了用户名、真实姓名、用户起始目录、加密口令和用户的其<br>他信息。  </li>
+<li>/etc/fdprm<br>软盘参数表，用以说明不同的软盘格式。可用setfdprm 进行设置。更多的信息见s e t f d p r m<br>的帮助页。  </li>
+<li>/etc/fstab<br>指定启动时需要自动安装的文件系统列表。也包括用swapon -a启用的s w a p区的信息。  </li>
+<li>/etc/group<br>类似/etc/passwd ，但说明的不是用户信息而是组的信息。包括组的各种数据。  </li>
+<li>/etc/inittab<br>init 的配置文件。  </li>
+<li>/etc/issue<br>包括用户在登录提示符前的输出信息。通常包括系统的一段短说明或欢迎信息。具体内容由系统管理员确定。  </li>
+<li>/etc/magic<br>“f i l e”的配置文件。包含不同文件格式的说明，“f i l e”基于它猜测文件类型。  </li>
+<li>/etc/motd<br>m o t d是message of the day的缩写，用户成功登录后自动输出。内容由系统管理员确定。常用于通告信息，如计划关机时间的警告等。  </li>
+<li>/etc/mtab<br>当前安装的文件系统列表。由脚本( s c r i t p )初始化，并由mount 命令自动更新。当需要一个当前安装的文件系统的列表时使用(例如df 命令)。  </li>
+<li>/etc/shadow<br>在安装了影子( s h a d o w )口令软件的系统上的影子口令文件。影子口令文件将/ e t c / p a s s wd文件中的加密口令移动到/ e t c / s h a d o w中，而后者只对超级用户( r o o t)可读。这使破译口令更困难，以此增加系统的安全性。  </li>
+<li>/etc/login.defs<br>l o g i n命令的配置文件。  </li>
+<li>/etc/printcap<br>类似/etc/termcap ，但针对打印机。语法不同。  </li>
+<li>/etc/profile 、/ e t c / c s h . l o g i n、/etc/csh.cshrc<br>登录或启动时b o u r n e或c shells执行的文件。这允许系统管理员为所有用户建立全局缺省环境。  </li>
+<li>/etc/securetty<br>确认安全终端，即哪个终端允许超级用户( r o o t )登录。一般只列出虚拟控制台，这样就不可能(至少很困难)通过调制解调器( m o d e m )或网络闯入系统并得到超级用户特权。  </li>
+<li>/etc/shells<br>列出可以使用的s h e l l。chsh 命令允许用户在本文件指定范围内改变登录的s h e l l。提供一台机器f t p服务的服务进程ftpd 检查用户s h e l l是否列在/etc/shells 文件中，如果不是，将不允许该用户登录。  </li>
+<li>/etc/termcap<br>终端性能数据库。说明不同的终端用什么“转义序列”控制。写程序时不直接输出转义序列(这样只能工作于特定品牌的终端)，而是从/etc/termcap 中查找要做的工作的正确序列。<br>这样，多数的程序可以在多数终端上运行。</li>
+</ol>
+<p>/dev文件系统</p>
+<p>/dev 目录包括所有设备的设备文件。设备文件用特定的约定命名，这在设备列表中说明。<br>设备文件在安装时由系统产生，以后可以用/dev/makedev 描述。/ d e v / m a k e d e v.local是<br>系统管理员为本地设备文件(或连接)写的描述文稿(即如一些非标准设备驱动不是标准<br>makedev 的一部分)。下面简要介绍/ d e v下一些常用文件。  </p>
+<ol>
+<li>/dev/console<br>系统控制台，也就是直接和系统连接的监视器。  </li>
+<li>/dev/hd<br>i d e硬盘驱动程序接口。如： / d e v / h d a指的是第一个硬盘， h a d 1则是指/ d e v / h da的第一个<br>分区。如系统中有其他的硬盘，则依次为/ d e v / h d b、/ d e v / h d c、. . . . ..；如有多个分区则依次为<br>h d a 1、h d a 2 . . . . . .  </li>
+<li>/dev/sd<br>s c s i磁盘驱动程序接口。如有系统有s c s i硬盘，就不会访问/ d e v / h a d，而会访问/ d e v / sd a。  </li>
+<li>/dev/fd<br>软驱设备驱动程序。如： / d e v / f d 0指系统的第一个软盘，也就是通常所说的a：盘，<br>/ d e v / f d 1指第二个软盘，. . . . . .而/ d e v / f d 1 h 1 4 40则表示访问驱动器1中的4 . 5高密盘。  </li>
+<li>/dev/st<br>s c s i磁带驱动器驱动程序。  </li>
+<li>/dev/tty<br>提供虚拟控制台支持。如： / d e v / t t y 1指的是系统的第一个虚拟控制台， / d e v / t t y2则是系统<br>的第二个虚拟控制台。  </li>
+<li>/dev/pty<br>提供远程登陆伪终端支持。在进行te l n e t登录时就要用到/ d e v / p t y设备。  </li>
+<li>/dev/ttys<br>计算机串行接口，对于d o s来说就是“ c o m 1”口。  </li>
+<li>/dev/cua<br>计算机串行接口，与调制解调器一起使用的设备。  </li>
+<li>/dev/null<br>“黑洞”，所有写入该设备的信息都将消失。例如：当想要将屏幕上的输出信息隐藏起来时，只要将输出信息输入到/ d e v / n u l l中即可。</li>
+</ol>
+<p>/usr文件系统</p>
+<p>/usr 是个很重要的目录，通常这一文件系统很大，因为所有程序安装在这里。/usr 里的<br>所有文件一般来自l i n u x发行版( d i s t r i b u t i o n)；本地安装的程序和其他东西在/usr/local 下，因为这样可以在升级新版系统或新发行版时无须重新安装全部程序。/usr目录下的许多内容是可选的，但这些功能会使用户使用系统更加有效。/ u s r可容纳许多大型的软件包和它们的配置文件。下面列出一些重要的目录(一些不太重要的目录被省略了)。  </p>
+<ol>
+<li>/usr/x11r6<br>包含x wi n d o w系统的所有可执行程序、配置文件和支持文件。为简化x的开发和安装，x的文件没有集成到系统中。x wi n d o w系统是一个功能强大的图形环境，提供了大量的图形工具程序。用户如果对microsoft wi n d o w s或m a c h i n t o s h比较熟悉的话，就不会对x win d o w系统感到束手无策了。  </li>
+<li>/usr/x386<br>类似/ u s r / x 11r6 ，但是是专门给x 11 release 5的。  </li>
+<li>/usr/bin<br>集中了几乎所有用户命令，是系统的软件库。另有些命令在/bin 或/usr/local/bin 中。  </li>
+<li>/usr/sbin<br>包括了根文件系统不必要的系统管理命令，例如多数服务程序。  </li>
+<li>/usr/man、/ u s r / i n f o、/ u s r / d o c<br>这些目录包含所有手册页、g n u信息文档和各种其他文档文件。每个联机手册的“节”都有两个子目录。例如： / u s r / m a n / m a n 1中包含联机手册第一节的源码(没有格式化的原始文件)，/ u s r / m a n / c a t 1包含第一节已格式化的内容。l联机手册分为以下九节：内部命令、系统调用、库函数、设备、文件格式、游戏、宏软件包、系统管理和核心程序。  </li>
+<li>/usr/include<br>包含了c语言的头文件，这些文件多以. h结尾，用来描述c语言程序中用到的数据结构、子过程和常量。为了保持一致性，这实际上应该放在/usr/lib 下，但习惯上一直沿用了这个名字。  </li>
+<li>/usr/lib<br>包含了程序或子系统的不变的数据文件，包括一些s i t e - w i d e配置文件。名字l i b来源于库(library); 编程的原始库也存在/usr/lib 里。当编译程序时，程序便会和其中的库进行连接。也有许多程序把配置文件存入其中。  </li>
+<li>/usr/local<br>本地安装的软件和其他文件放在这里。这与/ u s r很相似。用户可能会在这发现一些比较大的软件包，如t e x、e m a c s等。</li>
+</ol>
+<p>/var文件系统</p>
+<p>/var 包含系统一般运行时要改变的数据。通常这些数据所在的目录的大小是要经常变化或扩充的。原来/ v a r目录中有些内容是在/ u s r中的，但为了保持/ u s r目录的相对稳定，就把那些需要经常改变的目录放到/ v a r中了。每个系统是特定的，即不通过网络与其他计算机共享。下面列出一些重要的目录(一些不太重要的目录省略了)。  </p>
+<ol>
+<li>/var/catman<br>包括了格式化过的帮助( m a n )页。帮助页的源文件一般存在/ u s r / m a n / m a n中；有些m an页可能有预格式化的版本，存在/ u s r / m a n / c a t中。而其他的m a n页在第一次看时都需要格式化，格式化完的版本存在/var/man 中，这样其他人再看相同的页时就无须等待格式化了。(/var/catman 经常被清除，就像清除临时目录一样。)  </li>
+<li>/var/lib<br>存放系统正常运行时要改变的文件。  </li>
+<li>/var/local<br>存放/usr/local 中安装的程序的可变数据(即系统管理员安装的程序)。注意，如果必要，即使本地安装的程序也会使用其他/var 目录，例如/var/lock 。  </li>
+<li>/var/lock<br>锁定文件。许多程序遵循在/var/lock 中产生一个锁定文件的约定，以用来支持他们正在使用某个特定的设备或文件。其他程序注意到这个锁定文件时，就不会再使用这个设备或文件。  </li>
+<li>/var/log<br>各种程序的日志( l o g )文件，尤其是login (/var/log/wtmp log纪录所有到系统的登录和注销) 和syslog (/var/log/messages 纪录存储所有核心和系统程序信息)。/var/log里的文件经常不确定地增长，应该定期清除。  </li>
+<li>/var/run<br>保存在下一次系统引导前有效的关于系统的信息文件。例如， /var/run/utmp 包含当前登录的用户的信息。  </li>
+<li>/var/spool<br>放置“假脱机( s p o o l )”程序的目录，如m a i l、n e w s、打印队列和其他队列工作的目录。每个不同的s p o o l在/var/spool 下有自己的子目录，例如，用户的邮箱就存放在/var/spool/mail中。  </li>
+<li>/var/tmp<br>比/tmp 允许更大的或需要存在较长时间的临时文件。注意系统管理员可能不允许/var/tmp 有很旧的文件。</li>
+</ol>
+<p>/proc文件系统</p>
+<p>/proc 文件系统是一个伪的文件系统，就是说它是一个实际上不存在的目录，因而这是一<br>个非常特殊的目录。它并不存在于某个磁盘上，而是由核心在内存中产生。这个目录用于提<br>供关于系统的信息。下面说明一些最重要的文件和目录(/proc 文件系统在proc man页中有更详<br>细的说明)。  </p>
+<ol>
+<li>/proc/x<br>关于进程x的信息目录，这一x是这一进程的标识号。每个进程在/proc 下有一个名为自<br>己进程号的目录。  </li>
+<li>/proc/cpuinfo<br>存放处理器( c p u )的信息，如c p u的类型、制造商、型号和性能等。  </li>
+<li>/proc/devices<br>当前运行的核心配置的设备驱动的列表。  </li>
+<li>/proc/dma<br>显示当前使用的d m a通道。  </li>
+<li>/proc/filesystems<br>核心配置的文件系统信息。  </li>
+<li>/proc/interrupts<br>显示被占用的中断信息和占用者的信息，以及被占用的数量。  </li>
+<li>/proc/ioports<br>当前使用的i / o端口。  </li>
+<li>/proc/kcore<br>系统物理内存映像。与物理内存大小完全一样，然而实际上没有占用这么多内存；它仅仅是在程序访问它时才被创建。(注意：除非你把它拷贝到什么地方，否则/proc 下没有任何东西占用任何磁盘空间。)  </li>
+<li>/proc/kmsg<br>核心输出的消息。也会被送到s y s l o g。  </li>
+<li>/proc/ksyms<br>核心符号表。  </li>
+<li>/proc/loadavg<br>系统“平均负载”； 3个没有意义的指示器指出系统当前的工作量。  </li>
+<li>/proc/meminfo<br>各种存储器使用信息，包括物理内存和交换分区( s w a p )。  </li>
+<li>/proc/modules<br>存放当前加载了哪些核心模块信息。  </li>
+<li>/proc/net<br>网络协议状态信息。  </li>
+<li>/proc/self<br>存放到查看/proc 的程序的进程目录的符号连接。当2个进程查看/proc 时，这将会是不同的连接。这主要便于程序得到它自己的进程目录。  </li>
+<li>/proc/stat<br>系统的不同状态，例如，系统启动后页面发生错误的次数。  </li>
+<li>/proc/uptime<br>系统启动的时间长度。  </li>
+<li>/proc/version<br>核心版本</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/10/10/linux-e5-90-84-e7-9b-ae-e5-bd-95-e5-8f-8a-e6-af-8f-e4-b8-aa-e7-9b-ae-e5-bd-95-e7-9a-84-e8-af-a6-e7-bb-86-e4-bb-8b-e7-bb-8d/" data-id="ck1oej6hz000tdstq2vzwnbgl" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-tcp-e7-9a-84-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-90-86-e8-a7-a3-e5-8f-8a-e9-9d-a2-e8-af-95-e9-a2-98-ef-bc-88-e5-be-88-e5-85-a8-e9-9d-a2-ef-bc-89" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/10/10/tcp-e7-9a-84-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-90-86-e8-a7-a3-e5-8f-8a-e9-9d-a2-e8-af-95-e9-a2-98-ef-bc-88-e5-be-88-e5-85-a8-e9-9d-a2-ef-bc-89/" class="article-date">
+  <time datetime="2019-10-10T01:10:01.000Z" itemprop="datePublished">2019-10-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux基础/">Linux基础</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/10/tcp-e7-9a-84-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-90-86-e8-a7-a3-e5-8f-8a-e9-9d-a2-e8-af-95-e9-a2-98-ef-bc-88-e5-be-88-e5-85-a8-e9-9d-a2-ef-bc-89/">TCP的三次握手与四次挥手理解及面试题（很全面）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="https://img-blog.csdn.net/20180717201939345?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4OTUwMzE2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt></p>
+<pre><code>序列号seq：占4个字节，用来标记数据段的顺序，TCP把连接中发送的所有数据字节都编上一个序号，第一个字节的编号由本地随机产生；给字节编上序号后，就给每一个报文段指派一个序号；序列号seq就是这个报文段中的第一个字节的数据编号。
+
+确认号ack：占4个字节，期待收到对方下一个报文段的第一个数据字节的序号；序列号表示报文段携带数据的第一个字节的编号；而确认号指的是期望接收到下一个字节的编号；因此当前报文段最后一个字节的编号+1即为确认号。
+
+确认ACK：占1位，仅当ACK=1时，确认号字段才有效。ACK=0时，确认号无效
+
+同步SYN：连接建立时用于同步序号。当SYN=1，ACK=0时表示：这是一个连接请求报文段。若同意连接，则在响应报文段中使得SYN=1，ACK=1。因此，SYN=1表示这是一个连接请求，或连接接受报文。SYN这个标志位只有在TCP建产连接时才会被置1，握手完成后SYN标志位被置0。
+
+终止FIN：用来释放一个连接。FIN=1表示：此报文段的发送方的数据已经发送完毕，并要求释放运输连接
+
+PS：ACK、SYN和FIN这些大写的单词表示标志位，其值要么是1，要么是0；ack、seq小写的单词表示序号。</code></pre><p><img src="https://img2018.cnblogs.com/blog/1454483/201906/1454483-20190629132816032-2043402666.png" alt></p>
+<p><strong>三次握手过程理解</strong></p>
+<p><img src="https://img-blog.csdn.net/20180717202520531?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4OTUwMzE2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt></p>
+<p>第一次握手：建立连接时，客户端发送syn包（syn=j）到服务器，并进入SYN_SENT状态，等待服务器确认；SYN：同步序列编号（Synchronize Sequence Numbers）。</p>
+<p>第二次握手：服务器收到syn包，必须确认客户的SYN（ack=j+1），同时自己也发送一个SYN包（syn=k），即SYN+ACK包，此时服务器进入SYN_RECV状态；</p>
+<p>第三次握手：客户端收到服务器的SYN+ACK包，向服务器发送确认包ACK(ack=k+1），此包发送完毕，客户端和服务器进入ESTABLISHED（TCP连接成功）状态，完成三次握手。</p>
+<p>四次挥手过程理解 </p>
+<p><img src="https://img-blog.csdn.net/20180717204202563?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4OTUwMzE2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt></p>
+<p>1）客户端进程发出连接释放报文，并且停止发送数据。释放数据报文首部，FIN=1，其序列号为seq=u（等于前面已经传送过来的数据的最后一个字节的序号加1），此时，客户端进入FIN-WAIT-1（终止等待1）状态。 TCP规定，FIN报文段即使不携带数据，也要消耗一个序号。<br>2）服务器收到连接释放报文，发出确认报文，ACK=1，ack=u+1，并且带上自己的序列号seq=v，此时，服务端就进入了CLOSE-WAIT（关闭等待）状态。TCP服务器通知高层的应用进程，客户端向服务器的方向就释放了，这时候处于半关闭状态，即客户端已经没有数据要发送了，但是服务器若发送数据，客户端依然要接受。这个状态还要持续一段时间，也就是整个CLOSE-WAIT状态持续的时间。<br>3）客户端收到服务器的确认请求后，此时，客户端就进入FIN-WAIT-2（终止等待2）状态，等待服务器发送连接释放报文（在这之前还需要接受服务器发送的最后的数据）。<br>4）服务器将最后的数据发送完毕后，就向客户端发送连接释放报文，FIN=1，ack=u+1，由于在半关闭状态，服务器很可能又发送了一些数据，假定此时的序列号为seq=w，此时，服务器就进入了LAST-ACK（最后确认）状态，等待客户端的确认。<br>5）客户端收到服务器的连接释放报文后，必须发出确认，ACK=1，ack=w+1，而自己的序列号是seq=u+1，此时，客户端就进入了TIME-WAIT（时间等待）状态。注意此时TCP连接还没有释放，必须经过2∗∗MSL（最长报文段寿命）的时间后，当客户端撤销相应的TCB后，才进入CLOSED状态。<br>6）服务器只要收到了客户端发出的确认，立即进入CLOSED状态。同样，撤销TCB后，就结束了这次的TCP连接。可以看到，服务器结束TCP连接的时间要比客户端早一些。</p>
+<p> <strong>常见面试题</strong><br>【问题1】为什么连接的时候是三次握手，关闭的时候却是四次握手？</p>
+<p>答：因为当Server端收到Client端的SYN连接请求报文后，可以直接发送SYN+ACK报文。其中ACK报文是用来应答的，SYN报文是用来同步的。但是关闭连接时，当Server端收到FIN报文时，很可能并不会立即关闭SOCKET，所以只能先回复一个ACK报文，告诉Client端，”你发的FIN报文我收到了”。只有等到我Server端所有的报文都发送完了，我才能发送FIN报文，因此不能一起发送。故需要四步握手。</p>
+<p>【问题2】为什么TIME_WAIT状态需要经过2MSL(最大报文段生存时间)才能返回到CLOSE状态？</p>
+<p>答：虽然按道理，四个报文都发送完毕，我们可以直接进入CLOSE状态了，但是我们必须假象网络是不可靠的，有可以最后一个ACK丢失。所以TIME_WAIT状态就是用来重发可能丢失的ACK报文。在Client发送出最后的ACK回复，但该ACK可能丢失。Server如果没有收到ACK，将不断重复发送FIN片段。所以Client不能立即关闭，它必须确认Server接收到了该ACK。Client会在发送出ACK之后进入到TIME_WAIT状态。Client会设置一个计时器，等待2MSL的时间。如果在该时间内再次收到FIN，那么Client会重发ACK并再次等待2MSL。所谓的2MSL是两倍的MSL(Maximum Segment Lifetime)。MSL指一个片段在网络中最大的存活时间，2MSL就是一个发送和一个回复所需的最大时间。如果直到2MSL，Client都没有再次收到FIN，那么Client推断ACK已经被成功接收，则结束TCP连接。</p>
+<p>【问题3】为什么不能用两次握手进行连接？</p>
+<p>答：3次握手完成两个重要的功能，既要双方做好发送数据的准备工作(双方都知道彼此已准备好)，也要允许双方就初始序列号进行协商，这个序列号在握手过程中被发送和确认。</p>
+<pre><code>现在把三次握手改成仅需要两次握手，死锁是可能发生的。作为例子，考虑计算机S和C之间的通信，假定C给S发送一个连接请求分组，S收到了这个分组，并发 送了确认应答分组。按照两次握手的协定，S认为连接已经成功地建立了，可以开始发送数据分组。可是，C在S的应答分组在传输中被丢失的情况下，将不知道S 是否已准备好，不知道S建立什么样的序列号，C甚至怀疑S是否收到自己的连接请求分组。在这种情况下，C认为连接还未建立成功，将忽略S发来的任何数据分 组，只等待连接确认应答分组。而S在发出的分组超时后，重复发送同样的分组。这样就形成了死锁。</code></pre><p>【问题4】如果已经建立了连接，但是客户端突然出现故障了怎么办？</p>
+<h2 id="TCP还设有一个保活计时器，显然，客户端如果出现故障，服务器不能一直等下去，白白浪费资源。服务器每收到一次客户端的请求后都会重新复位这个计时器，时间通常是设置为2小时，若两小时还没有收到客户端的任何数据，服务器就会发送一个探测报文段，以后每隔75秒钟发送一次。若一连发送10个探测报文仍然没反应，服务器就认为客户端出了故障，接着就关闭连接。"><a href="#TCP还设有一个保活计时器，显然，客户端如果出现故障，服务器不能一直等下去，白白浪费资源。服务器每收到一次客户端的请求后都会重新复位这个计时器，时间通常是设置为2小时，若两小时还没有收到客户端的任何数据，服务器就会发送一个探测报文段，以后每隔75秒钟发送一次。若一连发送10个探测报文仍然没反应，服务器就认为客户端出了故障，接着就关闭连接。" class="headerlink" title="TCP还设有一个保活计时器，显然，客户端如果出现故障，服务器不能一直等下去，白白浪费资源。服务器每收到一次客户端的请求后都会重新复位这个计时器，时间通常是设置为2小时，若两小时还没有收到客户端的任何数据，服务器就会发送一个探测报文段，以后每隔75秒钟发送一次。若一连发送10个探测报文仍然没反应，服务器就认为客户端出了故障，接着就关闭连接。  "></a>TCP还设有一个保活计时器，显然，客户端如果出现故障，服务器不能一直等下去，白白浪费资源。服务器每收到一次客户端的请求后都会重新复位这个计时器，时间通常是设置为2小时，若两小时还没有收到客户端的任何数据，服务器就会发送一个探测报文段，以后每隔75秒钟发送一次。若一连发送10个探测报文仍然没反应，服务器就认为客户端出了故障，接着就关闭连接。  </h2><p>作者：青柚_<br>来源：CSDN<br>原文：<a href="https://blog.csdn.net/qq_38950316/article/details/81087809" target="_blank" rel="noopener">https://blog.csdn.net/qq_38950316/article/details/81087809</a><br>版权声明：本文为博主原创文章，转载请附上博文链接！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/10/10/tcp-e7-9a-84-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-90-86-e8-a7-a3-e5-8f-8a-e9-9d-a2-e8-af-95-e9-a2-98-ef-bc-88-e5-be-88-e5-85-a8-e9-9d-a2-ef-bc-89/" data-id="ck1oej6hu000odstqcfgv2jsd" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-e7-90-86-e8-a7-a3tcp-ip-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-9a-84-e6-ad-a3-e7-a1-ae-e5-a7-bf-e5-8a-bf" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/10/10/e7-90-86-e8-a7-a3tcp-ip-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-9a-84-e6-ad-a3-e7-a1-ae-e5-a7-bf-e5-8a-bf/" class="article-date">
+  <time datetime="2019-10-10T01:08:57.000Z" itemprop="datePublished">2019-10-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/苦逼之旅/">苦逼之旅</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/10/e7-90-86-e8-a7-a3tcp-ip-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-9a-84-e6-ad-a3-e7-a1-ae-e5-a7-bf-e5-8a-bf/">理解TCP/IP三次握手与四次挥手的正确姿势</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>和女朋友异地恋一年多，为了保持感情我提议每天晚上视频聊天一次。</p>
+<p>从好上开始，到现在，一年多也算坚持下来了。</p>
+<p>问题</p>
+<p>有时候聊天的过程中，我的网络或者她的网络可能会不好，视频就会卡住，听不到对方的声音，过一会儿之后才会恢复。</p>
+<p>中间双方可能就要不断的确认网络是否恢复，但是有时候会：</p>
+<p>她：“你可以听到了吗？”</p>
+<p>我：“可以了，你呢？”、</p>
+<p>她：“喂喂，你可以听到了吗？”</p>
+<p>我：“可以了，我可以听到了，你呢？”</p>
+<p>她：“你可以听到了吗？”</p>
+<p>…..</p>
+<p>这种情况很蛋疼，那么怎样才能找一个简单的办法，让两个人都确认自己可以听到对方的声音，对方也可以听到自己的声音呢？</p>
+<p>注：以下情节纯属虚构</p>
+<h1 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h1><p>TCP建立连接为什么是三次握手，而不是两次或四次？</p>
+<p>TCP，名为传输控制协议，是一种可靠的传输层协议，IP协议号为6。</p>
+<p>顺便说一句，原则上任何数据传输都无法确保绝对可靠，三次握手只是确保可靠的基本需要。</p>
+<p>举个日常例子，打电话时我们对话如下：</p>
+<p><img src="https://images2015.cnblogs.com/blog/606573/201703/606573-20170317191336932-1654751123.png" alt></p>
+<p>对应为客户端与服务器之间的通信：</p>
+<p><img src="https://images2015.cnblogs.com/blog/606573/201703/606573-20170317191401995-713085779.png" alt></p>
+<p><img src="https://images2015.cnblogs.com/blog/606573/201703/606573-20170317191417963-1010313216.png" alt></p>
+<p>于是有了如下对话：</p>
+<p>我：1+1等于几？</p>
+<p>她：2,2+2等于几？</p>
+<p>我：4</p>
+<p>首先两个人约定协议</p>
+<p>1.感觉网络情况不对的时候，任何一方都可以发起询问</p>
+<p>2.任何情况下，若发起询问后5秒还没收到回复，则认为网络不通</p>
+<p>3.网络不通的情况下等1min路由器之后再发起询问</p>
+<p>对于我而言，发起 “1+1等于几”的询问后</p>
+<p>1. 若5s内没有收到回复，则认为网络不通</p>
+<p>2. 若收到回复，则我确认①我能听到她的消息 ②她能听到我的消息，然后回复她的问题的答案</p>
+<p>对于她而言，当感觉网络情况不对的时候</p>
+<p>1. 若没有收到我的询问，则她发起询问</p>
+<p>2. 若收到“1+1等于几”，则她确认 ①她可以听到我的消息，然后回复我的问题的答案和她的问题“2，2+2等于几”</p>
+<p>3. 若5s内没有收到我的回复“4”，则她确认 ②我听不见她的消息</p>
+<p>4. 若5s内收到了我的回复“4”，则她确认 ②我可以听见她的消息</p>
+<p>这样，如果上面的对话得以完成，就证明双方都可以确认自己可以听到对方的声音，对方也可以听到自己的声音！</p>
+<p>这个故事可以解释TCP为什么要三次握手吗 … 囧</p>
+<h1 id="关于四次挥手"><a href="#关于四次挥手" class="headerlink" title="关于四次挥手"></a>关于四次挥手</h1><p>先由客户端向服务器端发送一个FIN，请求关闭数据传输。</p>
+<p>当服务器接收到客户端的FIN时，向客户端发送一个ACK，其中ack的值等于FIN+SEQ</p>
+<p>然后服务器向客户端发送一个FIN，告诉客户端应用程序关闭。</p>
+<p>当客户端收到服务器端的FIN是，回复一个ACK给服务器端。其中ack的值等于FIN+SEQ</p>
+<p><img src="https://images2015.cnblogs.com/blog/606573/201703/606573-20170317191427151-1248730377.png" alt></p>
+<h1 id="为什么要4次挥手？"><a href="#为什么要4次挥手？" class="headerlink" title="为什么要4次挥手？"></a>为什么要4次挥手？</h1><p>确保数据能够完整传输。</p>
+<p>当被动方收到主动方的FIN报文通知时，它仅仅表示主动方没有数据再发送给被动方了。</p>
+<p>但未必被动方所有的数据都完整的发送给了主动方，所以被动方不会马上关闭SOCKET,它可能还需要发送一些数据给主动方后，</p>
+<p>再发送FIN报文给主动方，告诉主动方同意关闭连接，所以这里的ACK报文和FIN报文多数情况下都是分开发送的。</p>
+<p><strong>一、TCP报文格式</strong></p>
+<p>  TCP报文格式图：</p>
+<p><img src="http://dl2.iteye.com/upload/attachment/0108/8317/ef70c29e-651b-33a4-b188-d4e8e0ff9915.png" alt></p>
+<p>  上图中有几个字段需要重点介绍下：</p>
+<p>  （1）序号：Seq序号，占32位，用来标识从TCP源端向目的端发送的字节流，发起方发送数据时对此进行标记。</p>
+<p>  （2）确认序号：Ack序号，占32位，只有ACK标志位为1时，确认序号字段才有效，Ack=Seq+1。</p>
+<p>  （3）标志位：共6个，即URG、ACK、PSH、RST、SYN、FIN等，具体含义如下：</p>
+<p>  （A）URG：紧急指针（urgent pointer）有效。</p>
+<p>  （B）ACK：确认序号有效。</p>
+<p>  （C）PSH：接收方应该尽快将这个报文交给应用层。</p>
+<p>  （D）RST：重置连接。</p>
+<p>  （E）SYN：发起一个新连接。</p>
+<p>  （F）FIN：释放一个连接。</p>
+<p> 需要注意的是：</p>
+<p>  （A）不要将确认序号Ack与标志位中的ACK搞混了。</p>
+<p>  （B）确认方Ack=发起方Req+1，两端配对。 </p>
+<p><strong>二、三次握手</strong></p>
+<p>TCP(Transmission Control Protocol)　传输控制协议</p>
+<p>TCP是主机对主机层的传输控制协议，提供可靠的连接服务，采用三次握手确认建立一个连接</p>
+<p>位码即tcp标志位,有6种标示:</p>
+<p><strong>SYN(synchronous建立联机)</strong></p>
+<p><strong>ACK(acknowledgement 确认)</strong></p>
+<p><strong>PSH(push传送)</strong></p>
+<p><strong>FIN(finish结束)</strong></p>
+<p><strong>RST(reset重置)</strong></p>
+<p><strong>URG(urgent紧急)</strong></p>
+<p>Sequence number(顺序号码)</p>
+<p>Acknowledge number(确认号码) </p>
+<p>establish  建立，创建</p>
+<p>  所谓<strong>三次握手</strong>（Three-Way Handshake）即建立TCP连接，<strong>是指建立一个TCP连接时，需要客户端和服务端总共发送3个包以确认连接的建立</strong>。在socket编程中，这一过程由客户端执行connect来触发，整个流程如下图所示：</p>
+<p><img src="http://dl2.iteye.com/upload/attachment/0108/8313/8352d9a8-8c91-32e5-adf8-2bdaf8d567d6.png" alt></p>
+<p>  （1）第一次握手：Client将标志位SYN置为1，随机产生一个值seq=J，并将该数据包发送给Server，<strong>Client进入SYN_SENT状态</strong>，等待Server确认。</p>
+<p>  （2）第二次握手：Server收到数据包后由标志位SYN=1知道Client请求建立连接，Server将标志位SYN和ACK都置为1，ack (number )=J+1，随机产生一个值seq=K，并将该数据包发送给Client以确认连接请求，<strong>Server进入SYN_RCVD状态</strong>。</p>
+<p>  （3）第三次握手：Client收到确认后，检查ack是否为J+1，ACK是否为1，如果正确则将标志位ACK置为1，ack=K+1，并将该数据包发送给Server，Server检查ack是否为K+1，ACK是否为1，<strong>如果正确则连接建立成功，Client和Server进入ESTABLISHED状态</strong>，完成三次握手，随后Client与Server之间可以开始传输数据了。</p>
+<p><img src="http://dl2.iteye.com/upload/attachment/0108/8319/f5bcb32c-6177-391d-bcb6-bc79c3b00369.jpg" alt></p>
+<p>**  SYN攻击**：</p>
+<p>  在三次握手过程中，<strong>Server发送SYN-ACK之后，收到Client的ACK之前的TCP连接称为半连接（half-open connect），此时Server处于SYN_RCVD状态</strong>，当收到ACK后，Server转入ESTABLISHED状态。<strong>SYN攻击就是Client在短时间内伪造大量不存在的IP地址，并向Server不断地发送SYN包，Server回复确认包，并等待Client的确认，由于源地址是不存在的，因此，Server需要不断重发直至超时</strong>，这些<strong>伪造的SYN包将长时间占用未连接队列，导致正常的SYN请求因为队列满而被丢弃</strong>，从而引起网络堵塞甚至系统瘫痪。SYN攻击时一种典型的DDOS攻击，检测SYN攻击的方式非常简单，即当Server上有大量半连接状态且源IP地址是随机的，则可以断定遭到SYN攻击了，使用如下命令可以让之现行：</p>
+<p>  #netstat -nap | grep SYN_RECV</p>
+<p> <strong>三、四次挥手</strong></p>
+<p> 三次握手耳熟能详，四次挥手估计就..所谓四次挥手（Four-Way Wavehand）即终止TCP连接，就是指断开一个TCP连接时，需要客户端和服务端总共发送4个包以确认连接的断开。在socket编程中，这一过程由客户端或服务端任一方执行close来触发，整个流程如下图所示：</p>
+<p><img src="http://dl2.iteye.com/upload/attachment/0108/8315/51a9937d-3155-3a95-b853-97e8e20e758b.png" alt></p>
+<p>  由于TCP连接时全双工的，因此，每个方向都必须要单独进行关闭，这一原则是当一方完成数据发送任务后，发送一个FIN来终止这一方向的连接，收到一个FIN只是意味着这一方向上没有数据流动了，即不会再收到数据了，但是在这个TCP连接上仍然能够发送数据，直到这一方向也发送了FIN。首先进行关闭的一方将执行主动关闭，而另一方则执行被动关闭，上图描述的即是如此。</p>
+<p> （1）第一次挥手：Client发送一个FIN，用来关闭Client到Server的数据传送，Client进入FIN_WAIT_1状态。</p>
+<p>  （2）第二次挥手：Server收到FIN后，发送一个ACK给Client，确认序号为收到序号+1（与SYN相同，一个FIN占用一个序号），Server进入CLOSE_WAIT状态。</p>
+<p> （3）第三次挥手：Server发送一个FIN，用来关闭Server到Client的数据传送，Server进入LAST_ACK状态。</p>
+<p>  （4）第四次挥手：Client收到FIN后，Client进入TIME_WAIT状态，接着发送一个ACK给Server，确认序号为收到序号+1，Server进入CLOSED状态，完成四次挥手。</p>
+<p><img src="http://dl2.iteye.com/upload/attachment/0108/8321/b32a11f5-7b60-364b-874d-67b096bec348.jpg" alt></p>
+<p>  上面是一方主动关闭，另一方被动关闭的情况，实际中还会出现同时发起主动关闭的情况，具体流程如下图：</p>
+<p><img src="http://dl2.iteye.com/upload/attachment/0108/8323/f8d7bde0-fd48-334a-bf6d-6be0b1706f86.png" alt></p>
+<p>  流程和状态在上图中已经很明了了，在此不再赘述，可以参考前面的四次挥手解析步骤。</p>
+<p>四、附注</p>
+<p>  关于三次握手与四次挥手通常都会有典型的面试题，在此提出供有需求的XDJM们参考：</p>
+<p>  （1）三次握手是什么或者流程？四次握手呢？答案前面分析就是。</p>
+<p>  （2）为什么建立连接是三次握手，而关闭连接却是四次挥手呢？</p>
+<p>  这是因为<strong>服务端在LISTEN状态下，收到建立连接请求的SYN报文后，把ACK和SYN放在一个报文里发送给客户端。而关闭连接时，当收到对方的FIN报文时，仅仅表示对方不再发送数据了但是还能接收数据</strong>，己方也未必全部数据都发送给对方了，所以己方可以立即close，也可以发送一些数据给对方后，再发送FIN报文给对方来表示同意现在关闭连接，因此，己方ACK和FIN一般都会分开发送。</p>
+<p>转自<a href="https://home.cnblogs.com/u/lms0755/" target="_blank" rel="noopener">吉米乐享驿站</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/10/10/e7-90-86-e8-a7-a3tcp-ip-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-9a-84-e6-ad-a3-e7-a1-ae-e5-a7-bf-e5-8a-bf/" data-id="ck1oej6gv0004dstqf8h77fmy" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-vim-e5-91-bd-e4-bb-a4-e8-a1-8c-e6-a8-a1-e5-bc-8f-e5-b8-b8-e8-a7-81-e5-bf-ab-e6-8d-b7-e6-96-b9-e5-bc-8f" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/10/10/vim-e5-91-bd-e4-bb-a4-e8-a1-8c-e6-a8-a1-e5-bc-8f-e5-b8-b8-e8-a7-81-e5-bf-ab-e6-8d-b7-e6-96-b9-e5-bc-8f/" class="article-date">
+  <time datetime="2019-10-10T01:08:16.000Z" itemprop="datePublished">2019-10-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux基础/">Linux基础</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/10/vim-e5-91-bd-e4-bb-a4-e8-a1-8c-e6-a8-a1-e5-bc-8f-e5-b8-b8-e8-a7-81-e5-bf-ab-e6-8d-b7-e6-96-b9-e5-bc-8f/">vim命令行模式常见快捷方式</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="普通模式下的快捷键"><a href="#普通模式下的快捷键" class="headerlink" title="普通模式下的快捷键"></a>普通模式下的快捷键</h2><p>快捷键 　　说明<br>　　i 　　 insert, 在光标所在处输入<br>　　I 　　 在当前光标所在行的行首输入<br>　　a 　　 append, 在光标所在处后面输入<br>　　A 　　 在当前光标所在行的行尾输入<br>　　o 　　 在当前光标所在行的下方打开一个新行<br>　　O 　　 在当前光标所在行的上方打开一个新行<br>　　ZZ 　　 保存退出<br>　　ZQ 　　 不保存退出</p>
+<p>　　:q　　 退出<br>　　:q! 　　 强制退出，丢弃做出的修改<br>　　:wq　　 保存退出<br>　　:x 　　 保存退出</p>
+<p>命令模式<br>　　di”　　 光标在” “之间，则删除” “之间的内容</p>
+<p>　　yi( 　　光标在()之间，则复制()之间的内容<br>　　vi[ 　　光标在[]之间，则选中[]之间的内容<br>　　dtx 　　删除字符直到遇见光标之后的第一个 x 字符<br>　　ytx 　　复制字符直到遇见光标之后的第一个 x 字符</p>
+<p>字符间跳转：<br>　　h: 左 l: 右 j: 下 k: 上<br>　　#COMMAND：跳转由#指定的个数的字符</p>
+<p>单词间跳转：<br>　　w：下一个单词的词首<br>　　e：当前或下一单词的词尾<br>　　b：当前或前一个单词的词首<br>　　#COMMAND：由#指定一次跳转的单词数</p>
+<p>当前页跳转：<br>　　H：页首 M：页中间行 L:页底<br>　　zt：将光标所在当前行移到屏幕顶端<br>　　zz：将光标所在当前行移到屏幕中间<br>　　zb：将光标所在当前行移到屏幕底端</p>
+<p>行首行尾跳转：<br>　　^: 跳转至行首的第一个非空白字符<br>　　0: 跳转至行首<br>　　$: 跳转至行尾</p>
+<p>行间移动：<br>　　#G :扩展命令模式下：# 跳转至由#指定行<br>　　G：最后一行<br>　　1G, gg: 第一行</p>
+<p>句间移动：<br>　　)：下一句(：上一句</p>
+<p>段落间移动：<br>　　}:下一段{：上一段<br>　　Ctrl+f: 向文件尾部翻一屏<br>　　Ctrl+b: 向文件首部翻一屏<br>　　Ctrl+d: 向文件尾部翻半屏<br>　　Ctrl+u:向文件首部翻半屏</p>
+<p>字符编辑：<br>　　x: 删除光标处的字符<br>　　#x: 删除光标处起始的#个字符<br>　　xp: 交换光标所在处的字符及其后面字符的位置<br>　　~:转换大小写<br>　　J:删除当前行后的换行符</p>
+<p>替换命令(r, replace)<br>　　r: 替换光标所在处的字符<br>　　R:切换成REPLACE模式</p>
+<p>删除命令：<br>　　d: 删除命令，可结合光标跳转字符，实现范围删除</p>
+<p>复制命令(y, yank)：<br>　　y: 复制，行为相似于d命令</p>
+<p>粘贴命令(p, paste)：<br>　　p：缓冲区存的如果为整行，则粘贴当前光标所在行的下方；否则，则粘贴至当前光标所在处的后面<br>　　P：缓冲区存的如果为整行，则粘贴当前光标所在行的上方；否则，则粘贴至当前光标所在处的前面</p>
+<h2 id="vim查找，替换的方法"><a href="#vim查找，替换的方法" class="headerlink" title="vim查找，替换的方法"></a>vim查找，替换的方法</h2><p>查找<br>　　/PATTERN：从当前光标所在处向文件尾部查找<br>　　?PATTERN：从当前光标所在处向文件首部查找<br>　　n：与命令同方向<br>　　N：与命令反方向</p>
+<p>查找并替换<br>　　s: 在扩展模式下完成查找替换操作<br>　　格式：s/要查找的内容/替换为的内容/修饰符<br>　　要查找的内容：可使用模式<br>　　替换为的内容：不能使用模式，但可以使用\1, \2, …等后向引用符号；还可以使用“&amp;”引用前面查找时查找到的整个内容</p>
+<p>修饰符：<br>　　i: 忽略大小写<br>　　g: 全局替换；默认情况下，每一行只替换第一次出现<br>　　gc:全局替换，每次替换前询问</p>
+<p>查找替换中的分隔符/可替换为其它字符，例如<br>s@/etc@/var@g<br>s#/boot#/#i</p>
+<p>例：</p>
+<p>用vim，在/etc/default/grub倒数第二行末尾引号前面加入 <code>xyz</code>  </p>
+<p>:%s/\(.*CMD.*\)”/\1 xyz”/</p>
+<p>用vim，在/etc/fstab中给行首不是#开头的都加上#</p>
+<p>方法一<br>:%s@\(^[^#].*\|^$\)@#\1@<br>方法二<br>:%s@^[^#]\|^$@#&amp;@</p>
+<p>用vim，去除#开头的行</p>
+<p>方法一<br>:%s/^#.<em>\n//<br>方法二 留下了空行<br>:%s@^#.</em>$@@</p>
+<p><img src="https://images0.cnblogs.com/blog2015/757743/201507/151702138453739.jpg" alt></p>
+<p><img src="https://images0.cnblogs.com/blog/218095/201301/12220137-72507d77225449c284b84d79f32aba0c.png" alt></p>
+<p><img src="https://images0.cnblogs.com/blog/218095/201301/12220248-3137513499af469b94a923378d6f3021.jpg" alt></p>
+<p><img src="https://images0.cnblogs.com/blog/218095/201301/12220327-49e035f0e3c3486897f906b563ff5e04.jpg" alt></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/10/10/vim-e5-91-bd-e4-bb-a4-e8-a1-8c-e6-a8-a1-e5-bc-8f-e5-b8-b8-e8-a7-81-e5-bf-ab-e6-8d-b7-e6-96-b9-e5-bc-8f/" data-id="ck1oej6i1000udstqn2fdc4bp" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-myisam-e4-b8-8einnodb-e4-b8-a4-e8-80-85-e4-b9-8b-e9-97-b4-e5-8c-ba-e5-88-ab-e4-b8-8e-e9-80-89-e6-8b-a9-ef-bc-8c-e8-af-a6-e7-bb-86-e6-80-bb-e7-bb-93-ef-bc-8c-e6-80-a7-e8-83-bd-e5-af-b9-e6-af-94" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/10/10/myisam-e4-b8-8einnodb-e4-b8-a4-e8-80-85-e4-b9-8b-e9-97-b4-e5-8c-ba-e5-88-ab-e4-b8-8e-e9-80-89-e6-8b-a9-ef-bc-8c-e8-af-a6-e7-bb-86-e6-80-bb-e7-bb-93-ef-bc-8c-e6-80-a7-e8-83-bd-e5-af-b9-e6-af-94/" class="article-date">
+  <time datetime="2019-10-10T01:07:19.000Z" itemprop="datePublished">2019-10-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/苦逼之旅/">苦逼之旅</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/10/myisam-e4-b8-8einnodb-e4-b8-a4-e8-80-85-e4-b9-8b-e9-97-b4-e5-8c-ba-e5-88-ab-e4-b8-8e-e9-80-89-e6-8b-a9-ef-bc-8c-e8-af-a6-e7-bb-86-e6-80-bb-e7-bb-93-ef-bc-8c-e6-80-a7-e8-83-bd-e5-af-b9-e6-af-94/">MyISAM与InnoDB两者之间区别与选择，详细总结，性能对比</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>1、MyISAM：默认表类型，它是基于传统的ISAM类型，ISAM是Indexed Sequential Access Method (有索引的顺序访问方法) 的缩写，它是存储记录和文件的标准方法。不是事务安全的，而且不支持外键，如果执行大量的select，insert MyISAM比较适合。</p>
+<p>2、InnoDB：支持事务安全的引擎，支持外键、行锁、事务是他的最大特点。如果有大量的update和insert，建议使用InnoDB，特别是针对多个并发和QPS较高的情况。</p>
+<p>一、表锁差异</p>
+<p>MyISAM:</p>
+<p>myisam只支持表级锁，用户在操作myisam表时，select，update，delete，insert语句都会给表自动加锁，如果加锁以后的表满足insert并发的情况下，可以在表的尾部插入新的数据。也可以通过lock table命令来锁表，这样操作主要是可以模仿事务，但是消耗非常大，一般只在实验演示中使用。</p>
+<p>InnoDB ：</p>
+<p>Innodb支持事务和行级锁，是innodb的最大特色。</p>
+<p>事务的ACID属性：atomicity,consistent,isolation,durable。</p>
+<p>并发事务带来的几个问题：更新丢失，脏读，不可重复读，幻读。</p>
+<p>事务隔离级别：未提交读(Read uncommitted)，已提交读(Read committed)，可重复读(Repeatable read)，可序列化(Serializable)</p>
+<p>四种隔离级别的比较</p>
+<p>读数据一致性及并发副作用</p>
+<p>隔离级别</p>
+<p>读数据一致性</p>
+<p>脏读</p>
+<p>不可重复读</p>
+<p>幻读</p>
+<p>为提交读(read uncommitted)<br>最低级别，不读物理上顺坏的数据</p>
+<p>是</p>
+<p>是</p>
+<p>是</p>
+<p>已提交读(read committed)<br>语句级</p>
+<p>否</p>
+<p>是</p>
+<p>是</p>
+<p>可重复读(Repeatable red)<br>事务级</p>
+<p>否</p>
+<p>否</p>
+<p>是</p>
+<p>可序列化(Serializable)<br>最高级别，事务级</p>
+<p>否</p>
+<p>否</p>
+<p>否</p>
+<p>查看mysql的默认事务隔离级别“show global variables like ‘tx_isolation’; ”</p>
+<p>Innodb的行锁模式有以下几种：共享锁，排他锁，意向共享锁(表锁)，意向排他锁(表锁)，间隙锁。</p>
+<p>注意：当语句没有使用索引，innodb不能确定操作的行，这个时候就使用的意向锁，也就是表锁</p>
+<p>关于死锁：</p>
+<p>什么是死锁？当两个事务都需要获得对方持有的排他锁才能完成事务，这样就导致了循环锁等待，也就是常见的死锁类型。</p>
+<p>解决死锁的方法：</p>
+<p>1、  数据库参数</p>
+<p>2、  应用中尽量约定程序读取表的顺序一样</p>
+<p>3、  应用中处理一个表时，尽量对处理的顺序排序</p>
+<p>4、  调整事务隔离级别（避免两个事务同时操作一行不存在的数据，容易发生死锁）</p>
+<p>二、数据库文件差异<br>MyISAM ：</p>
+<p>myisam属于堆表</p>
+<p>myisam在磁盘存储上有三个文件，每个文件名以表名开头，扩展名指出文件类型。</p>
+<p>.frm 用于存储表的定义</p>
+<p>.MYD 用于存放数据</p>
+<p>.MYI 用于存放表索引</p>
+<p>myisam表还支持三种不同的存储格式：</p>
+<p>静态表(默认，但是注意数据末尾不能有空格，会被去掉)</p>
+<p>动态表</p>
+<p>压缩表</p>
+<p>InnoDB ：</p>
+<p>innodb属于索引组织表</p>
+<p>innodb有两种存储方式，共享表空间存储和多表空间存储</p>
+<p>两种存储方式的表结构和myisam一样，以表名开头，扩展名是.frm。</p>
+<p>如果使用共享表空间，那么所有表的数据文件和索引文件都保存在一个表空间里，一个表空间可以有多个文件，通过innodb_data_file_path和innodb_data_home_dir参数设置共享表空间的位置和名字，一般共享表空间的名字叫ibdata1-n。</p>
+<p>如果使用多表空间，那么每个表都有一个表空间文件用于存储每个表的数据和索引，文件名以表名开头，以.ibd为扩展名。</p>
+<p>三、索引差异</p>
+<p>1、关于自动增长</p>
+<p>myisam引擎的自动增长列必须是索引，如果是组合索引，自动增长可以不是第一列，他可以根据前面几列进行排序后递增。</p>
+<p>innodb引擎的自动增长咧必须是索引，如果是组合索引也必须是组合索引的第一列。</p>
+<p>2、关于主键</p>
+<p>myisam允许没有任何索引和主键的表存在，</p>
+<p>myisam的索引都是保存行的地址。</p>
+<p>innodb引擎如果没有设定主键或者非空唯一索引，就会自动生成一个6字节的主键(用户不可见)</p>
+<p>innodb的数据是主索引的一部分，附加索引保存的是主索引的值。</p>
+<p>3、关于count()函数</p>
+<p>myisam保存有表的总行数，如果select count(*) from table;会直接取出出该值</p>
+<p>innodb没有保存表的总行数，如果使用select count(*) from table；就会遍历整个表，消耗相当大，但是在加了wehre       条件后，myisam和innodb处理的方式都一样。</p>
+<p>4、全文索引</p>
+<p>myisam支持 FULLTEXT类型的全文索引</p>
+<p>innodb不支持FULLTEXT类型的全文索引，但是innodb可以使用sphinx插件支持全文索引，并且效果更好。（sphinx   是一个开源软件，提供多种语言的API接口，可以优化mysql的各种查询）</p>
+<p>5、delete from table</p>
+<p>使用这条命令时，innodb不会从新建立表，而是一条一条的删除数据，在innodb上如果要清空保存有大量数据的表，最       好不要使用这个命令。(推荐使用truncate table，不过需要用户有drop此表的权限)</p>
+<p>6、索引保存位置</p>
+<p>myisam的索引以表名+.MYI文件分别保存。</p>
+<p>innodb的索引和数据一起保存在表空间里。</p>
+<p>四、开发的注意事项</p>
+<p>1、可以用 show create table tablename 命令看表的引擎类型。</p>
+<p>2、对不支持事务的表做start/commit操作没有任何效果，在执行commit前已经提交。</p>
+<p>3、可以执行以下命令来切换非事务表到事务（数据不会丢失），innodb表比myisam表更安全：alter table tablename type=innodb;或者使用 alter table tablename engine = innodb;</p>
+<p>4、默认innodb是开启自动提交的，如果你按照myisam的使用方法来编写代码页不会存在错误，只是性能会很低。如何在编写代码时候提高数据库性能呢？</p>
+<p>a、尽量将多个语句绑到一个事务中，进行提交，避免多次提交导致的数据库开销。</p>
+<p>b、在一个事务获得排他锁或者意向排他锁以后，如果后面还有需要处理的sql语句，在这两条或者多条sql语句之间程序应尽量少的进行逻辑运算和处理，减少锁的时间。</p>
+<p>c、尽量避免死锁</p>
+<p>d、sql语句如果有where子句一定要使用索引，尽量避免获取意向排他锁。</p>
+<p>f、针对我们自己的数据库环境，日志系统是直插入，不修改的，所以我们使用混合引擎方式，ZION_LOG_DB照旧使用myisam存储引擎，只有ZION_GAME_DB，ZION_LOGIN_DB，DAUM_BILLING使用Innodb引擎。</p>
+<p>五、究竟该怎么选择</p>
+<p>下面先让我们回答一些问题：  </p>
+<p>◆你的数据库有外键吗？  </p>
+<p>◆你需要事务支持吗？  </p>
+<p>◆你需要全文索引吗？  </p>
+<p>◆你经常使用什么样的查询模式？  </p>
+<p>◆你的数据有多大？    </p>
+<p>myisam只有索引缓存<br>innodb不分索引文件数据文件 innodb buffer<br>myisam只能管理索引，在索引数据大于分配的资源时，会由操作系统来cache；数据文件依赖于操作系统的cache。innodb不管是索引还是数据，都是自己来管理    </p>
+<p>思考上面这些问题可以让你找到合适的方向，但那并不是绝对的。如果你需要事务处理或是外键，那么InnoDB 可能是比较好的方式。如果你需要全文索引，那么通常来说 MyISAM是好的选择，因为这是系统内建的，然而，我们其实并不会经常地去测试两百万行记录。所以，就算是慢一点，我们可以通过使用Sphinx从InnoDB中获得全文索引。    </p>
+<p>数据的大小，是一个影响你选择什么样存储引擎的重要因素，大尺寸的数据集趋向于选择InnoDB方式，因为其支持事务处理和故障恢复。数据库的在小决定了故障恢复的时间长短，InnoDB可以利用事务日志进行数据恢复，这会比较快。而MyISAM可能会需要几个小时甚至几天来干这些事，InnoDB只需要几分钟。    </p>
+<p>操作数据库表的习惯可能也会是一个对性能影响很大的因素。比如： COUNT() 在 MyISAM 表中会非常快，而在InnoDB 表下可能会很痛苦。而主键查询则在InnoDB下会相当相当的快，但需要小心的是如果我们的主键太长了也会导致性能问题。大批的inserts 语句在 MyISAM下会快一些，但是updates 在InnoDB下会更快一些——尤其在并发量大的时候。    </p>
+<p>所以，到底你检使用哪一个呢？根据经验来看，如果是一些小型的应用或项目，那么MyISAM 也许会更适合。当然，在大型的环境下使用 MyISAM 也会有很大成功的时候，但却不总是这样的。如果你正在计划使用一个超大数据量的项目，而且需要事务处理或外键支持，那么你真的应该直接使用 InnoDB方式。但需要记住InnoDB 的表需要更多的内存和存储，转换100GB 的MyISAM 表到InnoDB 表可能会让你有非常坏的体验。    </p>
+<p>对于支持事务的InnoDB类型的表，影响速度的主要原因是AUTOCOMMIT默认设置是打开的，而且程序没有显式调用BEGIN 开始事务，导致每插入一条都自动Commit，严重影响了速度。可以在执行sql前调用begin，多条sql形成一个事务（即使autocommit打开也可以），将大大提高性能。  </p>
+<p>InnoDB</p>
+<p>InnoDB 给 MySQL 提供了具有事务(commit)、回滚(rollback)和崩溃修复能力 (crash recovery capabilities)的事务安全(transaction-safe (ACID compliant))型表。 InnoDB 提供了行锁(locking on row level)，提供与 Oracle 类型一致的不加锁读取(non- locking read in SELECTs)。这些特性均提高了多用户并发操作的性能表现。在InnoDB表中不需要扩大锁定 (lock escalation)，因为 InnoDB 的列锁定(row level locks)适宜非常小的空间。 InnoDB 是 MySQL 上第一个提供外键约束(FOREIGN KEY constraints)的表引擎。  </p>
+<p>InnoDB 的设计目标是处理大容量数据库系统，它的 CPU 利用率是其它基于磁盘的关系数据库引擎所不能比的。在技术上，InnoDB 是一套放在 MySQL 后台的完整数据库系统，InnoDB 在主内存中建立其专用的缓冲池用于高速缓冲数据和索引。 InnoDB 把数据和索引存放在表空间里，可能包含多个文件，这与其它的不一样，举例来说，在 MyISAM 中，表被存放在单独的文件中。InnoDB 表的大小只受限于操作系统的文件大小，一般为 2 GB。<br>InnoDB所有的表都保存在同一个数据文件 ibdata1 中（也可能是多个文件，或者是独立的表空间文件）,相对来说比较不好备份，免费的方案可以是拷贝数据文件、备份 binlog，或者用 mysqldump。  </p>
+<p>MyISAM<br>MyISAM 是MySQL缺省存贮引擎 .<br>每张MyISAM 表被存放在三个文件 。frm 文件存放表格定义。 数据文件是MYD (MYData) 。 索引文件是 MYI (MYIndex) 引伸。<br>因为MyISAM相对简单所以在效率上要优于InnoDB..小型应用使用MyISAM是不错的选择.<br>MyISAM表是保存成文件的形式,在跨平台的数据转移中使用MyISAM存储会省去不少的麻烦    </p>
+<p>以下是一些细节和具体实现的差别：    </p>
+<p>1.InnoDB不支持FULLTEXT类型的索引。<br>2.InnoDB 中不保存表的具体行数，也就是说，执行select count(<em>) from table时，InnoDB要扫描一遍整个表来计算有多少行，但是MyISAM只要简单的读出保存好的行数即可。注意的是，当count(</em>)语句包含 where条件时，两种表的操作是一样的。<br>3.对于AUTO_INCREMENT类型的字段，InnoDB中必须包含只有该字段的索引，但是在MyISAM表中，可以和其他字段一起建立联合索引。<br>4.DELETE FROM table时，InnoDB不会重新建立表，而是一行一行的删除。<br>5.LOAD TABLE FROM MASTER操作对InnoDB是不起作用的，解决方法是首先把InnoDB表改成MyISAM表，导入数据后再改成InnoDB表，但是对于使用的额外的InnoDB特性（例如外键）的表不适用。  </p>
+<p>另外，InnoDB表的行锁也不是绝对的，如果在执行一个SQL语句时MySQL不能确定要扫描的范围，InnoDB表同样会锁全表，例如 update table set num=1 where name like “%aaa%”  </p>
+<p>任何一种表都不是万能的，只用恰当的针对业务类型来选择合适的表类型，才能最大的发挥MySQL的性能优势。  </p>
+<p>六、重复地总结一遍</p>
+<p>1、MyISAM不支持事务，InnoDB是事务类型的存储引擎，当我们的表需要用到事务支持的时候，那肯定是不能选择MyISAM了。</p>
+<p>2、MyISAM只支持表级锁，BDB支持页级锁和表级锁默认为页级锁，而InnoDB支持行级锁和表级锁默认为行级锁  </p>
+<p>表级锁：直接锁定整张表，在锁定期间，其他进程无法对该表进行写操作，如果设置的是写锁，那么其他进程读也不允许  </p>
+<p>MyISAM是表级锁定的存储引擎，它不会出现死锁问题  </p>
+<p>对于write，表锁定原理如下：  </p>
+<p>如果表上没有锁，在其上面放置一个写锁，否则，把锁定请求放在写锁队列中。  </p>
+<p>对于read，表锁定原理如下 ：  </p>
+<p>如果表上没有写锁定，那么把一个读锁放在其上面，否则把锁请求放在读锁定队列中  </p>
+<p>当一个锁定被释放时，表可被写锁定队列中的线程得到，然后才是读锁定队列中的线程。这意味着，如果你在一个表上有许多更新，那么你的SELECT语句将等到所有的写锁定线程执行完。</p>
+<p>行级锁：只对指定的行进行锁定，其他进程还是可以对表中的其他行进行操作的。  </p>
+<p>行级锁是Mysql粒度最小的一种锁，它能大大的减少数据库操作的冲突，但是粒度越小实现成本也越大。  </p>
+<p>行级锁可能会导致“死锁”，那到底是怎么导致的呢，分析原因：Mysql行级锁并不是直接锁记录，而是锁索引。索引分为主键索引和非主键索引两种，如果一条sql语句操作了主键索引，那么Mysql就会锁定这个主键索引，如果sql语句操作的是非主键索引，那么Mysql会先锁定这个非主键索引，再去锁定主键索引。  </p>
+<p>在UPDATE 和 DELETE操作时Mysql不仅会锁定所有WHERE 条件扫描过得索引，还会锁定相邻的键值。  </p>
+<p>“死锁”举例分析：  </p>
+<p>表Test：（ID,STATE,TIME）  主键索引：ID  非主键索引：STATE  </p>
+<p>当执行”UPDATE  STATE =1011 WHERE STATE=1000”  语句的时候会锁定STATE索引，由于STATE 是非主键索引,所以Mysql还会去请求锁定ID索引  </p>
+<p>当另一个SQL语句与语句1几乎同时执行时：“UPDATE STATE=1010 WHERE ID=1”  对于语句2 Mysql会先锁定ID索引，由于语句2操作了STATE字段，所以Mysql还会请求锁定STATE索引。这时。彼此锁定着对方需要的索引，又都在等待对方释放锁定。所以出现了”死锁”的情况。  </p>
+<p>行级锁的优点：  </p>
+<p>有许多线程访问不同的行时，只存在少量的冲突。  </p>
+<p>回滚时只有少量的更改  </p>
+<p>可以长时间锁定单一的行  </p>
+<p>行级锁缺点：  </p>
+<p>相对于页级锁和表级锁来说占用了更多的内存  </p>
+<p>当表的大部分行在使用时，比页级锁和表级锁慢，因为你必须获得更多的锁  </p>
+<p>当在大部分数据上经常使用GROUP BY操作，肯定会比表级锁和页级锁慢。  </p>
+<p>页级锁：表级锁速度快，但是冲突多；行级锁速度慢，但冲突少；页级锁就是他俩折中的，一次锁定相邻的一组记录。</p>
+<p>3、MyISAM引擎不支持外键，InnoDB支持外键</p>
+<p>4、MyISAM引擎的表在大量高并发的读写下会经常出现表损坏的情况  </p>
+<p>我们以前做的项目就遇到这个问题，表的INSERT 和 UPDATE操作很频繁，原来用的MyISAM引擎，导致表隔三差五就损坏，后来更换成了InnoDB引擎。  </p>
+<p>其他容易导致表损坏原因：  </p>
+<p>服务器突然断电导致数据文件损坏，强制关机（mysqld未关闭情况下）导致表损坏  </p>
+<p>mysqld进程在写入操作的时候被杀掉  </p>
+<p>磁盘故障  </p>
+<p>表损坏常见症状：  </p>
+<p>查询表不能返回数据或返回部分数据  </p>
+<p>打开表失败： Can’t open file: ‘×××.MYI’ (errno: 145) 。  </p>
+<p>Error: Table ‘p’ is marked as crashed and should be repaired 。</p>
+<p>Incorrect key file for table: ‘…’. Try to repair it  </p>
+<p>Mysql表的恢复：</p>
+<p>对于MyISAM表的恢复：</p>
+<p>可以使用Mysql自带的myisamchk工具： myisamchk -r tablename  或者 myisamchk -o tablename（比前面的更保险） 对表进行修复</p>
+<p>5、对于count()查询来说MyISAM更有优势</p>
+<p>因为MyISAM存储了表中的行数记录，执行SELECT COUNT() 的时候可以直接获取到结果，而InnoDB需要扫描全部数据后得到结果。</p>
+<p>但是注意一点：对于带有WHERE 条件的 SELECT COUNT()语句两种引擎的表执行过程是一样的，都需要扫描全部数据后得到结果</p>
+<p>6、 InnoDB是为处理巨大数据量时的最大性能设计，它的CPU效率可能是任何其它基于磁盘的关系数据库引擎所不能匹敌的。</p>
+<p>7、MyISAM支持全文索引（FULLTEXT），InnoDB不支持</p>
+<p>8、MyISAM引擎的表的查询、更新、插入的效率要比InnoDB高</p>
+<p>网上截取了前辈们测试结论：</p>
+<p>测试方法：连续提交10个query， 表记录总数：38万 ， 时间单位 s  </p>
+<pre><code>    引擎类型                    MyISAM                InnoDB              性能相差  
+
+    count                      0.0008357            3.0163                3609  
+
+    查询主键                  0.005708              0.1574                27.57  
+
+    查询非主键                  24.01                  80.37                3.348  
+
+    更新主键                  0.008124            0.8183                100.7  
+
+    更新非主键                0.004141            0.02625              6.338  
+
+    插入                        0.004188            0.3694                88.21  
+
+
+（1）加了索引以后，对于MyISAM查询可以加快：4 206.09733倍，对InnoDB查询加快510.72921倍，同时对MyISAM更新速度减慢为原来的1/2，InnoDB的更  </code></pre><p>  新速度减慢为原来的1/30。要看情况决定是否要加索引，比如不查询的log表，不要做任何的索引。  </p>
+<pre><code>（2）如果你的数据量是百万级别的，并且没有任何的事务处理，那么用MyISAM是性能最好的选择。  
+
+（3）InnoDB表的大小更加的大，用MyISAM可省很多的硬盘空间。  
+
+    在我们测试的这个38w的表中，表占用空间的情况如下：  
+        引擎类型                    MyISAM              InnoDB  
+        数据                      53,924 KB          58,976 KB  
+        索引                      13,640 KB          21,072 KB  
+        占用总空间              67,564 KB          80,048 KB  
+
+    另外一个176W万记录的表， 表占用空间的情况如下：  
+
+        引擎类型                MyIsam              InnorDB  
+        数据                  56,166 KB          90,736 KB  
+        索引                  67,103 KB          88,848 KB  
+        占用总空间        123,269 KB        179,584 KB</code></pre><p>七、性能对比</p>
+<p>测试的版本是mysql  Ver 14.14 Distrib 5.1.49, for debian-linux-gnu (i686)，使用的是Innodb plugin 1.0.8（官方称比built-in版本性能更好）和默认的MyISAM。</p>
+<p>测试机器是笔记本，配置如下：Intel 酷睿2双核 P8600，2G*2 DDR3 1066内存，320G硬盘5400转。</p>
+<p>测试一：数据插入性能测试，这里我分别对innodb_flush_log_at_trx_commit参数打开和关闭都测了了一下，每次测试都是运行40s，表中数字都是实际插入条数。</p>
+<pre><code>MyISAM                 Innodb (打开)      Innodb (关闭)</code></pre><p>单线程，逐个插入         120000                 60000              60000</p>
+<p>4线程，逐个插入          40000_4                20000_4            40000*4</p>
+<p>单线程，批量100条/次插入  3600_100               800_100            3000*100</p>
+<p>单线程，批量200条/次插入  1800_200               400_200            1600*200</p>
+<p>可以发现批量插入的性能远高于单条插入，但是一次批量的大小对性能影响不大。每条记录是否都刷新日志的参数对innodb性能的影响巨大。总体上来说，MyISAM性能更优一点。这里有一点需要注意，在插入测试过程中，我对系统资源进行了监控，发现MyISAM对系统资源占用很低，但是Innodb对磁盘占用却很高，应该是对事务控制多了很多需要记录的日志。</p>
+<p>测试二：数据读取性能测试。每次随机读取1000条记录，反复进行读取。</p>
+<pre><code>MyISAM        Innodb</code></pre><p>单线程，200次读取         5.7s          16.7s</p>
+<p>4线程，200次读取          12s           40.8s</p>
+<p>可以看出MyISAM的读取性能非常恐怖，性能差距在3倍的样子。</p>
+<p>以上两个测试发现MyISAM在无事务的需求下几乎完胜，但是要知道它是表锁，Innodb是行锁，那么在并发读写同时存在的情况下，那结果会是怎么样呢？！</p>
+<p>测试三：两个线程并发写入，2个线程并发读取。</p>
+<pre><code>MyISAM                                 Innodb</code></pre><p>逐个插入                写入40s：10000_2 读取200次_2：14s        写入40s：60000_2 读取200次_2：50s</p>
+<p>批量100条/次插入        写入40s：1000_100_2 读取200次_2：10s      写入40s：1500_100_2 读取200次_2：50s</p>
+<p>这下立刻显示出Innodb在并发情况下强劲的性能，几乎没有什么性能衰减。而MyISAM单条插入速度变得非常慢，批量插入也下降了40%性能。</p>
+<p>总结一下，在写多读少的应用中还是Innodb插入性能更稳定，在并发情况下也能基本，如果是对读取速度要求比较快的应用还是选MyISAM。</p>
+<p>————————————————<br>版权声明：本文为CSDN博主「wjtlht928」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/wjtlht928/article/details/46641865" target="_blank" rel="noopener">https://blog.csdn.net/wjtlht928/article/details/46641865</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/10/10/myisam-e4-b8-8einnodb-e4-b8-a4-e8-80-85-e4-b9-8b-e9-97-b4-e5-8c-ba-e5-88-ab-e4-b8-8e-e9-80-89-e6-8b-a9-ef-bc-8c-e8-af-a6-e7-bb-86-e6-80-bb-e7-bb-93-ef-bc-8c-e6-80-a7-e8-83-bd-e5-af-b9-e6-af-94/" data-id="ck1oej6hw000qdstqtvp7b3rl" class="article-share-link">Share</a>
       
       
     </footer>
@@ -113,11 +1460,23 @@
   
 
 
+  <nav id="page-nav">
+    
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+  </nav>
+
 </section>
         
           <aside id="sidebar">
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux基础/">Linux基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/容器与编排/">容器与编排</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/苦逼之旅/">苦逼之旅</a></li></ul>
+    </div>
+  </div>
+
 
   
     
@@ -143,6 +1502,22 @@
         
           <li>
             <a href="/2019/10/12/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/12/e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2/">真正的inotify+rsync实时同步 彻底告别同步慢</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f/">10 分钟为你搭建一个超好用的 cmdb 系统</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f/">用Python做窗口化滚动点名系统</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f/">修改CentOS7网卡名称为传统名称eth0格式</a>
           </li>
         
       </ul>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Xtrabackup全量备份/增量备份脚本 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="一、全量备份脚本1、全量备份脚本#!/bin/bash #Description:xtrabackup complete #Author:created by michael #2017-08-07 v0.1 # USER=root PASSWD=123456 BACKUP_DIR=/backup/mysql/complete DATE=$(date +&amp;quot;%F_%T&amp;quot;) [[">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Xtrabackup全量备份&#x2F;增量备份脚本">
+<meta property="og:url" content="http://yoursite.com/2019/10/09/xtrabackup-e5-85-a8-e9-87-8f-e5-a4-87-e4-bb-bd-e5-a2-9e-e9-87-8f-e5-a4-87-e4-bb-bd-e8-84-9a-e6-9c-ac/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="一、全量备份脚本1、全量备份脚本#!/bin/bash #Description:xtrabackup complete #Author:created by michael #2017-08-07 v0.1 # USER=root PASSWD=123456 BACKUP_DIR=/backup/mysql/complete DATE=$(date +&amp;quot;%F_%T&amp;quot;) [[">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-13T02:52:28.279Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Xtrabackup全量备份&#x2F;增量备份脚本">
+<meta name="twitter:description" content="一、全量备份脚本1、全量备份脚本#!/bin/bash #Description:xtrabackup complete #Author:created by michael #2017-08-07 v0.1 # USER=root PASSWD=123456 BACKUP_DIR=/backup/mysql/complete DATE=$(date +&amp;quot;%F_%T&amp;quot;) [[">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-xtrabackup-e5-85-a8-e9-87-8f-e5-a4-87-e4-bb-bd-e5-a2-9e-e9-87-8f-e5-a4-87-e4-bb-bd-e8-84-9a-e6-9c-ac" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/10/09/xtrabackup-e5-85-a8-e9-87-8f-e5-a4-87-e4-bb-bd-e5-a2-9e-e9-87-8f-e5-a4-87-e4-bb-bd-e8-84-9a-e6-9c-ac/" class="article-date">
+  <time datetime="2019-10-09T12:16:57.000Z" itemprop="datePublished">2019-10-09</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Xtrabackup全量备份/增量备份脚本
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="一、全量备份脚本"><a href="#一、全量备份脚本" class="headerlink" title="一、全量备份脚本"></a>一、全量备份脚本</h2><h3 id="1、全量备份脚本"><a href="#1、全量备份脚本" class="headerlink" title="1、全量备份脚本"></a>1、全量备份脚本</h3><pre><code>#!/bin/bash
+#Description:xtrabackup complete
+#Author:created by michael
+#2017-08-07 v0.1
+#
+USER=root
+PASSWD=123456
+BACKUP_DIR=/backup/mysql/complete
+DATE=$(date +&quot;%F_%T&quot;)
+[[ -d $BACKUP_DIR ]] || mkdir $DATE_DIR
+innobackupex --user=$USER --password=$PASSWD $BACKUP_DIR &amp;&gt; /tmp/mysql/&quot;$DATE&quot;.txt
+egrep &quot;.* Backup created in directory.*&quot; /tmp/mysql/&quot;$DATE&quot;.txt &gt;&gt; $BACKUP_DIR/complete.info
+rm -rf /tmp/mysql/&quot;$DATE&quot;.txt</code></pre><h3 id="2、启动crond以及开机自启动crond"><a href="#2、启动crond以及开机自启动crond" class="headerlink" title="2、启动crond以及开机自启动crond"></a>2、启动crond以及开机自启动crond</h3><pre><code>systemctl start crond
+systemctl enable crond</code></pre><h3 id="3、授予执行权限"><a href="#3、授予执行权限" class="headerlink" title="3、授予执行权限"></a>3、授予执行权限</h3><pre><code>chmod 755 /root/script/backup_complete.sh</code></pre><h3 id="4、每周六的凌晨4点整定时执行全量备份"><a href="#4、每周六的凌晨4点整定时执行全量备份" class="headerlink" title="4、每周六的凌晨4点整定时执行全量备份"></a>4、每周六的凌晨4点整定时执行全量备份</h3><pre><code>[root@michaelos complete]# crontab -e
+crontab: installing new crontab
+[root@michaelos complete]# crontab -l
+0 4 * * 6 /root/script/backup_complete.sh</code></pre><h2 id="二、增量备份脚本"><a href="#二、增量备份脚本" class="headerlink" title="二、增量备份脚本"></a>二、增量备份脚本</h2><h3 id="1、增量备份脚本"><a href="#1、增量备份脚本" class="headerlink" title="1、增量备份脚本"></a>1、增量备份脚本</h3><pre><code>[root@michaelos script]# cat backup_increment.sh 
+#!/bin/bash 
+#Description: mysql backup incremention
+#Author:michael
+#2017-08-07 v0.1
+#
+USER=root
+PASSWORD=123456
+BACKUP_DIR=/backup/mysql/increment
+DATE=$(date +&quot;%F_$T&quot;)
+BASE_DIR=$(tail -1 /backup/mysql/complete/complete.info | cut -d\&apos; -f2)
+[[ -d $BACKUP_DIR ]] || mkdir $BACKUP_DIR
+innobackupex --user=$USER --password=$PASSWORD --incremental $BACKUP_DIR --incremental-basedir=$BASE_DIR &amp;&gt; /tmp/mysql/&quot;$DATE&quot;.txt
+egrep &quot;.*Backup created in directory.*&quot; /tmp/mysql/&quot;$DATE&quot;.txt &gt;&gt; $BACKUP_DIR/backup.info
+rm -rf /tmp/mysql/&quot;$DATE&quot;.txt</code></pre><h3 id="2、授予执行权限"><a href="#2、授予执行权限" class="headerlink" title="2、授予执行权限"></a>2、授予执行权限</h3><pre><code>chmod 755 backup_increment.sh</code></pre><h3 id="3、每周二、四、日的凌晨2点执行增量备份"><a href="#3、每周二、四、日的凌晨2点执行增量备份" class="headerlink" title="3、每周二、四、日的凌晨2点执行增量备份"></a>3、每周二、四、日的凌晨2点执行增量备份</h3><pre><code>[root@michaelos script]# crontab -l
+0 4 * * 6 /root/script/backup_complete.sh
+0 2 * * 2,4,7 /root/script/backup_increment.sh</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/10/09/xtrabackup-e5-85-a8-e9-87-8f-e5-a4-87-e4-bb-bd-e5-a2-9e-e9-87-8f-e5-a4-87-e4-bb-bd-e8-84-9a-e6-9c-ac/" data-id="ck1oej6i2000vdstqh0myfd9n" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/10/10/e8-99-9a-e6-8b-9f-e5-8c-96-e6-8a-80-e6-9c-af-e5-8e-9f-e7-90-86-ef-bc-88cpu-e3-80-81-e5-86-85-e5-ad-98-e3-80-81io-ef-bc-89/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          虚拟化技术原理（CPU、内存、IO）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/10/09/centos-7-e5-ae-89-e8-a3-85fail2banfirewalld-e9-98-b2-e6-ad-a2ssh-e7-88-86-e7-a0-b4-e4-b8-8ecc-e6-94-bb-e5-87-bb/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">CentOS 7安装fail2ban+Firewalld防止SSH爆破与CC攻击</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux基础/">Linux基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/容器与编排/">容器与编排</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/苦逼之旅/">苦逼之旅</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/10/12/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/12/e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2/">真正的inotify+rsync实时同步 彻底告别同步慢</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f/">10 分钟为你搭建一个超好用的 cmdb 系统</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f/">用Python做窗口化滚动点名系统</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f/">修改CentOS7网卡名称为传统名称eth0格式</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
