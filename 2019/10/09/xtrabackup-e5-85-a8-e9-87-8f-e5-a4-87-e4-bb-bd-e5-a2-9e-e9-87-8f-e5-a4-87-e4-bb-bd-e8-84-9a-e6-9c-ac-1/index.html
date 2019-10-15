@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="一、全量备份脚本1、全量备份脚本#!/bin/bash #Description:xtrabackup complete #Author:created by michael #2017-08-07 v0.1 # USER=root PASSWD=123456 BACKUP_DIR=/backup/mysql/complete DATE=$(date +&amp;quot;%F_%T&amp;quot;) [[">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Xtrabackup全量备份&#x2F;增量备份脚本">
+<meta property="og:url" content="http://yoursite.com/2019/10/09/xtrabackup-e5-85-a8-e9-87-8f-e5-a4-87-e4-bb-bd-e5-a2-9e-e9-87-8f-e5-a4-87-e4-bb-bd-e8-84-9a-e6-9c-ac-1/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="一、全量备份脚本1、全量备份脚本#!/bin/bash #Description:xtrabackup complete #Author:created by michael #2017-08-07 v0.1 # USER=root PASSWD=123456 BACKUP_DIR=/backup/mysql/complete DATE=$(date +&amp;quot;%F_%T&amp;quot;) [[">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-15T01:19:13.804Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Xtrabackup全量备份&#x2F;增量备份脚本">
+<meta name="twitter:description" content="一、全量备份脚本1、全量备份脚本#!/bin/bash #Description:xtrabackup complete #Author:created by michael #2017-08-07 v0.1 # USER=root PASSWD=123456 BACKUP_DIR=/backup/mysql/complete DATE=$(date +&amp;quot;%F_%T&amp;quot;) [[">
+  <link rel="canonical" href="http://yoursite.com/2019/10/09/xtrabackup-e5-85-a8-e9-87-8f-e5-a4-87-e4-bb-bd-e5-a2-9e-e9-87-8f-e5-a4-87-e4-bb-bd-e8-84-9a-e6-9c-ac-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Xtrabackup全量备份/增量备份脚本 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/09/xtrabackup-e5-85-a8-e9-87-8f-e5-a4-87-e4-bb-bd-e5-a2-9e-e9-87-8f-e5-a4-87-e4-bb-bd-e8-84-9a-e6-9c-ac-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            Xtrabackup全量备份/增量备份脚本
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-09 20:16:57" itemprop="dateCreated datePublished" datetime="2019-10-09T20:16:57+08:00">2019-10-09</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="一、全量备份脚本"><a href="#一、全量备份脚本" class="headerlink" title="一、全量备份脚本"></a>一、全量备份脚本</h2><h3 id="1、全量备份脚本"><a href="#1、全量备份脚本" class="headerlink" title="1、全量备份脚本"></a>1、全量备份脚本</h3><pre><code>#!/bin/bash
+#Description:xtrabackup complete
+#Author:created by michael
+#2017-08-07 v0.1
+#
+USER=root
+PASSWD=123456
+BACKUP_DIR=/backup/mysql/complete
+DATE=$(date +&quot;%F_%T&quot;)
+[[ -d $BACKUP_DIR ]] || mkdir $DATE_DIR
+innobackupex --user=$USER --password=$PASSWD $BACKUP_DIR &amp;&gt; /tmp/mysql/&quot;$DATE&quot;.txt
+egrep &quot;.* Backup created in directory.*&quot; /tmp/mysql/&quot;$DATE&quot;.txt &gt;&gt; $BACKUP_DIR/complete.info
+rm -rf /tmp/mysql/&quot;$DATE&quot;.txt</code></pre><a id="more"></a><h3 id="2、启动crond以及开机自启动crond"><a href="#2、启动crond以及开机自启动crond" class="headerlink" title="2、启动crond以及开机自启动crond"></a>2、启动crond以及开机自启动crond</h3><pre><code>systemctl start crond
+systemctl enable crond</code></pre><h3 id="3、授予执行权限"><a href="#3、授予执行权限" class="headerlink" title="3、授予执行权限"></a>3、授予执行权限</h3><pre><code>chmod 755 /root/script/backup_complete.sh</code></pre><h3 id="4、每周六的凌晨4点整定时执行全量备份"><a href="#4、每周六的凌晨4点整定时执行全量备份" class="headerlink" title="4、每周六的凌晨4点整定时执行全量备份"></a>4、每周六的凌晨4点整定时执行全量备份</h3><pre><code>[root@michaelos complete]# crontab -e
+crontab: installing new crontab
+[root@michaelos complete]# crontab -l
+0 4 * * 6 /root/script/backup_complete.sh</code></pre><h2 id="二、增量备份脚本"><a href="#二、增量备份脚本" class="headerlink" title="二、增量备份脚本"></a>二、增量备份脚本</h2><h3 id="1、增量备份脚本"><a href="#1、增量备份脚本" class="headerlink" title="1、增量备份脚本"></a>1、增量备份脚本</h3><pre><code>[root@michaelos script]# cat backup_increment.sh 
+#!/bin/bash 
+#Description: mysql backup incremention
+#Author:michael
+#2017-08-07 v0.1
+#
+USER=root
+PASSWORD=123456
+BACKUP_DIR=/backup/mysql/increment
+DATE=$(date +&quot;%F_$T&quot;)
+BASE_DIR=$(tail -1 /backup/mysql/complete/complete.info | cut -d&apos; -f2)
+[[ -d $BACKUP_DIR ]] || mkdir $BACKUP_DIR
+innobackupex --user=$USER --password=$PASSWORD --incremental $BACKUP_DIR --incremental-basedir=$BASE_DIR &amp;&gt; /tmp/mysql/&quot;$DATE&quot;.txt
+egrep &quot;.*Backup created in directory.*&quot; /tmp/mysql/&quot;$DATE&quot;.txt &gt;&gt; $BACKUP_DIR/backup.info
+rm -rf /tmp/mysql/&quot;$DATE&quot;.txt</code></pre><h3 id="2、授予执行权限"><a href="#2、授予执行权限" class="headerlink" title="2、授予执行权限"></a>2、授予执行权限</h3><pre><code>chmod 755 backup_increment.sh</code></pre><h3 id="3、每周二、四、日的凌晨2点执行增量备份"><a href="#3、每周二、四、日的凌晨2点执行增量备份" class="headerlink" title="3、每周二、四、日的凌晨2点执行增量备份"></a>3、每周二、四、日的凌晨2点执行增量备份</h3><pre><code>[root@michaelos script]# crontab -l
+0 4 * * 6 /root/script/backup_complete.sh
+0 2 * * 2,4,7 /root/script/backup_increment.sh</code></pre>
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/09/xtrabackup-e5-85-a8-e9-87-8f-e5-a4-87-e4-bb-bd-e5-a2-9e-e9-87-8f-e5-a4-87-e4-bb-bd-e8-84-9a-e6-9c-ac/" rel="next" title="Xtrabackup全量备份/增量备份脚本">
+                  <i class="fa fa-chevron-left"></i> Xtrabackup全量备份/增量备份脚本
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/10/e8-99-9a-e6-8b-9f-e5-8c-96-e6-8a-80-e6-9c-af-e5-8e-9f-e7-90-86-ef-bc-88cpu-e3-80-81-e5-86-85-e5-ad-98-e3-80-81io-ef-bc-89/" rel="prev" title="虚拟化技术原理（CPU、内存、IO）">
+                  虚拟化技术原理（CPU、内存、IO） <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、全量备份脚本"><span class="nav-number">1.</span> <span class="nav-text">一、全量备份脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、全量备份脚本"><span class="nav-number">1.1.</span> <span class="nav-text">1、全量备份脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、启动crond以及开机自启动crond"><span class="nav-number">1.2.</span> <span class="nav-text">2、启动crond以及开机自启动crond</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、授予执行权限"><span class="nav-number">1.3.</span> <span class="nav-text">3、授予执行权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、每周六的凌晨4点整定时执行全量备份"><span class="nav-number">1.4.</span> <span class="nav-text">4、每周六的凌晨4点整定时执行全量备份</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、增量备份脚本"><span class="nav-number">2.</span> <span class="nav-text">二、增量备份脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、增量备份脚本"><span class="nav-number">2.1.</span> <span class="nav-text">1、增量备份脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、授予执行权限"><span class="nav-number">2.2.</span> <span class="nav-text">2、授予执行权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、每周二、四、日的凌晨2点执行增量备份"><span class="nav-number">2.3.</span> <span class="nav-text">3、每周二、四、日的凌晨2点执行增量备份</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

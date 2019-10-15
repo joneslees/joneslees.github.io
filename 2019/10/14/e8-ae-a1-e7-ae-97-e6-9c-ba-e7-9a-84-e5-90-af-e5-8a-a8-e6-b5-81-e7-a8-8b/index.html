@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="服务器或PC机从按下电源按钮开始，会首先进行自检流程，其实一个非常复杂的过程，只见屏幕上字幕乱飞，各种check和ok，那么其间究竟发生了什么事情呢？启动又称为boot，而boot的原意为靴子，那么启动与靴子有什么关系呢？其实boot是boot是bootstrap（鞋带）的缩写，它来自于一句谚语：　“pull oneself up by one’s bootstraps”">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机的启动流程">
+<meta property="og:url" content="http://yoursite.com/2019/10/14/e8-ae-a1-e7-ae-97-e6-9c-ba-e7-9a-84-e5-90-af-e5-8a-a8-e6-b5-81-e7-a8-8b/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="服务器或PC机从按下电源按钮开始，会首先进行自检流程，其实一个非常复杂的过程，只见屏幕上字幕乱飞，各种check和ok，那么其间究竟发生了什么事情呢？启动又称为boot，而boot的原意为靴子，那么启动与靴子有什么关系呢？其实boot是boot是bootstrap（鞋带）的缩写，它来自于一句谚语：　“pull oneself up by one’s bootstraps”">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20160603042927_49793.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20160603044546_25456.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20160603044936_70273.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20160603080350_38784.png">
+<meta property="og:updated_time" content="2019-10-15T01:19:13.804Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="计算机的启动流程">
+<meta name="twitter:description" content="服务器或PC机从按下电源按钮开始，会首先进行自检流程，其实一个非常复杂的过程，只见屏幕上字幕乱飞，各种check和ok，那么其间究竟发生了什么事情呢？启动又称为boot，而boot的原意为靴子，那么启动与靴子有什么关系呢？其实boot是boot是bootstrap（鞋带）的缩写，它来自于一句谚语：　“pull oneself up by one’s bootstraps”">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20160603042927_49793.png">
+  <link rel="canonical" href="http://yoursite.com/2019/10/14/e8-ae-a1-e7-ae-97-e6-9c-ba-e7-9a-84-e5-90-af-e5-8a-a8-e6-b5-81-e7-a8-8b/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>计算机的启动流程 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/e8-ae-a1-e7-ae-97-e6-9c-ba-e7-9a-84-e5-90-af-e5-8a-a8-e6-b5-81-e7-a8-8b/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            计算机的启动流程
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 13:51:38" itemprop="dateCreated datePublished" datetime="2019-10-14T13:51:38+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>服务器或PC机从按下电源按钮开始，会首先进行自检流程，其实一个非常复杂的过程，只见屏幕上字幕乱飞，各种check和ok，那么其间究竟发生了什么事情呢？</p><p>启动又称为boot，而boot的原意为靴子，那么启动与靴子有什么关系呢？其实boot是boot是bootstrap（鞋带）的缩写，它来自于一句谚语：</p><p>　“pull oneself up by one’s bootstraps”</p><a id="more"></a>
+
+
+<p>意思为拉着自己的鞋带儿把自己拉起来，这肯定是不可能的事情，但是在早期PC还没有问世的时候，研发的工程师门用这句话来比喻计算机的开机流程是一个很复杂的过程，因为计算机要运行就得先运行程序，但是计算机还没有运行的时候又怎么运行程序呢？</p>
+<p>所以工程师们要想尽各种办法，在计算机启动之前将一小段程序放进内存，然后计算机才能正常工作，所以工程师们把这个过程称为“拉鞋带儿（bootstraps）”，慢慢就习惯称为boot了。</p>
+<p>下面开始介绍计算机的启动流程：</p>
+<p>一：BIOS阶段：</p>
+<p>在上世纪70年代初期，只读内存（read0only memory，缩写为ROM）问世，开机的第一个程序被预先写入到ROM内置芯片，当计算机通电后，第一件事情就是读取位于ROM中的程序，这个程序后来被叫做基本输入输出系统（basic input/output system），就是现在每台PC都有的BIOS。</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20160603042927_49793.png" alt></p>
+<p>1.1:加电自检：</p>
+<p>BIOS启动后会首先进行硬件检测，即检测硬件是否满足计算机的启动条件，BIOS是计算机厂商在计算机出厂之前就写入到芯片的，因此每个厂商的BIOS还不尽相同，硬件自检称为（Poer-On Self-Test），缩写为POST,自检会检测内存、CPU、风扇、硬盘等信息，如果有硬件不符合要求会发出不同的声音进行提示，如果检测通过则会在屏幕输出硬件信息。</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20160603044546_25456.png" alt></p>
+<p><strong>1.2 启动顺序：</strong></p>
+<p>在BIOS对硬件自检通过之后，BIOS会把启动控制权交给下一阶段的启动程序，下一阶段的启动程序需要进行提前设置，可以设置硬盘启动、光驱启动、网卡启动、USB启动等方式，BIOS会选择排在第一行的作为第一启动项，如下：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20160603044936_70273.png" alt></p>
+<p>二：主引导阶段：</p>
+<p>BISO安装预先设定好的启动顺序，将启动控制权交给排在第一位的存储设备。</p>
+<p>然后计算机会读取该设备的第一个扇区512字节，叫做<a href="http://en.wikipedia.org/wiki/Master_boot_record" target="_blank" rel="noopener">“主引导记录”</a>（Master boot record，缩写为MBR），硬盘的0柱面、0磁头、1扇区称为主引导扇区（也叫主引导记录MBR）。它由三个部分组成，主引导程序、硬盘分区表DPT（Disk Partition table）和分区有效标志（55AA）。在总共512字节的主引导扇区里主引导程序（boot loader）占446个字节，第二部分是Partition table区（分区表），即DPT，占64个字节，每个分区16个字节，所以只能有最多4个分区，硬盘中分区有多少以及每一分区的大小都记在其中，第三部分是magic number，占2个字节，固定为55AA，MBR是由安装操作系统时写入到硬盘里面的，它的主要功能是在开机从BIOS接到引导后，检测硬盘分区表是否完整，如果分区表有问题则会显示一个横杠在屏幕闪动或GRUB界面，然后在分附表中查找标记为活动的分区，并将活动分区的第一逻辑扇区装在到内存，将引导交予活动分区继续引导，MBR由系统引导代码段、分区表和有效标志组成,MBR分区表的最大可寻址的存储空间只有2Tb，当PC加电BIOS自检完毕后将控制权交给MBR中的引导代码段,由MBR代码加载操作系统完成启动过程,MBR信息不能存在于不可分区的媒介或高级分区，如软盘、LVM等分区中，是因为系统开机时没有相关驱动，无法识别有效的分区信息。</p>
+<p>另外MBR信息是可以备份的，也建议将服务器的MBR信息备份一下，复制到安全的地方，以避免突然断电等非正常关机后导致MBR丢失而无法开机，以下方法可以将当前计算机的MBR进行提取：</p>
+<p>dd if=/dev/sda of=/root/mbr bs=1 count=512</p>
+<p>即从sda读取512个块，每个块大小为1字节，即512字节，也就是将整个MBR导出成mbr文件文件导出后是二进制文件，是无法使用cat或vim等命令直接打开或编辑的，但是可以使用od命令查看od命令常用参数：-Ax ：左边地址显示用十六进制显示-tx1 ：显示内容以十六进制显示，并以一个字节为一个显示单位</p>
+<p> 使用以下命令查看MBR信息：</p>
+<p>[root@linux-node1 ~]# od -tx1 -Ax /root/mbr<br>000000 eb 63 90 10 8e d0 bc 00 b0 b8 00 00 8e d8 8e c0<br>000010 fb be 00 7c bf 00 06 b9 00 02 f3 a4 ea 21 06 00<br>000020 00 be be 07 38 04 75 0b 83 c6 10 81 fe fe 07 75<br>000030 f3 eb 16 b4 02 b0 01 bb 00 7c b2 80 8a 74 01 8b<br>000040 4c 02 cd 13 ea 00 7c 00 00 eb fe 00 00 00 00 00<br>000050 00 00 00 00 00 00 00 00 00 00 00 80 01 00 00 00<br>000060 00 00 00 00 ff fa 90 90 f6 c2 80 74 05 f6 c2 70<br>000070 74 02 b2 80 ea 79 7c 00 00 31 c0 8e d8 8e d0 bc<br>000080 00 20 fb a0 64 7c 3c ff 74 02 88 c2 52 be 05 7c<br>000090 b4 41 bb aa 55 cd 13 5a 52 72 3d 81 fb 55 aa 75<br>0000a0 37 83 e1 01 74 32 31 c0 89 44 04 40 88 44 ff 89<br>0000b0 44 02 c7 04 10 00 66 8b 1e 5c 7c 66 89 5c 08 66<br>0000c0 8b 1e 60 7c 66 89 5c 0c c7 44 06 00 70 b4 42 cd<br>0000d0 13 72 05 bb 00 70 eb 76 b4 08 cd 13 73 0d 5a 84<br>0000e0 d2 0f 83 de 00 be 85 7d e9 82 00 66 0f b6 c6 88<br>0000f0 64 ff 40 66 89 44 04 0f b6 d1 c1 e2 02 88 e8 88<br>000100 f4 40 89 44 08 0f b6 c2 c0 e8 02 66 89 04 66 a1<br>000110 60 7c 66 09 c0 75 4e 66 a1 5c 7c 66 31 d2 66 f7<br>000120 34 88 d1 31 d2 66 f7 74 04 3b 44 08 7d 37 fe c1<br>000130 88 c5 30 c0 c1 e8 02 08 c1 88 d0 5a 88 c6 bb 00<br>000140 70 8e c3 31 db b8 01 02 cd 13 72 1e 8c c3 60 1e<br>000150 b9 00 01 8e db 31 f6 bf 00 80 8e c6 fc f3 a5 1f<br>000160 61 ff 26 5a 7c be 80 7d eb 03 be 8f 7d e8 34 00<br>000170 be 94 7d e8 2e 00 cd 18 eb fe 47 52 55 42 20 00<br>000180 47 65 6f 6d 00 48 61 72 64 20 44 69 73 6b 00 52<br>000190 65 61 64 00 20 45 72 72 6f 72 0d 0a 00 bb 01 00<br>0001a0 b4 0e cd 10 ac 3c 00 75 f4 c3 00 00 00 00 00 00 #以上为主引导程序（boot loader）<br>0001b0 00 00 00 00 00 00 00 00 b1 d3 05 00 00 00 80 20 #第一个分区信息<br>0001c0 21 00 83 9f 06 19 00 08 00 00 00 40 06 00 00 9f #第二个分区信息，83为标准linix分区，这里是boot分区<br>0001d0 07 19 8e 98 79 1f 00 48 06 00 00 38 40 00 00 98 #第三个分区信息，8e是LVM分区<br>0001e0 7a 1f 8e fe ff ff 00 80 46 00 00 80 b9 09 00 00 #第四个分区信息<br>0001f0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 55 aa #55 aa为分区合法标志，表示磁盘可以引导系统启动，即有活动分区</p>
+<p>#第一个分区表信息，从80开始到06结束，80表示可启动分区，20/21/00是开始磁头/开始扇区/开始柱面，第五字节83是分区信息，6第-8字节9f/06/19字节结束磁头/结束扇区/结束柱面，第9-12字节</p>
+<p>00/08/00是分区前的隐藏扇区，是8个隐藏的扇区，是保护此分区表，第13-16字节00/00/40/06是分区大小总共的扇区。</p>
+<p>第二个分区到第四个分区一次类推。  </p>
+<p>从备份恢复mbr的命令：</p>
+<p> dd if=/root/mbr of=/dev/sda bs=1 count=512</p>
+<p> 总结：</p>
+<p> （1） 第1-446字节：调用操作系统的机器码。</p>
+<p> （2） 第447-510字节：分区表（Partition table）。</p>
+<p> （3） 第511-512字节：主引导记录签名（0x55和0xAA）。<br> 在此阶段，启动引导会识别一个激活的主分区，并将下一步的引导交于主分区继续进行启动引导，这样就到了第三阶段。</p>
+<p><strong>三、第三阶段：硬盘启动</strong></p>
+<p>计算机在 上一个阶段读取了主引导记录前面的446字节的引导代码之后，会运行事先安装在此分区的“启动管理器（boot loader）”，由用户选择启动的操作系统，在linux RHEL 7版本之前，通常是Grub引导，由此将控制权交给操作系统继续引导，如下：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20160603080350_38784.png" alt></p>
+<p><strong>四、第四阶段：操作系统</strong></p>
+<p>控制权转交给操作系统后，操作系统的内核vmlinuz首先被载入内存，以Linux系统为例，先载入/boot目录下面的kernel，内核加载成功后，第一个运行的程序是/sbin/init，它产生出init进程，这是Linux启动后的第一个进程，pid进程编号为1，其他进程都是它的子进程，然后，init线程加载系统的各个模块，比如窗口程序和网络程序，直至执行/bin/login程序，跳出登录界面，等待用户输入用户名和密码，至此，全部启动过程完成。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/14/e9-85-8d-e7-bd-ae-e6-9c-ac-e5-9c-b0yum-e4-bb-93-e5-ba-93/" rel="next" title="配置本地Yum仓库">
+                  <i class="fa fa-chevron-left"></i> 配置本地Yum仓库
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/14/205/" rel="prev" title="Centos7.4下部署PowerDNS的操作记录">
+                  Centos7.4下部署PowerDNS的操作记录 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

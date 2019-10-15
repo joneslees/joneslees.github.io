@@ -1,12 +1,60 @@
 <!DOCTYPE html>
-<html>
-<head><meta name="generator" content="Hexo 3.9.0">
-  <meta charset="utf-8">
-  
 
-  
-  <title>Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
   <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="http://yoursite.com/page/2/index.html">
@@ -14,667 +62,1347 @@
 <meta property="og:locale" content="en">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
+  <link rel="canonical" href="http://yoursite.com/page/2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: true,
+    isPost: false,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Hexo</title>
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  
-  <link rel="stylesheet" href="/css/style.css">
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
 </head>
-</html>
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
       
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
+      
         
-          <a class="main-nav-link" href="/">Home</a>
         
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
-      </div>
-    </div>
-  </div>
-</header>
-      <div class="outer">
-        <section id="main">
-  
-    <article id="post-e8-99-9a-e6-8b-9f-e5-8c-96-e6-8a-80-e6-9c-af-e5-8e-9f-e7-90-86-ef-bc-88cpu-e3-80-81-e5-86-85-e5-ad-98-e3-80-81io-ef-bc-89" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/10/10/e8-99-9a-e6-8b-9f-e5-8c-96-e6-8a-80-e6-9c-af-e5-8e-9f-e7-90-86-ef-bc-88cpu-e3-80-81-e5-86-85-e5-ad-98-e3-80-81io-ef-bc-89/" class="article-date">
-  <time datetime="2019-10-10T01:03:23.000Z" itemprop="datePublished">2019-10-10</time>
-</a>
+        <li class="menu-item menu-item-home">
+      
     
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/容器与编排/">容器与编排</a>
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
   </div>
 
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/10/10/e8-99-9a-e6-8b-9f-e5-8c-96-e6-8a-80-e6-9c-af-e5-8e-9f-e7-90-86-ef-bc-88cpu-e3-80-81-e5-86-85-e5-ad-98-e3-80-81io-ef-bc-89/">虚拟化技术原理（CPU、内存、IO）</a>
-    </h1>
   
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/linux-e6-96-87-e4-bb-b6-e4-b8-8e-e7-9b-ae-e5-bd-95-e7-ae-a1-e7-90-86/">
 
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/14/linux-e6-96-87-e4-bb-b6-e4-b8-8e-e7-9b-ae-e5-bd-95-e7-ae-a1-e7-90-86/" class="post-title-link" itemprop="url">Linux 文件与目录管理</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 13:45:21" itemprop="dateCreated datePublished" datetime="2019-10-14T13:45:21+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
       </header>
+
     
-    <div class="article-entry" itemprop="articleBody">
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
-        <p>本文来自：<a href="http://www.ywnds.com/?p=5856" target="_blank" rel="noopener">http://www.ywnds.com/?p=5856</a></p>
-<h3 id="虚拟化"><a href="#虚拟化" class="headerlink" title="虚拟化"></a>虚拟化</h3><p>云计算现在已经非常成熟了，而虚拟化是构建云计算基础架构不可或缺的关键技术之一。 云计算的云端系统， 其实质上就是一个大型的分布式系统。 虚拟化通过在一个物理平台上虚拟出更多的虚拟平台， 而其中的每一个虚拟平台则可以作为独立的终端加入云端的分布式系统。 比起直接使用物理平台， 虚拟化在资源的有效利用、 动态调配和高可靠性方面有着巨大的优势。 利用虚拟化， 企业不必抛弃现有的基础架构即可构建全新的信息基础架构，从而更加充分地利用原有的IT投资。</p>
-<h3 id="虚拟化技术"><a href="#虚拟化技术" class="headerlink" title="虚拟化技术"></a>虚拟化技术</h3><p>虚拟化是一个广义的术语，是指计算元件在虚拟的基础上而不是真实的基础上运行，是一个为了简化管理、优化资源的解决方案。</p>
-<p>在X86平台虚拟化技术中，新引入的虚拟化层通常称为虚拟机监控器（Virtual MachineMonitor, VMM）， 也叫做Hypervisor。 虚拟机监控器运行的环境，也就是真实的物理平台，称之为宿主机。而虚拟出来的平台通常称为客户机，里面运行的系统对应地也称为客户机操作系统，如下图：</p>
-<p><a href="http://www.ywnds.com/wp-content/uploads/2016/09/2016091208165311.png" target="_blank" rel="noopener"><img src="http://www.ywnds.com/wp-content/uploads/2016/09/2016091208165311.png" alt="虚拟化技术原理（CPU、内存、IO）"></a></p>
-<p>1974年，Popek和Goldberg在一篇论文中定义了“经典虚拟化(Classical virtualization)”的基本需求，他们认为，一款真正意义上的VMM至少要符合三个方面的标准：</p>
-<ul>
-<li>等价执行（Equivalient execution）：除了资源的可用性及时间上的不同之外，程序在虚拟化环境中及真实环境中的执行是完全相同的。</li>
-<li>性能（Performance）：指令集中的大部分指令要能够直接运行于CPU上。</li>
-<li>安全（Safety）：VMM要能够完全控制系统资源。</li>
+          <p>我们知道Linux的目录结构为树状结构，最顶级的目录为根目录 /。</p><p>其他目录通过挂载可以将它们添加到树中，通过解除挂载可以移除它们。</p><p>在开始本教程前我们需要先知道什么是绝对路径与相对路径。</p><ul>
+<li><strong>绝对路径：</strong><br>路径的写法，由根目录 / 写起，例如： /usr/share/doc 这个目录。</li>
+<li><strong>相对路径：</strong><br>路径的写法，不是由 / 写起，例如由 /usr/share/doc 要到 /usr/share/man 底下时，可以写成： cd ../man 这就是相对路径的写法啦！</li>
 </ul>
-<p>虚拟化技术有很多种实现方式， 比如软件虚拟化和硬件虚拟化， 再比如半虚拟化和全虚拟化。 下面将针对每种实现方式做一个简单的介绍。</p>
-<h3 id="CPU虚拟化技术实现"><a href="#CPU虚拟化技术实现" class="headerlink" title="CPU虚拟化技术实现"></a>CPU虚拟化技术实现</h3><p>一、软件虚拟化和硬件虚拟化</p>
-<p>1）虚拟化—软件方案</p>
-<p>纯软件虚拟化， 顾名思义， 就是用纯软件的方法在现有的物理平台上（往往并不支持硬件虚拟化） 实现对物理平台访问的截获和模拟。常见的软件虚拟机例如QEMU，它是通过纯软件来仿真X86平台处理器的取指、解码和执行，客户机的指令并不在物理平台上直接执行。由于所有的指令都是软件模拟的，因此性能往往比较差，但是可以在同一平台上模拟不同架构平台的虚拟机。</p>
-<p>VMWare的软件虚拟化则使用了动态二进制翻译（BT）的技术，与QEMU这种模拟的方式不同，BT是一种加速虚拟化的方案之一，另一种常见的虚拟化加速方案就是硬件辅助虚拟化技术。BT就是在虚拟机监控机可控制的范围内，允许客户机的指令在物理平台上直接运行。但是，客户机指令在运行前会被虚拟机监控机扫描，其中突破虚拟机监控机限制的指令会被动态替换为可以在物理平台上直接运行的安全指令，或者替换为对虚拟机监控器的软件调用。这样做的好处是比纯软件模拟性能有大幅的提升（模拟其根本就是通过一个软件做出一个假的，可以是不存在的；而虚拟是把这个设备通过某种切割或其他方式虚拟出去提供一定程度的服务）， 但是也同时失去了跨平台虚拟化的能力。</p>
-<p>有了BT技术后，Guest的用户空间运行在CPU ring 3上，而Guest的内核空间运行在了CPU ring 1上，Host的内核空间运行在CPU ring 0上。BT就监控在CPU ring 1上，随时将Guest内核的调用给转换为特权指令调用。当然CPU ring 1并没有被使用，BT这种技术让虚拟化性能得到了大大的提升。但是BT有一个大大的缺点就是无法跨平台，使用QEMU这种模拟器不管底层硬件是什么，能模拟各种CPU架构平台，如PowerPC、ARM等；但是BT却无法做到这点，BT强烈依赖底层架构，比如底层是X86的那么只能创建X86 CPU的虚拟机。</p>
-<p>在纯软件虚拟化解决方案中，VMM在软件套件中的位置是传统意义上操作系统所处的位置，而操作系统的位置是传统意义上应用程序所处的位置， 这种转换必然会增加系统的复杂性。软件堆栈的复杂性增加意味着，这些环境难于管理，因而会加大确保系统可靠性和安全性的困难。</p>
-<p>2） 虚拟化—硬件方案</p>
-<p>硬件辅助虚拟化（HVM），简而言之，就是物理平台本身提供了对特殊指令的截获和重定向的硬件支持，甚至，新的硬件会提供额外的资源来帮助软件实现对关键硬件资源的虚拟化，从而提升性能。可以理解为CPU额外增加了一个ring -1环专门提供给虚拟机运行的。以X86平台的虚拟化为例，支持虚拟技术的X86 CPU带有特别优化过的指令集来控制虚拟过程，通过这些指令集，VMM会很容易将客户机置于一种受限制的模式下运行，一旦客户机试图访问物理资源，硬件会暂停客户机的运行，将控制权交回给VMM处理。VMM还可以利用硬件的虚拟化增强机制，将客户机在受限模式下对一些特定资源的访问，完全由硬件重定向到VMM指定的虚拟资源，整个过程不需要暂停客户机的运行和VMM软件的参与。</p>
-<p>由于虚拟化硬件可提供全新的架构，支持操作系统直接在上面运行，无需进行二进制转换，减少了相关的性能开销，极大简化了VMM 设计，进而使VMM能够按通用标准进行编写， 性能更加强大。</p>
-<p>需要说明的是， 硬件虚拟化技术是一套解决方案。完整的情况需要CPU、主板芯片组、BIOS和软件的支持，例如VMM软件或者某些操作系统本身。即使只是CPU支持虚拟化技术，在配合VMM软件的情况下，也会比完全不支持虚拟化技术的系统有更好的性能。鉴于虚拟化的巨大需求和硬件虚拟化产品的广阔前景，Intel一直都在努力完善和加强自己的硬件虚拟化产品线。自2005年末，Intel便开始在其处理器产品线中推广应用Intel Virtualization Technology（IntelVT）虚拟化技术，发布了具有IntelVT虚拟化技术的一系列处理器产品，包括桌面的Pentium和Core系列，还有服务器的Xeon至强和Itanium安腾。Intel一直保持在每一代新的处理器架构中优化硬件虚拟化的性能和增加新的虚拟化技术。现在市面上，从桌面的Core i3/5/7，到服务器端的E3/5/7/9，几乎全部都支持Intel VT技术。可以说， 在不远的将来， Intel VT很可能会成为所有Intel处理器的标准配置。当然AMD的CPU也都支持虚拟化技术。</p>
-<p>总结</p>
-<p>硬件辅助虚拟化貌似比BT技术更好，如果BT技术能够让虚拟机性能达到物理机80%的性能的话，那么硬件辅助虚拟化（HVM）就能够让虚拟机性能达到物理机85%左右。当然这中间的转换还是需要的，只不过是由硬件直接完成了，仅此而已。</p>
-<p>二、全虚拟化和半虚拟化</p>
-<p>Full-virtualization（全虚拟化)</p>
-<p>全虚拟化为客户机提供了完整的虚拟X86平台， 包括处理器、 内存和外设， 支持运行任何理论上可在真实物理平台上运行的操作系统， 为虚拟机的配置提供了最大程度的灵活性。不需要对客户机操作系统做任何修改即可正常运行任何非虚拟化环境中已存在基于X86平台的操作系统和软件，这也是全虚拟化无可比拟的优势。</p>
-<p>在全虚拟化情况下，虚拟机并不知道自己运行在虚拟化环境下，是无感知的，安装使用时跟在物理机上没有什么区别。但是这种完全虚拟化中间需要软件做支撑的，需要软件去模拟提供所有的硬件资源，至少是这个CPU的特权指令需要用软件去模拟的，因为你要让各Guest并不知道自己运行在虚拟环境中，那么你就必须要提供一个带有特权指令的CPU。</p>
-<p>在虚拟化环境中，通常虚拟跟模拟是两个概念，VMWare的动态二进制翻译技术（BT）是虚拟的而QEMU软件技术是模拟的。最大的区别在于，模拟通过软件实现时需要模拟CPU ring 0-3，也就是需要转换CPU ring 0-3所有的指令，而虚拟只需要转换CPU ring 0特权指令即可。</p>
-<p>当然不管上面说到的BT技术还是QEMU还是硬件辅助虚拟化技术都属于完全虚拟化技术，都是需要指令转换的，都是需要复杂的步骤才能完成的，如果我们能够精简这其中的步骤那么虚拟机的性能一定会有提升的。那么怎么精简呢？这就是下面说的半虚拟化技术。另外，在全虚拟化模式下：</p>
-<p>CPU如果不支持硬件虚拟化技术：那么所有指令都是通过VMM虚拟的，通过VMM内的BT动态翻译技术把虚拟机要运行的特权指令转换为物理指令集，然后到CPU上运行。</p>
-<p>CPU如果支持硬件虚拟化技术：VMM运行ring -1，而GuestOS运行在ring 0。</p>
-<p>Para-virtualization（半虚拟化）</p>
-<p>软件虚拟化可以在缺乏硬件虚拟化支持的平台上完全通过VMM软件来实现对各个虚拟机的监控，以保证它们之间彼此独立和隔离。 但是付出的代价是软件复杂度的增加，和性能上的损失。减轻这种负担的一种方法就是，改动客户操作系统，使它知道自己运行在虚拟环境下，能够与虚拟机监控机协同工作。这种方法就叫半虚拟化（para-virtualization）。虚拟机内核明确知道自己是运行在虚拟化之上的，对于硬件资源的使用不再需要BT而是自己向VMM申请使用，如对于内存或CPU的使用是直接向VMM申请使用，直接调用而非翻译。就算对于I/O设备的使用它也可以通过Hyper Call（Hypervisor提供的系统调用）直接可以跟硬件打交道，减少了中间的翻译步骤自然性能就好了，据说这种半虚拟化方式能够让虚拟化达到物理机90%的性能。本质上，半虚拟化弱化了对虚拟机特殊指令的被动截获要求，将其转化成客户机操作系统的主动通知。但是，半虚拟化需要修改客户机操作系统的源代码来实现主动通知。</p>
-<p>Xen是开源准虚拟化技术的一个例子，操作系统作为虚拟服务器在Xen Hypervisor上运行之前，它必须在内核层面进行某些改变。因此，Xen适用于BSD、Linux、Solaris及其他开源操作系统，但不适合对像Windows这些专有的操作系统进行虚拟化处理，因为它们不<br>公开源代码，所以无法修改其内核。</p>
-<p>总结</p>
-<p>由于硬件辅助虚拟化的出现，使得完全虚拟化在性能上也得到了提升。并且相比半虚拟化而言，完全虚拟化使用上更加简化，虚拟过程对于Guest而言是透明的。所以完全虚拟化更加符合市场需求，比如后面说的KVM虚拟机。</p>
-<h3 id="内存虚拟化技术实现"><a href="#内存虚拟化技术实现" class="headerlink" title="内存虚拟化技术实现"></a>内存虚拟化技术实现</h3><p>说完虚拟化技术中最重要的CPU相关技术外，下面再来说说计算机五大部件中的第二大部件存储器，内存虚拟化技术。</p>
-<p>首先我们知道内存本身就类似于虚拟化技术，其通过虚拟地址对外提供服务，所有的进程都以为自己可以使用所有的物理内存。如下图提供了在非虚拟化中和虚拟化中寻址方式。</p>
-<p><img src="http://www.ywnds.com/wp-content/uploads/2016/08/2016082419310355.png" alt="虚拟化技术原理（CPU、内存、IO）"></p>
-<p>No Virtualation</p>
-<p>在非虚拟化中，系统把物理地址通过虚拟地址的方式（一个个页框）提供出去给进程使用，每个进程都以为自己可以使用所有的物理内存。本来在CPU上有个称为MMU（memory management unit）的东西，任何时候当某个进行想要访问数据自己的线性地址中的某段数据的时候，就是虚拟地址。这个进程就会传给CPU一个地址，并需要读取数据，但是CPU知道这个地址是无法真正访问到数据的，于是CPU要通过MMU将这段地址转换为对应物理地址的访问，从而这段数据就能访问到了。一般进程所得到的内存地址空间是一个连续的虚拟地址空间，而在真正的物理内存存储时一般都不会是连续的地址空间。</p>
-<p>In Virtualation</p>
-<p>为了实现内存虚拟化，让客户机使用一个隔离的、从零开始且具有连续的内存空间，像KVM虚拟机引入一层新的地址空间，即客户机物理地址空间 (Guest Physical Address, GPA)，这个地址空间并不是真正的物理地址空间，它只是宿主机虚拟地址空间在客户机地址空间的一个映射。对客户机来说，客户机物理地址空间都是从零开始的连续地址空间，但对于宿主机来说，客户机的物理地址空间并不一定是连续的，客户机物理地址空间有可能映射在若干个不连续的宿主机地址区间。</p>
-<p>从上图我们看出，在虚拟化环境中，由于虚拟机物理地址不能直接用于宿主机物理MMU进行寻址，所以需要把虚拟机物理地址转换成宿主机虚拟地址 （Host Virtual Address, HVA）。运行在硬件之上的Hypervisor首先会对物理内存进行虚拟地址 （Host Virtual Address, HVA）转换，然后还需要对转换后的虚拟地址内存空间进行再次虚拟，然后输出给上层虚拟机使用，而在虚拟机中同样又要进行GVA转换到GPA操作。显然通过这种映射方式，虚拟机的每次内存访问都需要Hypervisor介入，并由软件进行多次地址转换，其效率是非常低的。</p>
-<p>因此，为了提高GVA到HPA转换的效率，目前有两种实现方式来进行客户机虚拟地址到宿主机物理地址之间的直接转换。其一是基于纯软件的实现方式，也即通过影子页表（Shadow Page Table）来实现客户虚拟地址到宿主机物理地址之间的直接转换（KVM虚拟机是支持的）。其二是基于硬件辅助MMU对虚拟化的支持，来实现两者之间的转换。</p>
-<p>其中Shadow Page Table（影子页表），其实现非常复杂，因为每一个虚拟机都需要有一个Shadow Page Table。并且这种情况会出现一种非常恶劣的结果，那就是TLB（Translation Lookaside Buffer，传输后备缓冲器）很难命中，尤其是由多个虚拟主机时，因为TLB中缓存的是GVA到GPA的转换关系，所以每一次虚拟主机切换都需要清空TLB，不然主机之间就会发生数据读取错误（因为各主机间都是GVA到GPA）。传输后备缓冲器是一个内存管理单元用于改进虚拟地址到物理地址转换后结果的缓存，而这种问题也会导致虚拟机性能低下。</p>
-<p>此外，Intel的EPT(Extent Page Table) 技术和AMD的NPT(Nest Page Table) 技术都对内存虚拟化提供了硬件支持。这两种技术原理类似，都是在硬件层面上实现客户机虚拟地址到宿主机物理地址之间的转换。称为Virtualation MMU。当有了这种MMU虚拟化技术后，对于虚拟机进程来说还是同样把GVA通过内部MMU转换为GPA，并不需要改变什么，保留了完全虚拟化的好处。但是同时会自动把GVA通过Virtualation MMU技术转换为真正的物理地址（HPA）。很明显减少了由GPA到HPA的过程，提升虚拟机性能。</p>
-<p>并且CPU厂商还提供了TLB硬件虚拟化技术，以前的TLB只是标记GVA到GPA的对应关系，就这两个字段，现在被扩充为了三个字段，增加了一个主机字段，并且由GVA到GPA以及对应变成了GVA到HPA的对应关系。明确说明这是哪个虚拟机它的GVA到HPA的映射结果。</p>
-<p>总结</p>
-<p>由此看出内存虚拟化，如果没有硬件做支撑，那么只能使用Shadow Page Table（影子页表），也就意味着TLB需要不断地进行清空。而有了内存虚拟机技术后，虚拟机的性能在某种程度上也得到了大大地提升。</p>
-<h3 id="I-O虚拟化技术实现"><a href="#I-O虚拟化技术实现" class="headerlink" title="I/O虚拟化技术实现"></a>I/O虚拟化技术实现</h3><p>从处理器的角度看，外设是通过一组I/O资源（端口I/O或者是MMIO）来进行访问的，所以设备的相关虚拟化被称为I/O虚拟化，如：</p>
-<p>1）外存设备：硬盘、光盘、U盘。</p>
-<p>2）网络设备：网卡。</p>
-<p>3）显示设备：VGA（显卡）。</p>
-<p>4）键盘鼠标：PS/2、USB。</p>
-<p>还有一些如串口设备、COM口等等设备统称IO设备，所谓IO虚拟化就是提供这些设备的支持，其思想就是VMM截获客户操作系统对设备的访问请求，然后通过软件的方式来模拟真实设备的效果。基于设备类型的多样化，I/O虚拟化的方式和特点纷繁复杂，我们挑一些常用IO设备说一说。</p>
-<p>但一般IO虚拟化的方式有以下三种，如下图：</p>
-<p><img src="http://www.ywnds.com/wp-content/uploads/2016/08/2016082419311149.png" alt="虚拟化技术原理（CPU、内存、IO）"></p>
-<p>第一种：模拟I/O设备</p>
-<p>完全使用软件来模拟，这是最简单但性能最低的方式，对于IO设备来说模拟和完全虚拟化没有太大意义上的区别。VMM给Guest OS模拟出一个IO设备以及设备驱动，Guest OS要想使用IO设备需要调内核然后通过驱动访问到VMM模拟的IO设备，然后到达VMM模拟设备区域。VMM模拟了这么多设备以及VMM之上运行了那么多主机，所以VMM也提供了一个I/O Stack（多个队列）用来调度这些IO设备请求到真正的物理IO设备之上。经过多个步骤才完成一次请求。</p>
-<p>举例：Qemu、VMware Workstation</p>
-<p>第二种：半虚拟化</p>
-<p>半虚拟化比模拟性能要高，其通过系统调用直接使用I/O设备，跟CPU半虚拟化差不多，虚拟化明确知道自己使用的IO设备是虚拟出来的而非模拟。VMM给Guest OS提供了特定的驱动程序，在半虚拟化IO中我们也称为“前端IO驱动”；跟模拟I/O设备工作模式不同的是，Guest OS自己本身的IO设备不需要处理IO请求了，当Guest OS有IO请求时通过自身驱动直接发给VMM进行处理，而在VMM这部分的设备处理我们称之为“后端IO驱动”。</p>
-<p>举例：Xen、virtio</p>
-<p>第三种：I/O透传技术</p>
-<p>I/O透传技术（I/O through）比模拟和半虚拟化性能都好，几乎进阶于硬件设备，Guest OS直接使用物理I/O设备，操作起来比较麻烦。其思想就是提供多个物理I/O设备，如硬盘提供多块，网卡提供多个，然后规划好宿主机运行Guest OS的数量，通过协调VMM来达到每个Guest OS对应一个物理设备。另外，要想使用I/O透传技术，不光提供多个I/O设备还需要主板上的I/O桥提供支持透传功能才可以，一般Intel提供的这种技术叫VT-d，是一种基于北桥芯片的硬件辅助虚拟化技术，主要功能是由来提高I/O灵活性、可靠性和性能的。</p>
-<p>为什么I/O透传还需要主板支持呢？每个虚拟机直接使用一个网卡不就可以了吗？主要是因为在我们传统的X86服务器架构上，所有的IO设备通常有一个共享或集中式的DMA（直接内存访问），DMA是一种加速IO设备访问的方式。由于是集中式的，所以在VMM上管理多块网卡时其实使用的还是同一个DMA，如果让第一个Guest OS直接使用了第一块网卡，第二个Guest OS直接使用第二块网卡，但使用的DMA还是同一个，而DMA是无法区分哪个Guest OS使用的是哪块网卡，这就变的麻烦了。而像Intel的VT-d就是用来处理这些问题的，以及处理各主机中断。</p>
-<p>举例：Intel VT-d</p>
-<p>对应具体设备是如何实现？</p>
-<p>1）硬盘如何虚拟化？</p>
-<p>虚拟化技术中，CPU可以按时间切割，内存可以按空间切割，那么磁盘设备呢？也可以按照空间来切割，把硬盘划分成一个一个的区域。但是好像没有这么用的，一般磁盘虚拟化的方式就是通过模拟的技术来实现。</p>
-<p>2）网卡如何虚拟化？ </p>
-<p>网卡的虚拟化方式一般使用模拟、半虚拟化、IO透传技术都行，其实现方式根据VMM的不同有所不同，一般的VMM都会提供所有的方式。</p>
-<p>3）显卡如何虚拟化？</p>
-<p>显卡虚拟化通常使用的方式叫frame buffer（帧缓存机制），通过frame buffer给每个虚拟机一个独立的窗口来实现。当然其实对于显示设备的虚拟化是比较麻烦的，所以通常在虚拟化环境中我们的显示设备性能都不会很好的，当然安装个Windows显示还是没有问题的，但不适用图形处理类的服务。</p>
-<p>4）键盘鼠标如何虚拟化？</p>
-<p>我们在虚拟机中使用键盘鼠标通常都是通过模拟的方式实现的，通过焦点捕获将模拟的设备跟当前设备建立关联关系，比如你使用Vmware workstation时把鼠标点进哪个虚拟机后，相当于被此虚拟机捕获了，所有的操作都是针对此虚拟机了。</p>
-<p>总结</p>
-<p>简单描述了CPU虚拟化、内存虚拟化、IO虚拟化的实现方式。其一，我们大概知道了如何选择虚拟化主机性能会最大化，CPU支持硬件辅助虚拟化技术，如Intel的VT；内存支持硬件辅助虚拟化技术，如Virtualization mmu和TLB；IO支持硬件辅助虚拟化技术，如Intel的VT-d。当然光有硬件的支持还不是太够，在使用虚拟化时要能够充分利用到这些硬件才行。</p>
-<h3 id="虚拟化的运行模式"><a href="#虚拟化的运行模式" class="headerlink" title="虚拟化的运行模式"></a>虚拟化的运行模式</h3><p>Type-I：直接运行在操作系统之上的虚拟化，模式如下图：</p>
-<p><img src="http://www.ywnds.com/wp-content/uploads/2016/08/2016082419312558.png" alt="虚拟化技术原理（CPU、内存、IO）"></p>
-<p>如：Vmware workstations、Kvm等。</p>
-<p>Type-II：直接运行在硬件之上的（提供各种硬件驱动），模式如下图：</p>
-<p><img src="http://www.ywnds.com/wp-content/uploads/2016/08/2016082419313119.png" alt="虚拟化技术原理（CPU、内存、IO）"></p>
-<p>如：Vmware EXSI、Xen等。</p>
-<p>但是Xen有点特别，虽然也是直接安装在硬件之上，提供Hypervisor，但是只负责CPU、内存、中断，不提供I/O驱动，需要额外安装一个虚拟机再安装一个Linux系统用来管理I/O设备，如下图：</p>
-<p><img src="http://www.ywnds.com/wp-content/uploads/2016/08/2016082419313995.png" alt="虚拟化技术原理（CPU、内存、IO）"></p>
-<p>Type-III：其他类型</p>
-<p>当然，除了上面提到的基于操作系统或直接基于硬件的虚拟化外，还有如下常见的类型。</p>
-<p>容器虚拟化</p>
-<p>基于内核的虚拟化，所有的虚拟机都是一个独立的容器，但共同运行硬件之上，使用着同一个内核。优点就是速度快，部署容易，缺点就是相互间的资源相互隔离比较麻烦，但现在市场也都有了相对成熟的解决方案。如，如今大火的Docker，网上都有人说Docker具有取代虚拟化的势头。</p>
-<p>模拟器虚拟化</p>
-<p>通过模拟器模拟所有的硬件，如QEMU，KVM就是使用QEMU。</p>
-<p>库虚拟化</p>
-<p>通过在操作系统之上模拟出不同系统的库，如Linux上运行Wine就可以支持Windows上的软件运行，Windows上运行Cywin就可以支持Linux上的软件运行。因为现在操作系统都是遵循POSIX标准，所以各自提供的库接口都是同一个标准，只需要在对应的平台上运行一个可以提供对方库的软件，然后在此软件之上运行针对对方系统编译好的软件即可。为什么要运行针对对方平台编译好的软件，因为虽然库统一了，但是各自的ABI（应用二进制接口）接口还是不同的。</p>
-<h3 id="X86平台实现虚拟化技术的挑战？"><a href="#X86平台实现虚拟化技术的挑战？" class="headerlink" title="X86平台实现虚拟化技术的挑战？"></a>X86平台实现虚拟化技术的挑战？</h3><p>首先我们知道X86处理器有4个特权级别，Ring 0~Ring 3，只有运行在Ring 0 ~ 2级时，处理器才可以访问特权资源或执行特权指令，运行在Ring 0级时，处理器可以运行所有的特权指令。X86平台上的操作系统一般只使用Ring 0和Ring 3这两个级别，其中，操作系统内核运行在Ring 0级，也被称为内核空间指令，用户进程运行在Ring 3级，也被称为用户空间指令。</p>
-<p>特权级压缩(ring compression)</p>
-<p>为了满足上面所述的需求，VMM自身必须运行在Ring 0级，同时为了避免Guest OS控制系统资源，Guest OS不得不降低自身的运行级别而运行于Ring 3（Ring 1、2 不使用）。</p>
-<p>此外，VMM使用分页或段限制的方式保护物理内存的访问，但是64位模式下段限制不起作用，而分页又不区分Ring 0,1,2。为了统一和简化VMM的设计，Guest OS只能和用户进程一样运行在Ring 3。VMM必须监视Guest OS对GDT、IDT等特权资源的设置，防止Guest OS运行在Ring 0级，同时又要保护降级后的Guest OS不受Guest进程的主动攻击或无意破坏。</p>
-<p>特权级别名（Ring Alias）</p>
-<p>设计上的原因，操作系统假设自己运行于ring 0，然而虚拟化环境中的Guest OS实际上运行于Ring 1或Ring 3，由此，VMM必须保证各Guest OS不能得知其正运行于虚拟机中这一事实，以免其打破前面的“等价执行”标准。例如，x86处理器的特权级别存放在CS代码段寄存器内，Guest OS却可以使用非特权PUSH指令将CS寄存器压栈，然后POP出来检查该值；又如，Guest OS在低特权级别时读取特权寄存器GDT、LDT、IDT和TR时并不发生异常。这些行为都不同于Guest OS的正常期望。</p>
-<p>地址空间压缩（Address Space Compression）</p>
-<p>地址空间压缩是指VMM必须在Guest OS的地址空间中保留一段供自己使用，这是x86虚拟化技术面临的另一个挑战。VMM可以完全运行于自有的地址空间，也可以部分地运行于Guest OS的地址空间。前一种方式，需在VMM模式与Guest OS模式之间切换，这会带来较大的开销；此外，尽管运行于自己的地址空间，VMM仍需要在Guest OS的地址空间保留出一部分来保存控制结构，如IDT和GDT。无论是哪一种方式，VMM必须保证自己用到地址空间不会受到Guest OS的访问或修改。</p>
-<p>非特权敏感指令</p>
-<p>x86使用的敏感指令并不完全隶属于特权指令集，VMM将无法正确捕获此类指令并作出处理。例如，非特权指令SMSW在寄存器中存储的机器状态就能够被Guest OS所读取，这违反了经典虚拟化理论的要求。</p>
-<p>静默特权失败(Silent Privilege Failures)</p>
-<p>x86的某些特权指令在失败时并不返回错误，因此，其错误将无法被VMM捕获，这将导致其违反经典虚拟化信条中的“等价执行”法则。</p>
-<p>中断虚拟化(Interrupt Virtualization)</p>
-<p>虚拟化环境中，屏蔽中断及非屏蔽中断的管理都应该由VMM进行；然而，GuestOS对特权资源的每次访问都会触发处理器异常，这必然会频繁屏蔽或启用中断，如果这些请求均由VMM处理，势必会极大影响整体系统性能。</p>
-
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/14/linux-e6-96-87-e4-bb-b6-e4-b8-8e-e7-9b-ae-e5-bd-95-e7-ae-a1-e7-90-86/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
       
     </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/10/e8-99-9a-e6-8b-9f-e5-8c-96-e6-8a-80-e6-9c-af-e5-8e-9f-e7-90-86-ef-bc-88cpu-e3-80-81-e5-86-85-e5-ad-98-e3-80-81io-ef-bc-89/" data-id="ck1oej6hl000idstq5kk5zf0i" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
   
-</article>
-
-
   
-    <article id="post-xtrabackup-e5-85-a8-e9-87-8f-e5-a4-87-e4-bb-bd-e5-a2-9e-e9-87-8f-e5-a4-87-e4-bb-bd-e8-84-9a-e6-9c-ac" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/10/09/xtrabackup-e5-85-a8-e9-87-8f-e5-a4-87-e4-bb-bd-e5-a2-9e-e9-87-8f-e5-a4-87-e4-bb-bd-e8-84-9a-e6-9c-ac/" class="article-date">
-  <time datetime="2019-10-09T12:16:57.000Z" itemprop="datePublished">2019-10-09</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
+  
 
-  </div>
-  <div class="article-inner">
     
-    
-      <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/10/09/xtrabackup-e5-85-a8-e9-87-8f-e5-a4-87-e4-bb-bd-e5-a2-9e-e9-87-8f-e5-a4-87-e4-bb-bd-e8-84-9a-e6-9c-ac/">Xtrabackup全量备份/增量备份脚本</a>
-    </h1>
   
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/linux-e6-96-87-e4-bb-b6-e5-9f-ba-e6-9c-ac-e5-b1-9e-e6-80-a7/">
 
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/14/linux-e6-96-87-e4-bb-b6-e5-9f-ba-e6-9c-ac-e5-b1-9e-e6-80-a7/" class="post-title-link" itemprop="url">Linux 文件基本属性</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 13:44:02" itemprop="dateCreated datePublished" datetime="2019-10-14T13:44:02+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
       </header>
+
     
-    <div class="article-entry" itemprop="articleBody">
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
-        <h2 id="一、全量备份脚本"><a href="#一、全量备份脚本" class="headerlink" title="一、全量备份脚本"></a>一、全量备份脚本</h2><h3 id="1、全量备份脚本"><a href="#1、全量备份脚本" class="headerlink" title="1、全量备份脚本"></a>1、全量备份脚本</h3><pre><code>#!/bin/bash
-#Description:xtrabackup complete
-#Author:created by michael
-#2017-08-07 v0.1
-#
-USER=root
-PASSWD=123456
-BACKUP_DIR=/backup/mysql/complete
-DATE=$(date +&quot;%F_%T&quot;)
-[[ -d $BACKUP_DIR ]] || mkdir $DATE_DIR
-innobackupex --user=$USER --password=$PASSWD $BACKUP_DIR &amp;&gt; /tmp/mysql/&quot;$DATE&quot;.txt
-egrep &quot;.* Backup created in directory.*&quot; /tmp/mysql/&quot;$DATE&quot;.txt &gt;&gt; $BACKUP_DIR/complete.info
-rm -rf /tmp/mysql/&quot;$DATE&quot;.txt</code></pre><h3 id="2、启动crond以及开机自启动crond"><a href="#2、启动crond以及开机自启动crond" class="headerlink" title="2、启动crond以及开机自启动crond"></a>2、启动crond以及开机自启动crond</h3><pre><code>systemctl start crond
-systemctl enable crond</code></pre><h3 id="3、授予执行权限"><a href="#3、授予执行权限" class="headerlink" title="3、授予执行权限"></a>3、授予执行权限</h3><pre><code>chmod 755 /root/script/backup_complete.sh</code></pre><h3 id="4、每周六的凌晨4点整定时执行全量备份"><a href="#4、每周六的凌晨4点整定时执行全量备份" class="headerlink" title="4、每周六的凌晨4点整定时执行全量备份"></a>4、每周六的凌晨4点整定时执行全量备份</h3><pre><code>[root@michaelos complete]# crontab -e
-crontab: installing new crontab
-[root@michaelos complete]# crontab -l
-0 4 * * 6 /root/script/backup_complete.sh</code></pre><h2 id="二、增量备份脚本"><a href="#二、增量备份脚本" class="headerlink" title="二、增量备份脚本"></a>二、增量备份脚本</h2><h3 id="1、增量备份脚本"><a href="#1、增量备份脚本" class="headerlink" title="1、增量备份脚本"></a>1、增量备份脚本</h3><pre><code>[root@michaelos script]# cat backup_increment.sh 
-#!/bin/bash 
-#Description: mysql backup incremention
-#Author:michael
-#2017-08-07 v0.1
-#
-USER=root
-PASSWORD=123456
-BACKUP_DIR=/backup/mysql/increment
-DATE=$(date +&quot;%F_$T&quot;)
-BASE_DIR=$(tail -1 /backup/mysql/complete/complete.info | cut -d\&apos; -f2)
-[[ -d $BACKUP_DIR ]] || mkdir $BACKUP_DIR
-innobackupex --user=$USER --password=$PASSWORD --incremental $BACKUP_DIR --incremental-basedir=$BASE_DIR &amp;&gt; /tmp/mysql/&quot;$DATE&quot;.txt
-egrep &quot;.*Backup created in directory.*&quot; /tmp/mysql/&quot;$DATE&quot;.txt &gt;&gt; $BACKUP_DIR/backup.info
-rm -rf /tmp/mysql/&quot;$DATE&quot;.txt</code></pre><h3 id="2、授予执行权限"><a href="#2、授予执行权限" class="headerlink" title="2、授予执行权限"></a>2、授予执行权限</h3><pre><code>chmod 755 backup_increment.sh</code></pre><h3 id="3、每周二、四、日的凌晨2点执行增量备份"><a href="#3、每周二、四、日的凌晨2点执行增量备份" class="headerlink" title="3、每周二、四、日的凌晨2点执行增量备份"></a>3、每周二、四、日的凌晨2点执行增量备份</h3><pre><code>[root@michaelos script]# crontab -l
-0 4 * * 6 /root/script/backup_complete.sh
-0 2 * * 2,4,7 /root/script/backup_increment.sh</code></pre>
+          <p>Linux系统是一种典型的多用户系统，不同的用户处于不同的地位，拥有不同的权限。为了保护系统的安全性，Linux系统对不同的用户访问同一文件（包括目录文件）的权限做了不同的规定。</p><p>在Linux中我们可以使用ll或者ls –l命令来显示一个文件的属性以及文件所属的用户和组，如：</p><p>[root@www /]# ls -l<br>total 64<br>dr-xr-xr-x   2 root root 4096 Dec 14  2012 bin<br>dr-xr-xr-x   4 root root 4096 Apr 19  2012 boot<br>……</p>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/14/linux-e6-96-87-e4-bb-b6-e5-9f-ba-e6-9c-ac-e5-b1-9e-e6-80-a7/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
       
     </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/09/xtrabackup-e5-85-a8-e9-87-8f-e5-a4-87-e4-bb-bd-e5-a2-9e-e9-87-8f-e5-a4-87-e4-bb-bd-e8-84-9a-e6-9c-ac/" data-id="ck1oej6i2000vdstqh0myfd9n" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
   
-</article>
-
-
   
-    <article id="post-centos-7-e5-ae-89-e8-a3-85fail2banfirewalld-e9-98-b2-e6-ad-a2ssh-e7-88-86-e7-a0-b4-e4-b8-8ecc-e6-94-bb-e5-87-bb" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/10/09/centos-7-e5-ae-89-e8-a3-85fail2banfirewalld-e9-98-b2-e6-ad-a2ssh-e7-88-86-e7-a0-b4-e4-b8-8ecc-e6-94-bb-e5-87-bb/" class="article-date">
-  <time datetime="2019-10-09T09:40:53.000Z" itemprop="datePublished">2019-10-09</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/苦逼之旅/">苦逼之旅</a>
-  </div>
+  
 
-  </div>
-  <div class="article-inner">
     
-    
-      <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/10/09/centos-7-e5-ae-89-e8-a3-85fail2banfirewalld-e9-98-b2-e6-ad-a2ssh-e7-88-86-e7-a0-b4-e4-b8-8ecc-e6-94-bb-e5-87-bb/">CentOS 7安装fail2ban+Firewalld防止SSH爆破与CC攻击</a>
-    </h1>
   
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/linux-e5-bf-98-e8-ae-b0-e5-af-86-e7-a0-81-e8-a7-a3-e5-86-b3-e6-96-b9-e6-b3-95/">
 
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/14/linux-e5-bf-98-e8-ae-b0-e5-af-86-e7-a0-81-e8-a7-a3-e5-86-b3-e6-96-b9-e6-b3-95/" class="post-title-link" itemprop="url">Linux 忘记密码解决方法</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 12:33:07" itemprop="dateCreated datePublished" datetime="2019-10-14T12:33:07+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
       </header>
+
     
-    <div class="article-entry" itemprop="articleBody">
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
-        <p>说明：差不多很多博主都会遇到被CC攻击和SSH爆破的情况，这个时候就需要做下防御措施了，前几天发过一个防CC脚本，参考： <a href="https://www.centos.bz/tag/https/" target="_blank" rel="noopener">https</a>://<a href="http://www.moerats.com/archives/484/" target="_blank" rel="noopener">www.moerats.com/archives/484/</a> ，不过对于<a href="https://www.centos.bz/tag/centos/" target="_blank" rel="noopener">CentOS</a> 7来说，由于防火墙的因素，配置起来还是有点麻烦的，这里争对CentOS 7再分享个简单防CC攻击和SSH爆破的方法。</p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>fail2ban可以监视你的系统日志，然后匹配日志的错误信息执行相应的屏蔽动作。网上大部分教程都是关于fail2ban+<a href="https://www.centos.bz/tag/iptables/" target="_blank" rel="noopener">iptables</a>组合，考虑到CentOS 7已经自带Firewalld，所以这里我们也可以利用fail2ban+Firewalld来防CC攻击和SSH爆破。</p>
-<p>本教程编辑文件使用vi命令，如果不会用的，可以使用比较简单的nano，可以参考： <a href="https://www.moerats.com/archives/485/" target="_blank" rel="noopener">https://www.moerats.com/archives/485/</a> ，或者使用FTP工具，如<a href="https://www.centos.bz/tag/winscp/" target="_blank" rel="noopener">WinSCP</a>登录VPS操作。</p>
-<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><h3 id="1、检查Firewalld是否启用"><a href="#1、检查Firewalld是否启用" class="headerlink" title="1、检查Firewalld是否启用"></a>1、检查Firewalld是否启用</h3><pre><code>#如果您已经安装iptables建议先关闭
-service iptables stop
-#查看Firewalld状态
-firewall-cmd --state
-#启动firewalld
-systemctl start firewalld
-#设置开机启动
-systemctl enable firewalld.service</code></pre><p>启用Firewalld后会禁止所有端口连接，因此请务必放行常用的端口，以免被阻挡在外，以下是放行SSH端口（22）示例，供参考：</p>
-<pre><code>#放行22端口
-firewall-cmd --zone=public --add-port=80/tcp --permanent
-#重载配置
-firewall-cmd --reload
-#查看已放行端口
-firewall-cmd --zone=public --list-ports</code></pre><h3 id="2、安装fail2ban"><a href="#2、安装fail2ban" class="headerlink" title="2、安装fail2ban"></a>2、安装fail2ban</h3><p>fail2ban可以监控系统日志，并且根据一定规则匹配异常IP后使用Firewalld将其屏蔽，尤其是针对一些爆破/扫描等非常有效。</p>
-<pre><code>#CentOS内置源并未包含fail2ban，需要先安装epel源
-yum -y install epel-release
-#安装fial2ban
-yum -y install fail2ban</code></pre><p>安装成功后fail2ban配置文件位于/etc/fail2ban，其中jail.conf为主配置文件，相关的匹配规则位于filter.d目录，其它目录/文件一般很少用到，如果需要详细了解可自行搜索。</p>
-<h3 id="3、配置规则"><a href="#3、配置规则" class="headerlink" title="3、配置规则"></a>3、配置规则</h3><p>新建jail.local来覆盖fail2ban的一些默认规则：</p>
-<pre><code>#新建配置
-vi /etc/fail2ban/jail.local
-#默认配置
-[DEFAULT]
-ignoreip = 127.0.0.1/8
-bantime  = 86400
-findtime = 600
-maxretry = 5
-#这里banaction必须用firewallcmd-ipset,这是fiewalll支持的关键，如果是用Iptables请不要这样填写
-banaction = firewallcmd-ipset
-action = %(action_mwl)s</code></pre><p>参数说明：</p>
-<pre><code>ignoreip：IP白名单，白名单中的IP不会屏蔽，可填写多个以（,）分隔
-bantime：屏蔽时间，单位为秒（s）
-findtime：时间范围
-maxretry：最大次数
-banaction：屏蔽IP所使用的方法，上面使用firewalld屏蔽端口</code></pre><h2 id="防止SSH爆破"><a href="#防止SSH爆破" class="headerlink" title="防止SSH爆破"></a>防止SSH爆破</h2><p>如果您还在使用默认SSH端口（22），可能每天都会被扫描，我们可以修改端口尽量避免被扫，参考： <a href="https://www.moerats.com/archives/394/" target="_blank" rel="noopener">https://www.moerats.com/archives/394/</a> ，或者可以使用fail2ban将恶意IP屏蔽。</p>
-<p>继续修改jail.local这个配置文件，在后面追加如下内容：</p>
-<pre><code>[sshd]
-enabled = true
-filter  = sshd
-port    = 22
-action = %(action_mwl)s
-logpath = /var/log/secure</code></pre><p>参数说明：</p>
-<pre><code>[sshd]：名称，可以随便填写
-filter：规则名称，必须填写位于filter.d目录里面的规则，sshd是fail2ban内置规则
-port：对应的端口
-action：采取的行动
-logpath：需要监视的日志路径</code></pre><p>到这一步，我们jail.local的规则看起来可能像下面这样子：</p>
-<pre><code>[DEFAULT]
-ignoreip = 127.0.0.1/8
-bantime  = 86400
-findtime = 600
-maxretry = 5
-banaction = firewallcmd-ipset
-action = %(action_mwl)s
-
-[sshd]
-enabled = true
-filter  = sshd
-port    = 22
-action = %(action_mwl)s
-logpath = /var/log/secure</code></pre><p>上面的配置意思是如果同一个IP，在10分钟内，如果连续超过5次错误，则使用Firewalld将他IP ban了。输入systemctl start fail2ban启动fail2ban来试试效果。</p>
-<p>使用另一台服务器不断尝试连接SSH，并且不断的将密码输入错误，你会发现连续超过5次后直接连不上，说明IP被ban了，可以输入：fail2ban-client <a href="https://www.centos.bz/tag/status/" target="_blank" rel="noopener">status</a> sshd查看被ban的IP，如下截图。</p>
-<p><img src="https://www.centos.bz/wp-content/uploads/2018/01/1-92.png" alt></p>
-<h2 id="防止CC攻击"><a href="#防止CC攻击" class="headerlink" title="防止CC攻击"></a>防止CC攻击</h2><p>这里仅以<a href="https://www.centos.bz/category/web-server/nginx/" target="_blank" rel="noopener">Nginx</a>为例，使用fail2ban来监视<a href="https://www.centos.bz/tag/nginx-2/" target="_blank" rel="noopener">nginx</a>日志，匹配短时间内频繁请求的IP，并使用firewalld将其IP屏蔽，达到CC防护的作用。</p>
-<pre><code>#需要先新建一个nginx日志匹配规则
-vi /etc/fail2ban/filter.d/nginx-cc.conf
-#填写如下内容
-[Definition]
-failregex =  -.*- .*HTTP/1.* .* .*$
-ignoreregex =</code></pre><p>继续修改jail.local追加如下内容：</p>
-<pre><code>[nginx-cc]
-enabled = true
-port = http,https
-filter = nginx-cc
-action = %(action_mwl)s
-maxretry = 20
-findtime = 60
-bantime = 3600
-logpath = /usr/local/nginx/logs/access.log</code></pre><p>上面的配置意思是如果在60s内，同一IP达到20次请求，则将其IP ban 1小时，上面只是为了测试，请根据自己的实际情况修改。logpath为nginx日志路径。</p>
-<h2 id="防止Wordpress爆破"><a href="#防止Wordpress爆破" class="headerlink" title="防止Wordpress爆破"></a>防止Wordpress爆破</h2><p>如果您经常分析日志会发现有大量机器人在扫描wordpress登录页面wp-login.php，虽然对方可能没成功，但是为了避免万一还是将他IP干掉为好。</p>
-<pre><code>#需要先新建一个nginx日志匹配规则
-vi /etc/fail2ban/filter.d/wordpress.conf
-#填写如下内容
-[Definition]
-failregex = ^ -.* /wp-login.php.* HTTP/1\..&quot;
-ignoreregex =</code></pre><p>继续修改jail.local追加如下内容：</p>
-<pre><code>[wordpress]
-enabled = true
-port = http,https
-filter = wordpress
-action = %(action_mwl)s
-maxretry = 20
-findtime = 60
-bantime = 3600
-logpath = /usr/local/nginx/logs/access.log</code></pre><p>当然，别忘记输入systemctl restart fail2ban重启fail2ban使其生效。</p>
-<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><pre><code>#启动
-systemctl start fail2ban
-#停止
-systemctl stop fail2ban
-#开机启动
-systemctl enable fail2ban
-#查看被ban IP，其中sshd为名称，比如上面的[wordpress]
-fail2ban-client status sshd
-#删除被ban IP
-fail2ban-client set sshd delignoreip 192.168.111.111
-#查看日志
-tail /var/log/fail2ban.log</code></pre><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>fail2ban已经内置很多匹配规则，位于filter.d目录下，包含了常见的SSH/FTP/Nginx/<a href="https://www.centos.bz/category/web-server/apache/" target="_blank" rel="noopener">Apache</a>等日志匹配，如果都还无法满足您的需求，您也可以自行新建规则来匹配异常IP。使用fail2ban+Firewalld来阻止恶意IP是行之有效的办法，可极大提高服务器安全。</p>
-
+          <p>很多朋友经常会忘记Linux系统的root密码，linux系统忘记root密码的情况该怎么办呢？重新安装系统吗？当然不用！进入单用户模式更改一下root密码即可。</p><p>步骤如下：</p><h3 id="重启linux系统"><a href="#重启linux系统" class="headerlink" title="重启linux系统"></a>重启linux系统</h3><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_21.png" alt="4_21"></p><p>3 秒之内要按一下回车，出现如下界面</p><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_22.png" alt="4_22"></p><p>然后输入e</p><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_23.png" alt="4_23"></p><p>在 第二行最后边输入 single，有一个空格。具体方法为按向下尖头移动到第二行，按”e”进入编辑模式</p>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/14/linux-e5-bf-98-e8-ae-b0-e5-af-86-e7-a0-81-e8-a7-a3-e5-86-b3-e6-96-b9-e6-b3-95/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
       
     </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/09/centos-7-e5-ae-89-e8-a3-85fail2banfirewalld-e9-98-b2-e6-ad-a2ssh-e7-88-86-e7-a0-b4-e4-b8-8ecc-e6-94-bb-e5-87-bb/" data-id="ck1oej6go0001dstq91jzwbs1" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
   
-</article>
-
-
   
-    <article id="post-e8-bf-90-e7-bb-b4-e4-b8-8e-e8-87-aa-e5-8a-a8-e5-8c-96-e8-bf-90-e7-bb-b4-e6-a6-82-e6-8b-ac" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/10/09/e8-bf-90-e7-bb-b4-e4-b8-8e-e8-87-aa-e5-8a-a8-e5-8c-96-e8-bf-90-e7-bb-b4-e6-a6-82-e6-8b-ac/" class="article-date">
-  <time datetime="2019-10-09T09:14:20.000Z" itemprop="datePublished">2019-10-09</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/苦逼之旅/">苦逼之旅</a>
-  </div>
+  
 
-  </div>
-  <div class="article-inner">
     
-    
-      <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/10/09/e8-bf-90-e7-bb-b4-e4-b8-8e-e8-87-aa-e5-8a-a8-e5-8c-96-e8-bf-90-e7-bb-b4-e6-a6-82-e6-8b-ac/">运维与自动化运维概括</a>
-    </h1>
   
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/linux-e7-b3-bb-e7-bb-9f-e7-9b-ae-e5-bd-95-e7-bb-93-e6-9e-84/">
 
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/14/linux-e7-b3-bb-e7-bb-9f-e7-9b-ae-e5-bd-95-e7-bb-93-e6-9e-84/" class="post-title-link" itemprop="url">Linux 系统目录结构</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 12:32:00" itemprop="dateCreated datePublished" datetime="2019-10-14T12:32:00+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
       </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>*<em>一：运维工作内容分类：个人理解级别从低到高 *</em></p>
-<p>  1).机房运维（负责服务器上下架、IP配置与划分、服务器打标签、机房定期巡检、服务器故障报修、服务器硬件监控)<br>  2).基础设施运维（系统安装初始化、网络维护）<br>  3).监控运维（7×24运维值班、简单故障处理、通知相关业务负责人）<br>  4).基础服务运维（包含运维开发）（内部DNS管理、负载均衡配置、系统监控报警、硬件资产管理平台、监控平台搭建、代码发布平台）<br>  5).应用运维（精通公司业务、各种服务系统部署、业务系统部署、版本管理、灰度发布、应用监控）<br>  6).系统运维（架构层面的分布式缓存、分布式文件系统、日志收集与分析、业务环境规划（测试、开发、生产）、业务架构设计与规划实施、服务器系统性能调优）<br>  7).安全运维（关键程序包更新、整体的安全方案、规范、漏洞监测、安全防护、漏洞扫描与修补等）</p>
-<p><strong>二：运维的发展线路：</strong></p>
-<p>  1).搭建服务–可以安装服务并运行，由于是参加工作没有相关服务安装和部署经验，所以此阶段的主要目的是可以把服务安装并可以运行起来。 </p>
-<p>  2).用好服务–适当对服务优化，工作一两年后可以根据业务的实际需求对服务做适当的优化，比如可以对nginx做调优和监控。 </p>
-<p>  3).自动化–自动化服务的部署或监控，工作三到五年后可以结合自动化部署工具或编写脚本实现业务的自动化部署。 </p>
-<p>  4).产品设计（如何设计一个监控系统），可以根据需要设计和部署大型业务系统，现在很多公司都在用云服务，比如阿里云、Amazon的AWS，微软的Azure，以及腾讯云、青云等等各种云计算，但是 云</p>
-<p>计算的核心竞争力是运维，其始终离不开运维对业务的技术支撑，比如搭建云服务时的服务器选型、网络规划、物理机系统部署与优化、监控系统的安装等等。 </p>
-<p><strong>三：自动化运维之运维标准化</strong> </p>
-<p><strong>1.物理设备层面：</strong> </p>
-<p>  1).服务器标签化（IP地址/与交换机接口/当前服务/）、设备负责人（管理人）、设备采购详情（保修日期）、设备摆放标准（服务器之间间隔1U通风）。</p>
-<p>  2).网络划分、远程控制卡、网卡端口。</p>
-<p>  3).服务器厂商机型号同一、硬盘大小转速同一、内存统型号大小频率一、服务器课根据业务分类，有的要求IO高（存储服务器），有的要求内存大（缓存服务器），有的要求CPU块（代理服务器），有 的对CPU和IO要求CPU和内存都高（数据库服务器）。 </p>
-<p>  4).资产命名规范、编号规范、类型规范。 </p>
-<p>  5).监控标准（统一阈值和监控类型）。 </p>
-<p><strong>2.操作系统层面：</strong> </p>
-<p> 1).操作系统版本（不要混合使用linux和windows,linux发行版尽量统一）</p>
-<p> 2).系统初始化（IP、网关、掩码、DNS、NTP、内核参数调优、rsyslog、主机名规范、任务计划） </p>
-<p> 3).基础Agent配备（Zabbix Agent、Logstash Agent、Saltstack minion） </p>
-<p> 4).系统监控标准（CPU使用率、内存使用率、硬盘使用率、IO延时、网络状况、进程数与僵尸进程、运行时间等）</p>
-<p><strong>3.**</strong>应用服务层面：**</p>
-<p>  1).Web服务器选型（LNMP/LAMP/Tomcat/MySQL） </p>
-<p>  2).进程启动用户身份及目录、端口监听规范、日志收集规范（访问日志、错误日志、运行日志、系统日志）</p>
-<p>  3).配置管理（配置文件规范、脚本规范）</p>
-<p>  4).架构规范（Nginx+Keepalived、LVS+Keepalived等等）</p>
-<p>  5).部署规范（位置、包命名等）<br><strong>4.**</strong>运维操作层面：**<br>   1).机房巡检流程（巡检周期、巡检内容、硬件报修流程）<br>   2).业务部署流程（先在开发环境和测试环境测试、最后后在生产环境部署、如出现问题立即回滚、出现问题先回滚再修复）<br>   3).故障处理流程（紧急故障处理、故障升级流程及时间、重大故障管理、责任分配）<br>   4).工作日志标准（如何编写工作日志周报、月报）<br>   5).业务上线流程（1.项目发起人 2.系统安装部署优化  3.部署Nginx及相关访问 4.备案及解析域名   5.上线测试 6.对服务和主机加监控 7.数据定期备份）<br>   6).业务下线流程（谁发起，下线时间，服务器和数据如何处理。）<br>   7).运维安全规范（密码复杂度、更改周期、VPN使用规范、服务登录规范、命令使用规范、备份还原规范）  </p>
-<p><strong>运维标准化实现业务规范化和流出啊，最终达到文档化的目的，即所有和业务相关的都有文档可查，包括技术文档、故障文档等，也不会导致因为某员工离职而导致业务无法继续。</strong></p>
-<p><strong>四：自动化运维之工具化：通过相关运维工具，替代需要人工需要多次执行单一的工作内容，如：</strong></p>
-<p>  1).Shell或Python脚本（简单功能配置或修改的脚本，如自动修改配置文件、流程执行的脚本，如需要先修改完配置文件才能重启服务、检查性，如检查配置文件是否修改，日志是否生成、报表性的脚本，如生成自定义数据的文本文档并自动发送到邮箱）</p>
-<p>  2).开源监控工具：Zabbix  ELKStack  SaltStack  Cobbler  </p>
-<p>  3).开源部署工具：cobbler等</p>
-<p><strong>运维工具化带来的好处：</strong></p>
-<p>  1).促进标准化的实施</p>
-<p>  2).将重复的操作，简单化</p>
-<p>  3).将多次操作，流程化</p>
-<p>  4).减少人为操作的低效和降低故障率</p>
-<p><strong>运维工具化遇到的问题**</strong>：**</p>
-<p>  1).你至少要ssh到服务器执行。可能犯错</p>
-<p>  2).多个脚本有执行顺序的时候，可能犯错。</p>
-<p>  3).权限不好管理，日志没法统计。</p>
-<p>  4).无法避免手工操作。</p>
-<p><strong>例子：比如某天某台Web服务器磁盘可能发生问题，要在访问量较低的凌晨要将服务器的数据导出来放在其他服务器替代，那么需要考虑的是：</strong></p>
-<p>  1).是否有由其他服务器连接此服务器取数据或此服务器是否到其他服务器取数据。</p>
-<p>  2).此服务器是否有定时任务计划到其他服务器执行或有其他服务器连接到此服务器执行。</p>
-<p>  3).任务计划索要涉及的内容，以及停服务是否影响其他服务器。</p>
-<p>  4).后续的代码更新问题。</p>
-<p><strong>五：自动化运维之web化</strong>  </p>
-<p>公司基于php等语言自己开发的可以在web通过鼠标点击就能实现代码发布和回滚等功能的web界面的操作平台。<br>   1).招聘开发运维做成Web界面。<br>   2).web界面的登录权限控制。<br>   3).操作日志记录。<br>   4).一键部署所有指定服务器，弱化操作流程。<br>   5).不用ssh到每台后端服务器，减少人为误操作的故障率。<br><strong>例如：</strong></p>
-<p>  1).DNS Web管理  bind-DLZ<br>  2).负载均衡Web管理<br>  3).Job管理平台<br>  4).监控平台 Zabbix<br>  5).操作系统安装平台</p>
-<p><strong>六：自动化运维之**</strong>服务化（API化）**<br>  1).DNS Web管理 ———-&gt;bind-DLZ   dns-api（bind）<br>  2).负载均衡Web管理——&gt;slb-api（haproxy、LVS、Nginx）<br>  3).Job管理平台————-&gt;job-api（php自主开发）<br>  4).监控平台 Zabbix ——-&gt;zabbix-api（zabbix、nagios、cacti）<br>  5).操作系统安装平台——&gt;cobbler-api（cobbler、kickstack）<br>  6).部署平台——————&gt;deploy-api（安装服务软件nginx+php）<br>  7).配置管理平台————&gt;saltstack-api（saltstack、ansible）<br>  8).自动化测试平台———&gt;test-api（自主开发测试）</p>
-<p><strong>通过调用相关api实现服务器从系统安装到上线完全自动化：</strong><br>   1).调用cobbler-api自动安装指定的操作系统<br>   2).调用saltstack-api进行系统初始化和配置<br>   3).调用dns-api 解析域名和主机名<br>   4).调用zabbix-api 讲该新上线机器加上监控<br>   5).再次调用saltstack-api 部署访问软件（安装Nginx+PHP,Tomcat,Mysql）<br>   6).调用deploy-api   将当前最新稳定版本的代码部署到服务器上的指定目录。<br>   7).调用test-api  测试当前服务运行十分正常，如有异常，则执行报警等操作<br>   8).调用slb-api 将该节点加入集群  </p>
-<p><strong>七：自动化运维之智能化：</strong></p>
-<p>能根据一定的策略或条件，智能化的自动化扩容、缩容、（服务降级、故障自修复），包括自动发布代码加进负载集群等一些列操作</p>
-<p>触发:指的是触发事先定义的一个阈值，可能是CPU使用率80%，也可能是并发超过100000，也可能是web访问响应时间超过5s，这是一个触发机制，然后要定义要做的决策，如：</p>
-<p>   1).当某个集群的访问量超过最大支撑量，比如10000<br>       1.1 CPU使用率达到xx%　　内存使用率达到xx%   响应时间&gt; x秒<br>   2).此状态已经持续5分钟。<br>   3).判断不是攻击<br>   4).扩张资源池有可用资源<br>      4.1).当前网络带宽使用率<br>      4.2).如果是公有云——钱够不够<br>   5).当前后端服务支撑量是否超过阈值  如果超过应该后端先扩容<br>   6).数据库是否可以支撑当前并发<br>   7).当前自动化扩展队列，是否有正在扩容的节点<br>   8).其它业务相关的。  </p>
-<p><strong>自动化扩容机制：</strong></p>
-<p>  1).扩容之前：先判断Buffer区域是否有最近x小时，已经移除的之前创建的虚拟机，并查询软件版本是否和当前一致，如果一致，跳过 2 3 4步骤，如果不一致，跳过2 3。<br>  2). OpenStack 创建虚拟机<br>  3). Saltstack 配置环境—-监控<br>  4). 部署系统部署当前代码<br>  5). 测试服务是否可用（注意间隔和次数）<br>  6). 加入集群<br>  7). 通知（短信、邮件）<br><strong>自动化缩容机制：</strong><br>  1).触发条件和决策<br>  2).从集群中移除节点-关闭监控-移除<br>  3).通知<br>  4).移除的节点存放于Buffer里面。<br>  5).Buffer里面超过1天的虚拟机，自动关闭，存放于xx区<br>  6).Buffer区的虚拟机，每7天清理删除。  </p>
-<p><strong>八：附一次去机房的照片：</strong></p>
-<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20160526113756_64285.jpg" alt></p>
-<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20160526113757_39636.jpg" alt></p>
 
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>登录系统后，在当前命令窗口下输入命令：</p><p> ls / </p><p>你会看到如下图所示:</p><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_20.png" alt></p><p>树状目录结构：</p><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/003vPl7Rty6E8kZRlAEdc690.jpg" alt></p><p>以下是对这些目录的解释：</p><ul>
+<li><strong>/bin</strong>：<br>bin是Binary的缩写, 这个目录存放着最经常使用的命令。</li>
+<li><strong>/boot：</strong><br>这里存放的是启动Linux时使用的一些核心文件，包括一些连接文件以及镜像文件。</li>
+<li><strong>/dev ：</strong><br>dev是Device(设备)的缩写, 该目录下存放的是Linux的外部设备，在Linux中访问设备的方式和访问文件的方式是相同的。</li>
+<li><strong>/etc：</strong><br>这个目录用来存放所有的系统管理所需要的配置文件和子目录。</li>
+<li><strong>/home</strong>：<br>用户的主目录，在Linux中，每个用户都有一个自己的目录，一般该目录名是以用户的账号命名的。</li>
+<li><strong>/lib</strong>：<br>这个目录里存放着系统最基本的动态连接共享库，其作用类似于Windows里的DLL文件。几乎所有的应用程序都需要用到这些共享库。</li>
+<li><strong>/lost+found</strong>：<br>这个目录一般情况下是空的，当系统非法关机后，这里就存放了一些文件。</li>
+<li><strong>/media</strong>：<br>linux系统会自动识别一些设备，例如U盘、光驱等等，当识别后，linux会把识别的设备挂载到这个目录下。</li>
+<li><strong>/mnt</strong>：<br>系统提供该目录是为了让用户临时挂载别的文件系统的，我们可以将光驱挂载在/mnt/上，然后进入该目录就可以查看光驱里的内容了。</li>
+<li><strong>/opt</strong>：<br> 这是给主机额外安装软件所摆放的目录。比如你安装一个ORACLE数据库则就可以放到这个目录下。默认是空的。</li>
+<li><strong>/proc</strong>：<br>这个目录是一个虚拟的目录，它是系统内存的映射，我们可以通过直接访问这个目录来获取系统信息。<br>这个目录的内容不在硬盘上而是在内存里，我们也可以直接修改里面的某些文件，比如可以通过下面的命令来屏蔽主机的ping命令，使别人无法ping你的机器：echo 1 &gt; /proc/sys/net/ipv4/icmp_echo_ignore_all</li>
+<li><strong>/root</strong>：<br>该目录为系统管理员，也称作超级权限者的用户主目录。</li>
+<li><strong>/sbin</strong>：<br>s就是Super User的意思，这里存放的是系统管理员使用的系统管理程序。</li>
+<li><strong>/selinux</strong>：<br> 这个目录是Redhat/CentOS所特有的目录，Selinux是一个安全机制，类似于windows的防火墙，但是这套机制比较复杂，这个目录就是存放selinux相关的文件的。</li>
+<li><strong>/srv</strong>：<br> 该目录存放一些服务启动之后需要提取的数据。</li>
+<li><strong>/sys</strong>： 这是linux2.6内核的一个很大的变化。该目录下安装了2.6内核中新出现的一个文件系统 sysfs 。sysfs文件系统集成了下面3种文件系统的信息：针对进程信息的proc文件系统、针对设备的devfs文件系统以及针对伪终端的devpts文件系统。该文件系统是内核设备树的一个直观反映。当一个内核对象被创建的时候，对应的文件和目录也在内核对象子系统中被创建。</li>
+<li><strong>/tmp</strong>：<br>这个目录是用来存放一些临时文件的。</li>
+<li><strong>/usr</strong>：<br> 这是一个非常重要的目录，用户的很多应用程序和文件都放在这个目录下，类似于windows下的program files目录。</li>
+<li><strong>/usr/bin：</strong><br>系统用户使用的应用程序。</li>
+<li><strong>/usr/sbin：</strong><br>超级用户使用的比较高级的管理程序和系统守护程序。</li>
+<li><strong>/usr/src：</strong><br>内核源代码默认的放置目录。</li>
+<li><strong>/var</strong>：<br>这个目录中存放着在不断扩充着的东西，我们习惯将那些经常被修改的目录放在这个目录下。包括各种日志文件。</li>
+<li><strong>/run</strong>：<br>是一个临时文件系统，存储系统启动以来的信息。当系统重启时，这个目录下的文件应该被删掉或清除。如果你的系统上有 /var/run 目录，应该让它指向 run。</li>
+</ul>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/14/linux-e7-b3-bb-e7-bb-9f-e7-9b-ae-e5-bd-95-e7-bb-93-e6-9e-84/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
       
     </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/09/e8-bf-90-e7-bb-b4-e4-b8-8e-e8-87-aa-e5-8a-a8-e5-8c-96-e8-bf-90-e7-bb-b4-e6-a6-82-e6-8b-ac/" data-id="ck1oej6hf000edstqwj7y6rxr" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
   
-</article>
-
-
   
-    <article id="post-hello-world-trashed" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/10/09/hello-world-trashed/" class="article-date">
-  <time datetime="2019-10-09T09:05:22.000Z" itemprop="datePublished">2019-10-09</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/苦逼之旅/">苦逼之旅</a>
-  </div>
+  
 
-  </div>
-  <div class="article-inner">
     
-    
-      <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/10/09/hello-world-trashed/">世界，您好！</a>
-    </h1>
   
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/linux-e7-b3-bb-e7-bb-9f-e5-90-af-e5-8a-a8-e8-bf-87-e7-a8-8b/">
 
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/14/linux-e7-b3-bb-e7-bb-9f-e5-90-af-e5-8a-a8-e8-bf-87-e7-a8-8b/" class="post-title-link" itemprop="url">Linux 系统启动过程</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 12:30:57" itemprop="dateCreated datePublished" datetime="2019-10-14T12:30:57+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
       </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>欢迎使用WordPress。这是您的第一篇文章。编辑或删除它，然后开始写作吧！</p>
 
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>linux启动时我们会看到许多启动信息。</p><p>Linux系统的启动过程并不是大家想象中的那么复杂，其过程可以分为5个阶段：</p><ul>
+<li>内核的引导。</li>
+<li>运行 init。</li>
+<li>系统初始化。</li>
+<li>建立终端 。</li>
+<li>用户登录系统。</li>
+</ul><p>init程序的类型：</p><ul>
+<li><strong>SysV:</strong> init, CentOS 5之前, 配置文件： /etc/inittab。</li>
+<li><strong>Upstart:</strong> init,CentOS 6, 配置文件： /etc/inittab, /etc/init/*.conf。</li>
+<li><strong>Systemd：</strong> systemd, CentOS 7,配置文件： /usr/lib/systemd/system、 /etc/systemd/system。</li>
+</ul>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/14/linux-e7-b3-bb-e7-bb-9f-e5-90-af-e5-8a-a8-e8-bf-87-e7-a8-8b/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
       
     </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/09/hello-world-trashed/" data-id="ck1oej6hh000gdstqa8ki007v" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
 
-
-  
-
-
-  <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/hello-world/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/12/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-12 17:01:00" itemprop="dateCreated datePublished" datetime="2019-10-12T17:01:00+08:00">2019-10-12</time>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/12/hello-world/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/12/e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2-1/" class="post-title-link" itemprop="url">真正的inotify+rsync实时同步 彻底告别同步慢</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-12 09:32:07" itemprop="dateCreated datePublished" datetime="2019-10-12T09:32:07+08:00">2019-10-12</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/苦逼之旅/" itemprop="url" rel="index">
+                    <span itemprop="name">苦逼之旅</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>我们公司在用inotify+rsync做实时同步，来解决分布式集群文件一致性的问题。但当web文件越来越多(百万级数量html,jpg等小 文件)，同步就越来越慢，根本做不到实时，按照网上的调优方法都尝试过，问题根本没有解决。经过我一翻细致研究，终于把慢的核心问题研究明白，先总结一句 inotifywait响应不会有延迟，rsync也很快。大家同样有慢的烦恼，那是因为网上的inotify+rsync的教程都是坑。下面我们来分 析。</p>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/12/e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2-1/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/12/e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2/" class="post-title-link" itemprop="url">真正的inotify+rsync实时同步 彻底告别同步慢</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-12 09:32:07" itemprop="dateCreated datePublished" datetime="2019-10-12T09:32:07+08:00">2019-10-12</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-13 10:52:28" itemprop="dateModified" datetime="2019-10-13T10:52:28+08:00">2019-10-13</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/苦逼之旅/" itemprop="url" rel="index">
+                    <span itemprop="name">苦逼之旅</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>我们公司在用inotify+rsync做实时同步，来解决分布式集群文件一致性的问题。但当web文件越来越多(百万级数量html,jpg等小 文件)，同步就越来越慢，根本做不到实时，按照网上的调优方法都尝试过，问题根本没有解决。经过我一翻细致研究，终于把慢的核心问题研究明白，先总结一句 inotifywait响应不会有延迟，rsync也很快。大家同样有慢的烦恼，那是因为网上的inotify+rsync的教程都是坑。下面我们来分 析。</p>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/12/e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f/" class="post-title-link" itemprop="url">10 分钟为你搭建一个超好用的 cmdb 系统</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-12 09:30:28" itemprop="dateCreated datePublished" datetime="2019-10-12T09:30:28+08:00">2019-10-12</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-13 10:52:28" itemprop="dateModified" datetime="2019-10-13T10:52:28+08:00">2019-10-13</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/苦逼之旅/" itemprop="url" rel="index">
+                    <span itemprop="name">苦逼之旅</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>CMDB 是什么，作为 IT 工程师的你想必已经听说过了，或者已经烂熟了，容我再介绍一下，以防有读者还不知道。CMDB 的全称是 Configuration Management Data Base，翻译下就是配置管理数据库，它存储与管理企业 IT 架构中设备的各种配置信息，它支撑服务流程的运转、发挥着配置信息的价值。在今天，无论是自动化运维、标准化运维、DevOps、甚至是时髦的智能运维，其实都离开不 CMDB，可以说 CMDB 是运维体系的基石，有了配置信息数据库，后面各种标准、流程都可以建立在 CMDB 基础之上，从而实现真正的标准化、自动化、智能化运维，节约运维成本的同时，也降低运维流程混乱带来的操作风险。</p>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f-1/" class="post-title-link" itemprop="url">10 分钟为你搭建一个超好用的 cmdb 系统</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-12 09:30:28" itemprop="dateCreated datePublished" datetime="2019-10-12T09:30:28+08:00">2019-10-12</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/苦逼之旅/" itemprop="url" rel="index">
+                    <span itemprop="name">苦逼之旅</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>CMDB 是什么，作为 IT 工程师的你想必已经听说过了，或者已经烂熟了，容我再介绍一下，以防有读者还不知道。CMDB 的全称是 Configuration Management Data Base，翻译下就是配置管理数据库，它存储与管理企业 IT 架构中设备的各种配置信息，它支撑服务流程的运转、发挥着配置信息的价值。在今天，无论是自动化运维、标准化运维、DevOps、甚至是时髦的智能运维，其实都离开不 CMDB，可以说 CMDB 是运维体系的基石，有了配置信息数据库，后面各种标准、流程都可以建立在 CMDB 基础之上，从而实现真正的标准化、自动化、智能化运维，节约运维成本的同时，也降低运维流程混乱带来的操作风险。</p>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f-1/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+  </div>
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
-</section>
-        
-          <aside id="sidebar">
+
+
+          </div>
+          
+
+        </div>
+          
   
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
-    <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux基础/">Linux基础</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/容器与编排/">容器与编排</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/苦逼之旅/">苦逼之旅</a></li></ul>
-    </div>
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
   </div>
 
+  <aside class="sidebar">
+    <div class="sidebar-inner">
 
-  
-    
-
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2019/10/12/hello-world/">Hello World</a>
-          </li>
-        
-          <li>
-            <a href="/2019/10/12/e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2/">真正的inotify+rsync实时同步 彻底告别同步慢</a>
-          </li>
-        
-          <li>
-            <a href="/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f/">10 分钟为你搭建一个超好用的 cmdb 系统</a>
-          </li>
-        
-          <li>
-            <a href="/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f/">用Python做窗口化滚动点名系统</a>
-          </li>
-        
-          <li>
-            <a href="/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f/">修改CentOS7网卡名称为传统名称eth0格式</a>
-          </li>
-        
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
       </ul>
-    </div>
-  </div>
 
-  
-</aside>
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
         
       </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2019 John Doe<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
     
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-
-
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-<script src="/js/script.js"></script>
+  </nav>
+</div>
 
 
 
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
   </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
 </body>
 </html>

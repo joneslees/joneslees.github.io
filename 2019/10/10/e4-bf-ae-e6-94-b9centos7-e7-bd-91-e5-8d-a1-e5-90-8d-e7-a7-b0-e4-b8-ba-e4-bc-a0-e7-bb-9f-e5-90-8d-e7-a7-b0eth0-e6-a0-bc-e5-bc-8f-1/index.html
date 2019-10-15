@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="起因，很多使用CentOS7以前系统的小伙伴装完CentOS7以后发现了一个问题，那就是网卡名改变为了“en016777736”，而不是以前的eth0的简易模式了，如图：   这是为什么呢？开发者吃饱撑的么？当然不是。   以往的CentOS7以前的系统网卡命名虽然简单方便，但也会带来一些问题，例如，当eth0接口对应的网卡出问题以后，更换掉新网卡后新网卡的名字就可能不是eth0了。而CentOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="修改CentOS7网卡名称为传统名称eth0格式">
+<meta property="og:url" content="http://yoursite.com/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f-1/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="起因，很多使用CentOS7以前系统的小伙伴装完CentOS7以后发现了一个问题，那就是网卡名改变为了“en016777736”，而不是以前的eth0的简易模式了，如图：   这是为什么呢？开发者吃饱撑的么？当然不是。   以往的CentOS7以前的系统网卡命名虽然简单方便，但也会带来一些问题，例如，当eth0接口对应的网卡出问题以后，更换掉新网卡后新网卡的名字就可能不是eth0了。而CentOS">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/wKioL1lkeU6B5lHzAABMryQXEEE979.png">
+<meta property="og:updated_time" content="2019-10-15T01:19:13.804Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="修改CentOS7网卡名称为传统名称eth0格式">
+<meta name="twitter:description" content="起因，很多使用CentOS7以前系统的小伙伴装完CentOS7以后发现了一个问题，那就是网卡名改变为了“en016777736”，而不是以前的eth0的简易模式了，如图：   这是为什么呢？开发者吃饱撑的么？当然不是。   以往的CentOS7以前的系统网卡命名虽然简单方便，但也会带来一些问题，例如，当eth0接口对应的网卡出问题以后，更换掉新网卡后新网卡的名字就可能不是eth0了。而CentOS">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/10/wKioL1lkeU6B5lHzAABMryQXEEE979.png">
+  <link rel="canonical" href="http://yoursite.com/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>修改CentOS7网卡名称为传统名称eth0格式 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            修改CentOS7网卡名称为传统名称eth0格式
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-10 09:11:49" itemprop="dateCreated datePublished" datetime="2019-10-10T09:11:49+08:00">2019-10-10</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/苦逼之旅/" itemprop="url" rel="index">
+                    <span itemprop="name">苦逼之旅</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>起因，很多使用CentOS7以前系统的小伙伴装完CentOS7以后发现了一个问题，那就是网卡名改变为了“en016777736”，而不是以前的eth0的简易模式了，如图：</p><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/wKioL1lkeU6B5lHzAABMryQXEEE979.png" alt="wKioL1lkeU6B5lHzAABMryQXEEE979.png"></p><p>   这是为什么呢？开发者吃饱撑的么？当然不是。</p><p>   以往的CentOS7以前的系统网卡命名虽然简单方便，但也会带来一些问题，例如，当eth0接口对应的网卡出问题以后，更换掉新网卡后新网卡的名字就可能不是eth0了。而CentOS7使用了新的网卡命名模式接口名称被自动基于固件，拓扑结构和位置信息来确定。即使添加或移除网络设备，接口名称仍然保持固定，而无需重新枚举，和坏掉的硬件可以无缝替换。</p><a id="more"></a>
+
+
+
+<p>  虽然新的命名有好处，但是新的接口名称命名方案比传统的eth0相比看起来更难使用，出于习惯，很多网友想修改网卡名称，下面为大家介绍如何在CentOS7或RHEL7命名网络接口。</p>
+<h3 id="1-调整网卡名称"><a href="#1-调整网卡名称" class="headerlink" title="1.调整网卡名称"></a>1.调整网卡名称</h3><p>[root@oldboy tools]# cd/etc/sysconfig/network-scripts/         #&lt;==进入网卡文件目录。</p>
+<p>[root@oldboy network-scripts]# mv mv ifcfg-eno16777736ifcfg-eth0 #&lt;==进重命名网卡名称。</p>
+<h3 id="2-调整网卡的配置信息"><a href="#2-调整网卡的配置信息" class="headerlink" title="2.调整网卡的配置信息"></a>2.调整网卡的配置信息</h3><p>[root@oldboy network-scripts]# cat ifcfg-eth0 #&lt;==修改后的结果如下。</p>
+<p>TYPE=Ethernet</p>
+<p>BOOTPROTO=none</p>
+<p>DEFROUTE=yes</p>
+<p>IPV4_FAILURE_FATAL=no</p>
+<p>IPV6INIT=yes</p>
+<p>IPV6_AUTOCONF=yes</p>
+<p>IPV6_DEFROUTE=yes</p>
+<p>IPV6_FAILURE_FATAL=no</p>
+<p>NAME=eth0   #&lt;==修改为eth0。</p>
+<p>UUID=3e8d1581-84bd-44e8-ae70-467fa29e2585</p>
+<p>DEVICE=eth0 #&lt;==修改为eth0。</p>
+<p>ONBOOT=yes</p>
+<p>DNS1=10.0.0.2</p>
+<p>IPADDR=10.0.0.201</p>
+<p>PREFIX=24</p>
+<p>GATEWAY=10.0.0.2</p>
+<p>IPV6_PEERDNS=yes</p>
+<p>IPV6_PEERROUTES=yes</p>
+<p>IPV6_PRIVACY=no</p>
+<h3 id="3-修改并生成grub配置"><a href="#3-修改并生成grub配置" class="headerlink" title="3.修改并生成grub配置"></a>3.修改并生成grub配置</h3><p>修改后的结果如下，也可以在安装系统或开机启动时进行调整。</p>
+<p>[root@oldboy network-scripts]# cat /etc/sysconfig/grub</p>
+<p>GRUB_TIMEOUT=5</p>
+<p>GRUB_DISTRIBUTOR=”$(sed ‘s, release .*$,,g’/etc/system-release)”</p>
+<p>GRUB_DEFAULT=saved</p>
+<p>GRUB_DISABLE_SUBMENU=true</p>
+<p>GRUB_TERMINAL_OUTPUT=”console”</p>
+<p>GRUB_CMDLINE_LINUX=”crashkernel=128M rhgb <strong>net.ifnames=0 biosdevname=0</strong> quiet”  #&lt;==黄色底纹内容是添加的。</p>
+<p>GRUB_DISABLE_RECOVERY=”true”</p>
+<p>[root@linux-node2 ~]# grub2-mkconfig -o/boot/grub2/grub.cfg    #&lt;==生成grub启动菜单。</p>
+<p>Generating grub configuration file …</p>
+<p>Found linux p_w_picpath: /boot/vmlinuz-3.10.0-229.el7.x86_64</p>
+<p>Found initrd p_w_picpath:/boot/initramfs-3.10.0-229.el7.x86_64.img</p>
+<p>Found linux p_w_picpath:/boot/vmlinuz-0-rescue-1100f7e6c97d4afaad2e396403ba7f61</p>
+<p>Found initrd p_w_picpath:/boot/initramfs-0-rescue-1100f7e6c97d4afaad2e396403ba7f61.img</p>
+<p>Done</p>
+<h3 id="4-验证是否修改结果"><a href="#4-验证是否修改结果" class="headerlink" title="4.验证是否修改结果"></a>4.验证是否修改结果</h3><p>[root@oldboy network-scripts]# reboot #&lt;==必须重启系统。</p>
+<p>[root@linux-node2 ~]# yum install net-tools -y #&lt;== centos7默认没有ifconfig 需要安装net-tools包</p>
+<p>[root@oldboy network-scripts]# ifconfig                   #&lt;==再次查看网卡信息</p>
+<p><strong>eth0</strong>: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</p>
+<pre><code>inet10.0.0.201  netmask 255.255.255.0  broadcast 10.0.0.255
+
+inet6fe80::20c:29ff:feae:ef19  prefixlen64  scopeid 0x20&lt;link&gt;
+
+ether00:0c:29:ae:ef:19  txqueuelen 1000  (Ethernet)
+
+RX packets36248  bytes 2319009 (2.2 MiB)
+
+RXerrors 0  dropped 0  overruns 0 frame 0
+
+TXpackets 43090  bytes 67555745 (64.4 MiB)
+
+TXerrors 0  dropped 0 overruns 0  carrier 0 collisions 0</code></pre><p>其实开发还是吃饱撑的，开发费很大劲开发，最后我们还得改回来使用，大家说是不？</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f/" rel="next" title="修改CentOS7网卡名称为传统名称eth0格式">
+                  <i class="fa fa-chevron-left"></i> 修改CentOS7网卡名称为传统名称eth0格式
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f-1/" rel="prev" title="用Python做窗口化滚动点名系统">
+                  用Python做窗口化滚动点名系统 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-调整网卡名称"><span class="nav-number">1.</span> <span class="nav-text">1.调整网卡名称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-调整网卡的配置信息"><span class="nav-number">2.</span> <span class="nav-text">2.调整网卡的配置信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-修改并生成grub配置"><span class="nav-number">3.</span> <span class="nav-text">3.修改并生成grub配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-验证是否修改结果"><span class="nav-number">4.</span> <span class="nav-text">4.验证是否修改结果</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="先上图看效果:主要思路:1.用Python内置模块做图形界面;2.用时间产生随机数,作为下标更新名字;3.有需要可以用Pyinstaller打包为.EXE格式,方便其他用户使用.代码如下:from tkinter import *import timeclass RandomName(Frame):    def __init__(self, parent=None, **kw):">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用Python做窗口化滚动点名系统">
+<meta property="og:url" content="http://yoursite.com/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f-1/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="先上图看效果:主要思路:1.用Python内置模块做图形界面;2.用时间产生随机数,作为下标更新名字;3.有需要可以用Pyinstaller打包为.EXE格式,方便其他用户使用.代码如下:from tkinter import *import timeclass RandomName(Frame):    def __init__(self, parent=None, **kw):">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/1176578-20170621154007320-936394311.gif">
+<meta property="og:image" content="https://common.cnblogs.com/images/copycode.gif">
+<meta property="og:updated_time" content="2019-10-15T01:19:13.804Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用Python做窗口化滚动点名系统">
+<meta name="twitter:description" content="先上图看效果:主要思路:1.用Python内置模块做图形界面;2.用时间产生随机数,作为下标更新名字;3.有需要可以用Pyinstaller打包为.EXE格式,方便其他用户使用.代码如下:from tkinter import *import timeclass RandomName(Frame):    def __init__(self, parent=None, **kw):">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/10/1176578-20170621154007320-936394311.gif">
+  <link rel="canonical" href="http://yoursite.com/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>用Python做窗口化滚动点名系统 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            用Python做窗口化滚动点名系统
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-11 16:34:05" itemprop="dateCreated datePublished" datetime="2019-10-11T16:34:05+08:00">2019-10-11</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>先上图看效果:</p><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/1176578-20170621154007320-936394311.gif" alt></p><p>主要思路:</p><p>1.用Python内置模块做图形界面;</p><p>2.用时间产生随机数,作为下标更新名字;</p><p>3.有需要可以用Pyinstaller打包为.EXE格式,方便其他用户使用.</p><p>代码如下:</p><p><a href="void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p><p>from tkinter import *<br>import time</p><p>class RandomName(Frame):<br>    def __init__(self, parent=None, **kw):<br>        Frame.__init__(self, parent, kw)<br>        self.name_list = []<br>        self._start = 0.0<br>        self._elapsedtime = 0.0<br>        self._running = False<br>        self.timestr = StringVar()<br>        self.makeWidgets()</p><a id="more"></a>
+
+
+
+
+
+
+
+
+
+<pre><code>def makeWidgets(self):
+    #  定义标签栏
+    l = Label(self, textvariable=self.timestr, font=(&quot;Arial, 35&quot;))
+    self.set\_name(self.\_elapsedtime)
+    l.pack(side=TOP)
+
+def update(self):
+    # 更新显示内容
+    self.\_elapsedtime = time.time() - self.\_start
+    self.set\_name(self.\_elapsedtime)  # 设置显示内容
+    self._timer = self.after(50, self.update)  # 刷新界面
+
+def set_name(self, elap):
+    # 随机产生姓名
+    cur = int(elap * 100 % 30)
+    name_list = \[&apos;王生安&apos;, &apos;李鑫灏&apos;, &apos;薛佛世&apos;, &apos;蔡壮保&apos;, &apos;钱勤堃&apos;, &apos;潘恩依&apos;, &apos;陈国柏&apos;, &apos;魏皑虎&apos;,
+                 &apos;周卓浩&apos;, &apos;汤辟邦&apos;, &apos;张顺谷&apos;, &apos;张悌斯&apos;, &apos;张灶冲&apos;, &apos;易江维&apos;, &apos;孙来笙&apos;, &apos;饶展林&apos;,
+                 &apos;岳列洋&apos;, &apos;时党舒&apos;, &apos;周迟蒲&apos;, &apos;廉梦容&apos;, &apos;张淮森&apos;, &apos;夏劲釜&apos;, &apos;王好隐&apos;, &apos;刘昼星&apos;,
+                 &apos;池荣弈&apos;, &apos;邹包幼&apos;, &apos;王施峪&apos;, &apos;武慎萌&apos;, &apos;范千皋&apos;, &apos;潘佩焱&apos;\]
+    self.timestr.set(name_list\[cur\])
+
+def Start(self):
+    # 开始
+    if not self._running:
+        self.\_start = time.time() - self.\_elapsedtime
+        self.update()
+        self._running = True
+
+def Stop(self):
+    # 暂停
+    if self._running:
+        self.after\_cancel(self.\_timer)
+        self.\_elapsedtime = time.time() - self.\_start
+        self.set\_name(self.\_elapsedtime)
+        self._running = False
+
+def name_label(self):
+    # 显示窗口
+    self.pack(side=TOP)
+    Button(self, text=&apos;start&apos;, command=self.Start, width=10, height=2).pack(side=LEFT)
+    Button(self, text=&apos;stop&apos;, command=self.Stop, width=10, height=2).pack(side=LEFT)</code></pre><p>if __name__ == ‘__main__‘:<br>    root = Tk()<br>    root.title(“Aloe”)<br>    root.geometry(‘250x150’)<br>    sw = RandomName(root)<br>    sw.name_label()<br>    root.mainloop()</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f-1/" rel="next" title="修改CentOS7网卡名称为传统名称eth0格式">
+                  <i class="fa fa-chevron-left"></i> 修改CentOS7网卡名称为传统名称eth0格式
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f/" rel="prev" title="用Python做窗口化滚动点名系统">
+                  用Python做窗口化滚动点名系统 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

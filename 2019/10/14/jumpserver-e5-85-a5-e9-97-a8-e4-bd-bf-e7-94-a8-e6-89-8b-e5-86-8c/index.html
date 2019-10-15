@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="jumpserver官方地址： http://www.jumpserver.org/功能 身份验证Authentication 登录认证：资源统一登录和认证、LDAP 认证、支持 OpenID，实现单点登录 多因子认证：MFA（ GoogleAuthenticator） 账号管理Account 集中账号管理：管理用户管理、系统用户管理 统一密码管理：资产密码托管、自动生成密码、密码自动推送、密码过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jumpserver入门使用手册">
+<meta property="og:url" content="http://yoursite.com/2019/10/14/jumpserver-e5-85-a5-e9-97-a8-e4-bd-bf-e7-94-a8-e6-89-8b-e5-86-8c/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="jumpserver官方地址： http://www.jumpserver.org/功能 身份验证Authentication 登录认证：资源统一登录和认证、LDAP 认证、支持 OpenID，实现单点登录 多因子认证：MFA（ GoogleAuthenticator） 账号管理Account 集中账号管理：管理用户管理、系统用户管理 统一密码管理：资产密码托管、自动生成密码、密码自动推送、密码过">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190918211756906.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190918211812685.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190918211820109.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190918211826237.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019091821184853.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190918211857250.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190918211916427.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190918211920777.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190918211924748.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190918212014236.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190918212019492.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190918212031605.png">
+<meta property="og:updated_time" content="2019-10-15T01:19:13.804Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="jumpserver入门使用手册">
+<meta name="twitter:description" content="jumpserver官方地址： http://www.jumpserver.org/功能 身份验证Authentication 登录认证：资源统一登录和认证、LDAP 认证、支持 OpenID，实现单点登录 多因子认证：MFA（ GoogleAuthenticator） 账号管理Account 集中账号管理：管理用户管理、系统用户管理 统一密码管理：资产密码托管、自动生成密码、密码自动推送、密码过">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190918211756906.png">
+  <link rel="canonical" href="http://yoursite.com/2019/10/14/jumpserver-e5-85-a5-e9-97-a8-e4-bd-bf-e7-94-a8-e6-89-8b-e5-86-8c/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>jumpserver入门使用手册 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/jumpserver-e5-85-a5-e9-97-a8-e4-bd-bf-e7-94-a8-e6-89-8b-e5-86-8c/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            jumpserver入门使用手册
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 15:38:50" itemprop="dateCreated datePublished" datetime="2019-10-14T15:38:50+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/容器与编排/" itemprop="url" rel="index">
+                    <span itemprop="name">容器与编排</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="jumpserver"><a href="#jumpserver" class="headerlink" title="jumpserver"></a>jumpserver</h1><p>官方地址： <a href="http://www.jumpserver.org/" target="_blank" rel="noopener">http://www.jumpserver.org/</a></p><h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><ol>
+<li>身份验证Authentication <strong>登录认证</strong>：资源统一登录和认证、LDAP 认证、支持 OpenID，实现单点登录 <strong>多因子认证</strong>：MFA（ GoogleAuthenticator）</li>
+<li>账号管理Account <strong>集中账号管理</strong>：管理用户管理、系统用户管理 <strong>统一密码管理</strong>：资产密码托管、自动生成密码、密码自动推送、密码过期设置 <strong>批量密码变更(X-PACK)</strong>：定期批量修改密码、生成随机密码 <strong>多云环境的资产纳管(XPACK)</strong>：对私有云、公有云资产统一纳管</li>
+<li>授权控制Authorization <strong>资产授权管理</strong>：资产树、资产或资产组灵活授权、节点内资产自动继承授权 <strong>RemoteApp(X-PACK)</strong>： 实现更细粒度的应用级授权 <strong>组织管理(X-PACK)</strong>： 实现多租户管理，权限隔离 <strong>多维度授权</strong>： 可对用户、用户组或系统角色授权 <strong>指令限制</strong>： 限制特权指令使用，支持黑白名单 <strong>统一文件传输</strong>： SFTP 文件上传/下载 <strong>文件管理</strong>： Web SFTP 文件管理</li>
+<li>安全审计 Audit <strong>会话管理</strong>：在线会话管理、历史会话管理 <strong>录像管理</strong>：Linux 录像支持、Windows 录像支持 <strong>指令审计</strong>：指令记录 <strong>文件传输审计</strong>：上传/下载记录审计</li>
+</ol><a id="more"></a>
+
+<h2 id="部署环境："><a href="#部署环境：" class="headerlink" title="部署环境："></a>部署环境：</h2><p>官方环境要求：</p>
+<blockquote>
+<p>硬件配置: 2 个 CPU 核心, 4G 内存, 50G 硬盘（最低） 操作系统: Linux 发行版 x86_64 Python = 3.6.x Mysql Server ≥ 5.6 Mariadb Server ≥ 5.5.56 Redis</p>
+</blockquote>
+<p>服务器准备：</p>
+<blockquote>
+<p>192.168.99.101 jumpserver 2c-4G 192.168.99.102 数据库/Redis 2C-2G 192.168.99.103 web 服务器 A 1C-1G 192.168.99.104 web 服务器 B 1C-1G</p>
+</blockquote>
+<h2 id="部署-MySQL-服务："><a href="#部署-MySQL-服务：" class="headerlink" title="部署 MySQL 服务："></a>部署 MySQL 服务：</h2><ol>
+<li><p><strong>外置数据库要求:</strong> mysql 版本需要大于等于 5.6 mariadb 版本需要大于等于 5.5.6 数据库编码要求 uft8</p>
+</li>
+<li><p>导入 MySQL 镜像：</p>
+<p>docker load -i mysql-5.6.44.tar.gz</p>
+</li>
+</ol>
+<ol>
+<li><p>mysqld.cnf 配置文件 将容器中的 MySQL 配置文件在宿主机通过-v 挂载到容器中</p>
+<p>mkdir -p /etc/mysql/mysql.conf.d<br>vim /etc/mysql/mysql.conf.d/mysqld.cnf</p>
+</li>
+</ol>
+<pre><code># Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+## This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+#
+# The MySQL Server configuration file.
+#
+# For explanations see
+# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
+[mysqld]
+pid-file = /var/run/mysqld/mysqld.pid
+socket = /var/run/mysqld/mysqld.sock
+datadir = /var/lib/mysql
+#log-error = /var/log/mysql/error.log
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+character-set-server=utf8</code></pre><ol>
+<li><p>mysql.cnf 配置文件：</p>
+<p>mkdir -p /etc/mysql/conf.d/<br>vim /etc/mysql/conf.d/mysql.cnf</p>
+</li>
+</ol>
+<pre><code>[mysql]
+default-character-set=utf8  </code></pre><ol>
+<li><p>创建数据目录： 数据保存在宿主机， 实现数据与容器分离，当容器运行异常时也可以在启动一个新的容器直接使用宿主机的数据，从而保证业务的正产运行。</p>
+<p>mkdir /data/mysql -p</p>
+</li>
+</ol>
+<ol>
+<li><p>运行 MySQL 容器：</p>
+<p>docker run -it -d -p 3306:3306 \</p>
+<pre><code>-v /etc/mysql/mysql.conf.d/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf \
+-v /etc/mysql/conf.d/mysql.cnf:/etc/mysql/conf.d/mysql.cnf \
+-v /data/mysql:/var/lib/mysql \
+-e MYSQL_ROOT_PASSWORD=&quot;123&quot; \
+mysql:5.6.44</code></pre></li>
+</ol>
+<ol>
+<li><p>验证数据库</p>
+<p>apt install mysql-client<br>mysql -uroot -p123 -h192.168.99.22</p>
+</li>
+</ol>
+<ol>
+<li><p>验证数据库编码</p>
+<p>mysql&gt; show variables like “%character%”;<br>mysql&gt; show variables like “%collation%”;</p>
+</li>
+</ol>
+<ol>
+<li><p>创建 jumpserver 数据库</p>
+<p>mysql&gt; create database jumpserver default charset ‘utf8’;<br>mysql&gt; grant all on jumpserver.* to ‘jumpserver’@’%’ identified by ‘abc123’;</p>
+</li>
+</ol>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190918211756906.png" alt="在这里插入图片描述"></p>
+<p>启动数据库授权密码不能为纯数字， 负责报错如下</p>
+<ol>
+<li><p>确认 jumpserver 用户有权限访问数据库</p>
+<p>mysql -ujumpserver -pabc123 -h192.168.99.22</p>
+</li>
+</ol>
+<h2 id="部署-Redis-服务"><a href="#部署-Redis-服务" class="headerlink" title="部署 Redis 服务"></a>部署 Redis 服务</h2><ol>
+<li><p>下载镜像并安装</p>
+<p>docker pull redis:4.0.14<br>docker run -it -d -p 6379:6379 redis:4.0.14</p>
+</li>
+</ol>
+<ol>
+<li><p>验证 Redis 访问</p>
+<p>apt install redis<br>redis-cli -h 192.168.99.22</p>
+</li>
+</ol>
+<h2 id="部署-jumpserver"><a href="#部署-jumpserver" class="headerlink" title="部署 jumpserver"></a>部署 jumpserver</h2><ol>
+<li><p>下载镜像</p>
+<p>docker pull jumpserver/jms_all:1.4.8<br>#或已经下载镜像后导入<br>docker load -i jumpserver-jms_all_1.4.8.tar.gz</p>
+</li>
+</ol>
+<ol>
+<li><p>生成随机加密秘钥和初始化 token。</p>
+<h1 id="if-“-SECRET-KEY”-“”-then"><a href="#if-“-SECRET-KEY”-“”-then" class="headerlink" title="if [ “$SECRET_KEY” = “” ]; then \"></a>if [ “$SECRET_KEY” = “” ]; then \</h1><pre><code>SECRET_KEY=`cat /dev/urandom | \
+tr -dc A-Za-z0-9 | \
+head -c 50`; \
+echo &quot;SECRET_KEY=$SECRET_KEY&quot; &gt;&gt; ~/.bashrc; \
+echo $SECRET_KEY; \
+else echo $SECRET_KEY; \
+fi</code></pre><p>cZPi5K3utSGiwpK786wbrdZl7UqP0KzfszPBF3NqoATelylqzJ</p>
+<h1 id="if-“-BOOTSTRAP-TOKEN”-“”-then"><a href="#if-“-BOOTSTRAP-TOKEN”-“”-then" class="headerlink" title="if [ “$BOOTSTRAP_TOKEN” = “” ]; then \"></a>if [ “$BOOTSTRAP_TOKEN” = “” ]; then \</h1><pre><code>BOOTSTRAP_TOKEN=`cat /dev/urandom | \
+tr -dc A-Za-z0-9 | \
+head -c 16`; \
+echo &quot;BOOTSTRAP_TOKEN=$BOOTSTRAP_TOKEN&quot; &gt;&gt; ~/.bashrc; \
+echo $BOOTSTRAP_TOKEN; \
+else echo $BOOTSTRAP_TOKEN; \
+fi</code></pre><p>yaOz6fQzY0R8vIta</p>
+</li>
+</ol>
+<ol>
+<li><p>建 Jumpserver 容器</p>
+<p>docker run –name jms_all \</p>
+<pre><code>-v /opt/jumpserver:/opt/jumpserver/data/media \
+-p 80:80 \
+-p 2222:2222 \
+-e SECRET_KEY=cZPi5K3utSGiwpK786wbrdZl7UqP0KzfszPBF3NqoATelylqzJ \
+-e BOOTSTRAP_TOKEN=yaOz6fQzY0R8vIta \
+-e DB_HOST=192.168.99.22 \
+-e DB_PORT=3306 \
+-e DB_USER=&apos;jumpserver&apos; \
+-e DB_PASSWORD=&quot;abc123&quot; \
+-e DB_NAME=jumpserver \
+-e REDIS_HOST=192.168.99.22 \
+-e REDIS_PORT=6379 \
+-e REDIS_PASSWORD= \
+jumpserver/jms_all:1.4.8</code></pre></li>
+</ol>
+<ol>
+<li>容器启动完成</li>
+<li>验证数据库，内容</li>
+</ol>
+<hr>
+<h1 id="jumpserver-使用"><a href="#jumpserver-使用" class="headerlink" title="jumpserver 使用"></a>jumpserver 使用</h1><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190918211812685.png" alt="在这里插入图片描述"></p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190918211820109.png" alt="在这里插入图片描述"></p>
+<p>登录 web。默认账户 admin，密码 admin</p>
+<h2 id="用户和组管理"><a href="#用户和组管理" class="headerlink" title="用户和组管理"></a>用户和组管理</h2><p>用户管理–用户列表界面，管理创建用户，用户相当于是公司的运维人员 1. 创建用户 xiaoming</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190918211826237.png" alt="在这里插入图片描述"></p>
+<p>Multi-Factor Authentication (MFA) 遵循基于时间的一次性密码</p>
+<ol>
+<li>设置用户密码,创建是时候无法设置密码，创建完后再来设置密码</li>
+<li>组管理</li>
+<li>验证普通用户的登录</li>
+</ol>
+<h2 id="资产管理"><a href="#资产管理" class="headerlink" title="资产管理"></a>资产管理</h2><ol>
+<li>创建系统用户 资产管理–管理用户界面，创建系统用户， 此用户用于推送到后端服务器自动创建， 如果此账户已经存在于后端服务器则不会再重新创建， 而是直接使用， 后期jumpserver 的普通账户(zhangxiaoming)会使用此账户登陆并管理资产信息(服务器)，推荐的账户名称： mysql nginx tomcat www</li>
+</ol>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/2019091821184853.png" alt="在这里插入图片描述"></p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190918211857250.png" alt="在这里插入图片描述"></p>
+<ol>
+<li>创建管理用户 资产管理–系统用户界面， 创建管理用户， 该管理用户用于 jumpserver 登陆服务器统计资产信息以及推送系统用户的时候使用， 所以此用户一定是一个可以登录的具备超级权限的用户（如后端服务器的 root 账户或者具有 root 权限的其他用户）。</li>
+<li>创建资产： 资产就是物理机 虚拟机等</li>
+</ol>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190918211916427.png" alt="在这里插入图片描述"></p>
+<p>资产状态：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190918211920777.png" alt="在这里插入图片描述"></p>
+<p>点击主机名进入，测试资产可连接性</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190918211924748.png" alt="在这里插入图片描述"></p>
+<h2 id="授权管理"><a href="#授权管理" class="headerlink" title="授权管理"></a>授权管理</h2><ol>
+<li>创建授权规则，将资产授权给某个 jumpserver 的登陆账户,即第一步创建的账户：</li>
+<li>授权给用户</li>
+</ol>
+<h3 id="查看被授权的用户"><a href="#查看被授权的用户" class="headerlink" title="查看被授权的用户"></a>查看被授权的用户</h3><ol>
+<li>登录普通用户xiaoming</li>
+<li>进入web终端</li>
+</ol>
+<h2 id="资产分组"><a href="#资产分组" class="headerlink" title="资产分组"></a>资产分组</h2><ol>
+<li>新建节点</li>
+<li>添加主机到节点</li>
+</ol>
+<h2 id="会话管理"><a href="#会话管理" class="headerlink" title="会话管理"></a>会话管理</h2><p>会话管理-命令记录、历史会话里面可以看到用户操作过并且已经退出的录像记录。 使用 jumpserver 普通账户登录，并测试后端服务器的连接与使用</p>
+<h3 id="命令过滤："><a href="#命令过滤：" class="headerlink" title="命令过滤："></a>命令过滤：</h3><ol>
+<li>基于安全考虑，禁止某些用户执行指定的命令， 如 rm、 reboot、 poweroff 等命令</li>
+</ol>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190918212014236.png" alt="在这里插入图片描述"></p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190918212019492.png" alt="在这里插入图片描述"></p>
+<ol>
+<li>进入创建的这个过滤器</li>
+<li>创建规则</li>
+</ol>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190918212031605.png" alt="在这里插入图片描述"></p>
+<ol>
+<li>关联用户</li>
+<li>在创建用户的时候也可以关联</li>
+<li>测试</li>
+</ol>
+<h2 id="官方文档："><a href="#官方文档：" class="headerlink" title="官方文档："></a>官方文档：</h2><p>其他功能，可参如下考官方文档</p>
+<blockquote>
+<p><a href="https://jumpserver.readthedocs.io/zh/master/quick_start.html" target="_blank" rel="noopener">https://jumpserver.readthedocs.io/zh/master/quick_start.html</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/14/wordpress-e5-a4-87-e4-bb-bd-e5-88-b0-e7-99-be-e5-ba-a6-e4-ba-91-e7-9b-98-trashed/" rel="next" title="wordpress备份到百度云盘">
+                  <i class="fa fa-chevron-left"></i> wordpress备份到百度云盘
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/14/wordpress-e5-a4-87-e4-bb-bd-e5-88-b0-e7-99-be-e5-ba-a6-e4-ba-91-e7-9b-98/" rel="prev" title="wordpress备份到百度云盘">
+                  wordpress备份到百度云盘 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#jumpserver"><span class="nav-number">1.</span> <span class="nav-text">jumpserver</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#功能"><span class="nav-number">1.1.</span> <span class="nav-text">功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署环境："><span class="nav-number">1.2.</span> <span class="nav-text">部署环境：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署-MySQL-服务："><span class="nav-number">1.3.</span> <span class="nav-text">部署 MySQL 服务：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署-Redis-服务"><span class="nav-number">1.4.</span> <span class="nav-text">部署 Redis 服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署-jumpserver"><span class="nav-number">1.5.</span> <span class="nav-text">部署 jumpserver</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#if-“-SECRET-KEY”-“”-then"><span class="nav-number">2.</span> <span class="nav-text">if [ “$SECRET_KEY” = “” ]; then \</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#if-“-BOOTSTRAP-TOKEN”-“”-then"><span class="nav-number">3.</span> <span class="nav-text">if [ “$BOOTSTRAP_TOKEN” = “” ]; then \</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#jumpserver-使用"><span class="nav-number">4.</span> <span class="nav-text">jumpserver 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#用户和组管理"><span class="nav-number">4.1.</span> <span class="nav-text">用户和组管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#资产管理"><span class="nav-number">4.2.</span> <span class="nav-text">资产管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#授权管理"><span class="nav-number">4.3.</span> <span class="nav-text">授权管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查看被授权的用户"><span class="nav-number">4.3.1.</span> <span class="nav-text">查看被授权的用户</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#资产分组"><span class="nav-number">4.4.</span> <span class="nav-text">资产分组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#会话管理"><span class="nav-number">4.5.</span> <span class="nav-text">会话管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#命令过滤："><span class="nav-number">4.5.1.</span> <span class="nav-text">命令过滤：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#官方文档："><span class="nav-number">4.6.</span> <span class="nav-text">官方文档：</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

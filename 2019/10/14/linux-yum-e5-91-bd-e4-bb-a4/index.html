@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="yum（ Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。基於RPM包管理，能够从指定的服务器自动下载RPM包并且安装，可以自动处理依赖性关系，并且一次安装所有依赖的软体包，无须繁琐地一次次下载、安装。yum提供了查找、安装、删除某一个、一组甚至全部软件包的命令，而且命令简洁而又好记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux yum 命令">
+<meta property="og:url" content="http://yoursite.com/2019/10/14/linux-yum-e5-91-bd-e4-bb-a4/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="yum（ Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。基於RPM包管理，能够从指定的服务器自动下载RPM包并且安装，可以自动处理依赖性关系，并且一次安装所有依赖的软体包，无须繁琐地一次次下载、安装。yum提供了查找、安装、删除某一个、一组甚至全部软件包的命令，而且命令简洁而又好记。">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-15T01:19:13.804Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux yum 命令">
+<meta name="twitter:description" content="yum（ Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。基於RPM包管理，能够从指定的服务器自动下载RPM包并且安装，可以自动处理依赖性关系，并且一次安装所有依赖的软体包，无须繁琐地一次次下载、安装。yum提供了查找、安装、删除某一个、一组甚至全部软件包的命令，而且命令简洁而又好记。">
+  <link rel="canonical" href="http://yoursite.com/2019/10/14/linux-yum-e5-91-bd-e4-bb-a4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>linux yum 命令 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/linux-yum-e5-91-bd-e4-bb-a4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            linux yum 命令
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 13:49:25" itemprop="dateCreated datePublished" datetime="2019-10-14T13:49:25+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>yum（ Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。</p><p>基於RPM包管理，能够从指定的服务器自动下载RPM包并且安装，可以自动处理依赖性关系，并且一次安装所有依赖的软体包，无须繁琐地一次次下载、安装。</p><p>yum提供了查找、安装、删除某一个、一组甚至全部软件包的命令，而且命令简洁而又好记。</p><a id="more"></a>
+
+
+<h3 id="yum-语法"><a href="#yum-语法" class="headerlink" title="yum 语法"></a>yum 语法</h3><p>yum [options] [command] [package …]</p>
+<ul>
+<li><strong>options：</strong>可选，选项包括-h（帮助），-y（当安装过程提示选择全部为”yes”），-q（不显示安装的过程）等等。</li>
+<li><strong>command：</strong>要进行的操作。</li>
+<li><strong>package</strong>操作的对象。</li>
+</ul>
+<hr>
+<h2 id="yum常用命令"><a href="#yum常用命令" class="headerlink" title="yum常用命令"></a>yum常用命令</h2><ul>
+<li>1.列出所有可更新的软件清单命令：yum check-update</li>
+<li>2.更新所有软件命令：yum update</li>
+<li>3.仅安装指定的软件命令：yum install <package_name></package_name></li>
+<li>4.仅更新指定的软件命令：yum update <package_name></package_name></li>
+<li>5.列出所有可安裝的软件清单命令：yum list</li>
+<li>6.删除软件包命令：yum remove <package_name></package_name></li>
+<li>7.查找软件包 命令：yum search <keyword></keyword></li>
+<li>8.清除缓存命令:<ul>
+<li>yum clean packages: 清除缓存目录下的软件包</li>
+<li>yum clean headers: 清除缓存目录下的 headers</li>
+<li>yum clean oldheaders: 清除缓存目录下旧的 headers</li>
+<li>yum clean, yum clean all (= yum clean packages; yum clean oldheaders) :清除缓存目录下的软件包及旧的headers</li>
+</ul>
+</li>
+</ul>
+<h3 id="实例-1"><a href="#实例-1" class="headerlink" title="实例 1"></a>实例 1</h3><p>安装 pam-devel</p>
+<p>[root@www ~]# yum install pam-devel<br>Setting up Install Process<br>Parsing package install arguments<br>Resolving Dependencies  &lt;==先检查软件的属性相依问题<br>–&gt; Running transaction check<br>—&gt; Package pam-devel.i386 0:0.99.6.2-4.el5 set to be updated<br>–&gt; Processing Dependency: pam = 0.99.6.2-4.el5 for package: pam-devel<br>–&gt; Running transaction check<br>—&gt; Package pam.i386 0:0.99.6.2-4.el5 set to be updated<br>filelists.xml.gz          100% |=========================| 1.6 MB    00:05<br>filelists.xml.gz          100% |=========================| 138 kB    00:00<br>-&gt; Finished Dependency Resolution<br>……(省略)</p>
+<h3 id="实例-2"><a href="#实例-2" class="headerlink" title="实例 2"></a>实例 2</h3><p>移除 pam-devel</p>
+<p>[root@www ~]# yum remove pam-devel<br>Setting up Remove Process<br>Resolving Dependencies  &lt;==同样的，先解决属性相依的问题<br>–&gt; Running transaction check<br>—&gt; Package pam-devel.i386 0:0.99.6.2-4.el5 set to be erased<br>–&gt; Finished Dependency Resolution</p>
+<p>Dependencies Resolved</p>
+<p>=============================================================================<br> Package                 Arch       Version          Repository        Size<br>=============================================================================<br>Removing:<br> pam-devel               i386       0.99.6.2-4.el5   installed         495 k</p>
+<h1 id="Transaction-Summary"><a href="#Transaction-Summary" class="headerlink" title="Transaction Summary"></a>Transaction Summary</h1><p>Install      0 Package(s)<br>Update       0 Package(s)<br>Remove       1 Package(s)  &lt;==还好，并没有属性相依的问题，单纯移除一个软件</p>
+<p>Is this ok [y/N]: y<br>Downloading Packages:<br>Running rpm_check_debug<br>Running Transaction Test<br>Finished Transaction Test<br>Transaction Test Succeeded<br>Running Transaction<br>  Erasing   : pam-devel                    ######################### [1/1]</p>
+<p>Removed: pam-devel.i386 0:0.99.6.2-4.el5<br>Complete!</p>
+<h3 id="实例-3"><a href="#实例-3" class="headerlink" title="实例 3"></a>实例 3</h3><p>利用 yum 的功能，找出以 pam 为开头的软件名称有哪些？</p>
+<p>[root@www ~]# yum list pam*<br>Installed Packages<br>pam.i386                  0.99.6.2-3.27.el5      installed<br>pam_ccreds.i386           3-5                    installed<br>pam_krb5.i386             2.2.14-1               installed<br>pam_passwdqc.i386         1.0.2-1.2.2            installed<br>pam_pkcs11.i386           0.5.3-23               installed<br>pam_smb.i386              1.1.7-7.2.1            installed<br>Available Packages &lt;==底下则是『可升级』的或『未安装』的<br>pam.i386                  0.99.6.2-4.el5         base<br>pam-devel.i386            0.99.6.2-4.el5         base<br>pam_krb5.i386             2.2.14-10              base</p>
+<hr>
+<h2 id="国内-yum-源"><a href="#国内-yum-源" class="headerlink" title="国内 yum 源"></a>国内 yum 源</h2><p>网易（163）yum源是国内最好的yum源之一 ，无论是速度还是软件版本，都非常的不错。</p>
+<p>将yum源设置为163 yum，可以提升软件包安装和更新的速度，同时避免一些常见软件版本无法找到。</p>
+<h3 id="安装步骤"><a href="#安装步骤" class="headerlink" title="安装步骤"></a>安装步骤</h3><p>首先备份/etc/yum.repos.d/CentOS-Base.repo</p>
+<p>mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</p>
+<p>下载对应版本 repo 文件, 放入 /etc/yum.repos.d/ (操作前请做好相应备份)</p>
+<ul>
+<li><a href="http://mirrors.163.com/.help/CentOS5-Base-163.repo" target="_blank" rel="noopener">CentOS5</a> ：<a href="http://mirrors.163.com/.help/CentOS5-Base-163.repo" target="_blank" rel="noopener">http://mirrors.163.com/.help/CentOS5-Base-163.repo</a></li>
+<li><a href="http://mirrors.163.com/.help/CentOS6-Base-163.repo" target="_blank" rel="noopener">CentOS6</a> ：<a href="http://mirrors.163.com/.help/CentOS6-Base-163.repo" target="_blank" rel="noopener">http://mirrors.163.com/.help/CentOS6-Base-163.repo</a></li>
+<li><a href="http://mirrors.163.com/.help/CentOS7-Base-163.repo" target="_blank" rel="noopener">CentOS7</a> ：<a href="http://mirrors.163.com/.help/CentOS7-Base-163.repo" target="_blank" rel="noopener">http://mirrors.163.com/.help/CentOS7-Base-163.repo</a></li>
+</ul>
+<p>wget <a href="http://mirrors.163.com/.help/CentOS6-Base-163.repo" target="_blank" rel="noopener">http://mirrors.163.com/.help/CentOS6-Base-163.repo</a><br>mv CentOS6-Base-163.repo CentOS-Base.repo</p>
+<p>运行以下命令生成缓存</p>
+<p>yum clean all<br>yum makecache</p>
+<p>除了网易之外，国内还有其他不错的 yum 源，比如中科大和搜狐。</p>
+<p>中科大的 yum 源，安装方法查看：<a href="https://lug.ustc.edu.cn/wiki/mirrors/help/centos" target="_blank" rel="noopener">https://lug.ustc.edu.cn/wiki/mirrors/help/centos</a></p>
+<p>sohu 的 yum 源安装方法查看: <a href="http://mirrors.sohu.com/help/centos.html" target="_blank" rel="noopener">http://mirrors.sohu.com/help/centos.html</a></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/14/linux-vi-vim/" rel="next" title="Linux vi/vim">
+                  <i class="fa fa-chevron-left"></i> Linux vi/vim
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/14/e9-85-8d-e7-bd-ae-e6-9c-ac-e5-9c-b0yum-e4-bb-93-e5-ba-93/" rel="prev" title="配置本地Yum仓库">
+                  配置本地Yum仓库 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#yum-语法"><span class="nav-number">1.</span> <span class="nav-text">yum 语法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#yum常用命令"><span class="nav-number"></span> <span class="nav-text">yum常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-1"><span class="nav-number">1.</span> <span class="nav-text">实例 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-2"><span class="nav-number">2.</span> <span class="nav-text">实例 2</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transaction-Summary"><span class="nav-number"></span> <span class="nav-text">Transaction Summary</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-3"><span class="nav-number">1.</span> <span class="nav-text">实例 3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#国内-yum-源"><span class="nav-number"></span> <span class="nav-text">国内 yum 源</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装步骤"><span class="nav-number">1.</span> <span class="nav-text">安装步骤</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="本文的自建 DNS 是指的是权威 DNS，即给自己的域名配置的 DNS，而非在客户端配置的缓存 DNS。一、部署以MariaDB作为后端数据的PowerDNS系统1）关闭防火墙和selinux[root@PowerDNS ~]# cat /etc/redhat-releaseCentOS Linux release 7.4.1708 (Core)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Centos7.4下部署PowerDNS的操作记录">
+<meta property="og:url" content="http://yoursite.com/2019/10/14/205/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本文的自建 DNS 是指的是权威 DNS，即给自己的域名配置的 DNS，而非在客户端配置的缓存 DNS。一、部署以MariaDB作为后端数据的PowerDNS系统1）关闭防火墙和selinux[root@PowerDNS ~]# cat /etc/redhat-releaseCentOS Linux release 7.4.1708 (Core)">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/y0ukpf1pyp.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/18loubq9vn.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/0xd8gfstwm.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/94sykgty8w.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/jmq54wfmsv.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/1ux6949e8g.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/eepj9u3rj4.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/ycfwnuxxve.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/9t3432pb9l.png">
+<meta property="og:updated_time" content="2019-10-15T01:19:13.804Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Centos7.4下部署PowerDNS的操作记录">
+<meta name="twitter:description" content="本文的自建 DNS 是指的是权威 DNS，即给自己的域名配置的 DNS，而非在客户端配置的缓存 DNS。一、部署以MariaDB作为后端数据的PowerDNS系统1）关闭防火墙和selinux[root@PowerDNS ~]# cat /etc/redhat-releaseCentOS Linux release 7.4.1708 (Core)">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/10/y0ukpf1pyp.png">
+  <link rel="canonical" href="http://yoursite.com/2019/10/14/205/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Centos7.4下部署PowerDNS的操作记录 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/205/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            Centos7.4下部署PowerDNS的操作记录
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 15:28:58" itemprop="dateCreated datePublished" datetime="2019-10-14T15:28:58+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/容器与编排/" itemprop="url" rel="index">
+                    <span itemprop="name">容器与编排</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文的自建 DNS 是指的是权威 DNS，即给自己的域名配置的 DNS，而非在客户端配置的缓存 DNS。</p><p><strong>一、部署以MariaDB作为后端数据的PowerDNS系统</strong></p><p><strong>1）关闭防火墙和selinux</strong></p><p>[root@PowerDNS ~]# cat /etc/redhat-release<br>CentOS Linux release 7.4.1708 (Core) </p><a id="more"></a>
+
+
+
+<p>[root@PowerDNS ~]# setenforce 0<br>[root@PowerDNS ~]# getenforce<br>[root@PowerDNS ~]# cat /etc/sysconfig/selinux |grep “SELINUX=disabled”<br>SELINUX=disabled</p>
+<p>[root@PowerDNS ~]# systemctl stop firewalld<br>[root@PowerDNS ~]# systemctl disable firewalld<br>Removed symlink /etc/systemd/system/multi-user.target.wants/firewalld.service.<br>Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.<br>[root@PowerDNS ~]# firewall-cmd –state<br>not running</p>
+<p><strong>2）启用EPEL仓库</strong></p>
+<p>[root@PowerDNS ~]# yum install -y epel-release yum-plugin-priorities</p>
+<p><strong>3）安装并配置MariaDB服务器</strong></p>
+<p>[root@PowerDNS ~]# yum install -y mariadb-server mariadb<br>[root@PowerDNS ~]# systemctl enable mariadb.service<br>[root@PowerDNS ~]# systemctl start mariadb.service<br>[root@PowerDNS ~]# lsof -i:3306</p>
+<p>设置密码<br>[root@PowerDNS ~]# mysql_secure_installation<br>首先是设置密码，会提示先输入密码</p>
+<p>Enter current password for root (enter for none):&lt;–初次运行直接回车</p>
+<p>设置密码</p>
+<p>Set root password? [Y/n] &lt;– 是否设置root用户密码，输入y并回车或直接回车<br>New password: &lt;– 设置root用户的密码（比如123456）<br>Re-enter new password: &lt;– 再输入一次你设置的密码</p>
+<p>其他配置<br>Remove anonymous users? [Y/n] &lt;– 是否删除匿名用户，回车<br>Disallow root login remotely? [Y/n] &lt;–是否禁止root远程登录,回车,<br>Remove test database and access to it? [Y/n] &lt;– 是否删除test数据库，回车<br>Reload privilege tables now? [Y/n] &lt;– 是否重新加载权限表，回车</p>
+<p>使用密码登录MariaDB，查看字符集<br>[root@PowerDNS ~]# mysql -p123456<br>Welcome to the MariaDB monitor.  Commands end with ; or \g.<br>Your MariaDB connection id is 11<br>Server version: 5.5.56-MariaDB MariaDB Server</p>
+<p>Copyright (c) 2000, 2017, Oracle, MariaDB Corporation Ab and others.</p>
+<p>Type ‘help;’ or ‘\h’ for help. Type ‘\c’ to clear the current input statement.</p>
+<p>MariaDB [(none)]&gt; show variables like “%character%”;show variables like “%collation%”;<br>+————————–+—————————-+<br>| Variable_name            | Value                      |<br>+————————–+—————————-+<br>| character_set_client     | utf8                       |<br>| character_set_connection | utf8                       |<br>| character_set_database   | latin1                     |<br>| character_set_filesystem | binary                     |<br>| character_set_results    | utf8                       |<br>| character_set_server     | latin1                     |<br>| character_set_system     | utf8                       |<br>| character_sets_dir       | /usr/share/mysql/charsets/ |<br>+————————–+—————————-+<br>8 rows in set (0.00 sec)</p>
+<p>+———————-+——————-+<br>| Variable_name        | Value             |<br>+———————-+——————-+<br>| collation_connection | utf8_general_ci   |<br>| collation_database   | latin1_swedish_ci |<br>| collation_server     | latin1_swedish_ci |<br>+———————-+——————-+</p>
+<p>接下来配置MariaDB的字符集，设置成utf8:<br>-&gt; 首先是配置文件/etc/my.cnf，在[mysqld]标签下添加<br>init_connect=’SET collation_connection = utf8_unicode_ci’<br>init_connect=’SET NAMES utf8’<br>character-set-server=utf8<br>collation-server=utf8_unicode_ci<br>skip-character-set-client-handshake</p>
+<p>-&gt; 接着配置文件/etc/my.cnf.d/client.cnf，在[client]中添加<br>default-character-set=utf8</p>
+<p>-&gt; 然后配置文件/etc/my.cnf.d/mysql-clients.cnf，在[mysql]中添加<br>default-character-set=utf8</p>
+<p>最后是重启MariaDB，并登陆MariaDB查看字符集<br>[root@PowerDNS ~]# systemctl restart mariadb.service</p>
+<p>再次登录MariaDB，查看字符集，发现已是utf8了<br>[root@PowerDNS ~]# mysql -p123456<br>Welcome to the MariaDB monitor.  Commands end with ; or \g.<br>Your MariaDB connection id is 2<br>Server version: 5.5.56-MariaDB MariaDB Server</p>
+<p>Copyright (c) 2000, 2017, Oracle, MariaDB Corporation Ab and others.</p>
+<p>Type ‘help;’ or ‘\h’ for help. Type ‘\c’ to clear the current input statement.</p>
+<p>MariaDB [(none)]&gt; show variables like “%character%”;show variables like “%collation%”;<br>+————————–+—————————-+<br>| Variable_name            | Value                      |<br>+————————–+—————————-+<br>| character_set_client     | utf8                       |<br>| character_set_connection | utf8                       |<br>| character_set_database   | utf8                       |<br>| character_set_filesystem | binary                     |<br>| character_set_results    | utf8                       |<br>| character_set_server     | utf8                       |<br>| character_set_system     | utf8                       |<br>| character_sets_dir       | /usr/share/mysql/charsets/ |<br>+————————–+—————————-+<br>8 rows in set (0.00 sec)</p>
+<p>+———————-+—————–+<br>| Variable_name        | Value           |<br>+———————-+—————–+<br>| collation_connection | utf8_unicode_ci |<br>| collation_database   | utf8_unicode_ci |<br>| collation_server     | utf8_unicode_ci |<br>+———————-+—————–+</p>
+<p><strong>4）接着继续安装PowerDNS</strong></p>
+<p>[root@PowerDNS yum.repos.d]# yum install -y pdns pdns-backend-mysql</p>
+<p>PowerDNS的配置文件位于/etc/pdns/pdns.conf<br>[root@PowerDNS ~]# ll /etc/pdns/pdns.conf<br>-rw——-. 1 root root 14007 Feb  2 00:33 /etc/pdns/pdns.conf</p>
+<p><strong>5）为PowerDNS服务配置一个MariaDB数据库。</strong></p>
+<p>[root@PowerDNS ~]# mysql -p123456<br>Welcome to the MariaDB monitor.  Commands end with ; or \g.<br>Your MariaDB connection id is 3<br>Server version: 5.5.56-MariaDB MariaDB Server</p>
+<p>Copyright (c) 2000, 2017, Oracle, MariaDB Corporation Ab and others.</p>
+<p>Type ‘help;’ or ‘\h’ for help. Type ‘\c’ to clear the current input statement.</p>
+<p>MariaDB [(none)]&gt; CREATE DATABASE powerdns;<br>MariaDB [(none)]&gt; GRANT ALL ON powerdns.* TO ‘powerdns’@’localhost’ IDENTIFIED BY ‘powerdns’;<br>MariaDB [(none)]&gt; FLUSH PRIVILEGES;</p>
+<p>继续创建PowerDNS要使用的数据库表。像堆积木一样执行以下这些sql语句（即复制下面的语句直接粘贴到MariaDB中一起执行）<br>use powerdns;</p>
+<p>CREATE TABLE domains (<br>  id                    INT AUTO_INCREMENT,<br>  name                  VARCHAR(255) NOT NULL,<br>  master                VARCHAR(128) DEFAULT NULL,<br>  last_check            INT DEFAULT NULL,<br>  type                  VARCHAR(6) NOT NULL,<br>  notified_serial       INT DEFAULT NULL,<br>  account               VARCHAR(40) DEFAULT NULL,<br>  PRIMARY KEY (id)<br>) Engine=InnoDB;</p>
+<p>CREATE UNIQUE INDEX name_index ON domains(name);</p>
+<p>CREATE TABLE records (<br>  id                    BIGINT AUTO_INCREMENT,<br>  domain_id             INT DEFAULT NULL,<br>  name                  VARCHAR(255) DEFAULT NULL,<br>  type                  VARCHAR(10) DEFAULT NULL,<br>  content               VARCHAR(64000) DEFAULT NULL,<br>  ttl                   INT DEFAULT NULL,<br>  prio                  INT DEFAULT NULL,<br>  change_date           INT DEFAULT NULL,<br>  disabled              TINYINT(1) DEFAULT 0,<br>  ordername             VARCHAR(255) BINARY DEFAULT NULL,<br>  auth                  TINYINT(1) DEFAULT 1,<br>  PRIMARY KEY (id)<br>) Engine=InnoDB;</p>
+<p>CREATE INDEX nametype_index ON records(name,type);<br>CREATE INDEX domain_id ON records(domain_id);<br>CREATE INDEX recordorder ON records (domain_id, ordername);</p>
+<p>CREATE TABLE supermasters (<br>  ip                    VARCHAR(64) NOT NULL,<br>  nameserver            VARCHAR(255) NOT NULL,<br>  account               VARCHAR(40) NOT NULL,<br>  PRIMARY KEY (ip, nameserver)<br>) Engine=InnoDB;</p>
+<p>CREATE TABLE comments (<br>  id                    INT AUTO_INCREMENT,<br>  domain_id             INT NOT NULL,<br>  name                  VARCHAR(255) NOT NULL,<br>  type                  VARCHAR(10) NOT NULL,<br>  modified_at           INT NOT NULL,<br>  account               VARCHAR(40) NOT NULL,<br>  comment               VARCHAR(64000) NOT NULL,<br>  PRIMARY KEY (id)<br>) Engine=InnoDB;</p>
+<p>CREATE INDEX comments_domain_id_idx ON comments (domain_id);<br>CREATE INDEX comments_name_type_idx ON comments (name, type);<br>CREATE INDEX comments_order_idx ON comments (domain_id, modified_at);</p>
+<p>CREATE TABLE domainmetadata (<br>  id                    INT AUTO_INCREMENT,<br>  domain_id             INT NOT NULL,<br>  kind                  VARCHAR(32),<br>  content               TEXT,<br>  PRIMARY KEY (id)<br>) Engine=InnoDB;</p>
+<p>CREATE INDEX domainmetadata_idx ON domainmetadata (domain_id, kind);</p>
+<p>CREATE TABLE cryptokeys (<br>  id                    INT AUTO_INCREMENT,<br>  domain_id             INT NOT NULL,<br>  flags                 INT NOT NULL,<br>  active                BOOL,<br>  content               TEXT,<br>  PRIMARY KEY(id)<br>) Engine=InnoDB;</p>
+<p>CREATE INDEX domainidindex ON cryptokeys(domain_id);</p>
+<p>CREATE TABLE tsigkeys (<br>  id                    INT AUTO_INCREMENT,<br>  name                  VARCHAR(255),<br>  algorithm             VARCHAR(50),<br>  secret                VARCHAR(255),<br>  PRIMARY KEY (id)<br>) Engine=InnoDB;</p>
+<p>CREATE UNIQUE INDEX namealgoindex ON tsigkeys(name, algorithm);</p>
+<p>flush privileges;</p>
+<p>执行完之后，检查下：<br>MariaDB [powerdns]&gt; show databases;<br>+——————–+<br>| Database           |<br>+——————–+<br>| information_schema |<br>| mysql              |<br>| performance_schema |<br>| powerdns           |<br>+——————–+<br>4 rows in set (0.00 sec)</p>
+<p>MariaDB [powerdns]&gt; use powerdns;<br>Database changed<br>MariaDB [powerdns]&gt; show tables;<br>+——————–+<br>| Tables_in_powerdns |<br>+——————–+<br>| comments           |<br>| cryptokeys         |<br>| domainmetadata     |<br>| domains            |<br>| records            |<br>| supermasters       |<br>| tsigkeys           |<br>+——————–+</p>
+<p>检查下使用powerdns是否正常登录<br>[root@PowerDNS ~]# mysql -upowerdns -hlocalhost -ppowerdns;<br>Welcome to the MariaDB monitor.  Commands end with ; or \g.<br>Your MariaDB connection id is 5<br>Server version: 5.5.56-MariaDB MariaDB Server</p>
+<p>Copyright (c) 2000, 2017, Oracle, MariaDB Corporation Ab and others.</p>
+<p>Type ‘help;’ or ‘\h’ for help. Type ‘\c’ to clear the current input statement.</p>
+<p>MariaDB [(none)]&gt; show databases;<br>+——————–+<br>| Database           |<br>+——————–+<br>| information_schema |<br>| powerdns           |<br>+——————–+<br>2 rows in set (0.00 sec)</p>
+<p>MariaDB [(none)]&gt; use powerdns;<br>Reading table information for completion of table and column names<br>You can turn off this feature to get a quicker startup with -A</p>
+<p>Database changed<br>MariaDB [powerdns]&gt; show tables;<br>+——————–+<br>| Tables_in_powerdns |<br>+——————–+<br>| comments           |<br>| cryptokeys         |<br>| domainmetadata     |<br>| domains            |<br>| records            |<br>| supermasters       |<br>| tsigkeys           |<br>+——————–+<br>7 rows in set (0.00 sec)</p>
+<p>MariaDB [powerdns]&gt;</p>
+<p><strong>6）继续配置PowerDNS，以MariaDB作为后台。</strong></p>
+<p>[root@PowerDNS ~]# cp /etc/pdns/pdns.conf /etc/pdns/pdns.conf.bak<br>[root@PowerDNS ~]# vim /etc/pdns/pdns.conf<br>#查找类似：#launch= ；添加下面的内容：<br>launch=gmysql<br>gmysql-host=localhost<br>gmysql-port=3306<br>gmysql-dbname=powerdns<br>gmysql-user=powerdns<br>gmysql-password=powerdns</p>
+<p>将启动并添加PowerDNS到系统开机启动列表：<br>[root@PowerDNS ~]# systemctl enable pdns.service<br>[root@PowerDNS ~]# systemctl start pdns.service<br>[root@PowerDNS ~]# systemctl status pdns.service</p>
+<p>[root@PowerDNS ~]# ps -ef|grep pdns<br>pdns     20036     1  0 16:54 ?        00:00:00 /usr/sbin/pdns_server –daemon<br>root     20056 18838  0 16:56 pts/1    00:00:00 grep –color=auto pdns<br>[root@PowerDNS ~]# lsof -i:53<br>COMMAND     PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME<br>pdns_serv 20036 pdns    5u  IPv4  41118      0t0  UDP *:domain<br>pdns_serv 20036 pdns    6u  IPv4  41119      0t0  TCP *:domain (LISTEN)</p>
+<p>到这一步，PowerDNS服务器已经起起并运行了</p>
+<p><strong>二、安装PowerAdmin来管理PowerDNS</strong></p>
+<p><strong>7）PowerAdmin，一个界面友好的PowerDNS服务器的 Web 管理器。由于它是用PHP写的，我们将需要安装PHP和一台网络服务器（Apache）：</strong></p>
+<p>[root@PowerDNS html]# yum -y install httpd php php-devel php-gd php-mcrypt php-imap php-ldap php-mysql php-odbc php-pear php-xml php-xmlrpc php-mbstring php-mcrypt php-mhash gettext</p>
+<p>安装完成后，需要启动并设置Apache开机启动：<br>[root@PowerDNS ~]# systemctl enable httpd.service<br>[root@PowerDNS ~]# systemctl start httpd.service<br>[root@PowerDNS ~]# systemctl status httpd.service<br>[root@PowerDNS ~]# lsof -i:80</p>
+<p>由于已经满足PowerAdmin的所有系统要求，可以继续下载软件包，放到Apache默认的网页目录位于/var/www/html/<br>[root@PowerDNS ~]# cd /var/www/html/<br>[root@PowerDNS html]#  wget <a href="http://downloads.sourceforge.net/project/poweradmin/poweradmin-2.1.7.tgz" target="_blank" rel="noopener">http://downloads.sourceforge.net/project/poweradmin/poweradmin-2.1.7.tgz</a><br>[root@PowerDNS html]# tar -zvxf poweradmin-2.1.7.tgz<br>[root@PowerDNS html]# ls<br>poweradmin-2.1.7  poweradmin-2.1.7.tgz</p>
+<p>接着启动PowerAdmin的网页安装器了，只需打开（192.168.10.239为本机ip）：<br><a href="http://192.168.10.239/poweradmin-2.1.7/install/" target="_blank" rel="noopener">http://192.168.10.239/poweradmin-2.1.7/install/</a></p>
+<p>下面的页面会要求你为PowerAdmin选择语言，请选择你想要使用的那一个，然后点击”进入步骤 2”按钮。</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/y0ukpf1pyp.png" alt></p>
+<p>安装器需要PowerDNS数据库：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/18loubq9vn.png" alt></p>
+<p>因为上面已经创建了一个数据库，所以可以继续进入下一步。接着会被要求提供先前配置的数据库详情，同时也需要为Poweradmin设置管理员密码：  </p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/0xd8gfstwm.png" alt></p>
+<p>输入这些信息后，进入步骤 4。你将创建为Poweradmin创建一个受限用户。这里你需要输入的字段是：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/94sykgty8w.png" alt></p>
+<p>用户名（Username）：PowerAdmin用户名。 密码（Password）：上述用户的密码。 主机管理员（Hostmaster）：当创建SOA记录而你没有指定主机管理员时，该值会被用作默认值(可以不写)。这里我写的是部署机的主机名 主域名服务器：该值在创建新的DNS区域时会被用于作为主域名服务器。 辅域名服务器：该值在创建新的DNS区域时会被用于作为辅域名服务器。</p>
+<p>在下一步中，Poweradmin会要求你在数据库表中创建一个新的受限数据库用户，它会提供你需要在MariaDB控制台输入的代码：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/jmq54wfmsv.png" alt></p>
+<p>现在打开终端并运行（以下这段命令就是复制上图步骤中的命令，进入数据库粘贴即可。）</p>
+<p>MariaDB [(none)]&gt; GRANT SELECT,INSERT,UPDATE,DELETE ON powerdns.* TO ‘poweradmin’@’localhost’ IDENTIFIED BY ‘poweradmin’;<br>MariaDB [(none)]&gt; flush privileges;</p>
+<p>测试使用上面权限登录数据库<br>[root@PowerDNS inc]# mysql -upoweradmin -hlocalhost -ppoweradmin<br>Welcome to the MariaDB monitor.  Commands end with ; or \g.<br>Your MariaDB connection id is 17<br>Server version: 5.5.56-MariaDB MariaDB Server</p>
+<p>Copyright (c) 2000, 2017, Oracle, MariaDB Corporation Ab and others.</p>
+<p>Type ‘help;’ or ‘\h’ for help. Type ‘\c’ to clear the current input statement.</p>
+<p>MariaDB [(none)]&gt; show databases;<br>+——————–+<br>| Database           |<br>+——————–+<br>| information_schema |<br>| powerdns           |<br>+——————–+<br>2 rows in set (0.00 sec)</p>
+<p>MariaDB [(none)]&gt;</p>
+<p>现在，回到浏览器中并继续下一步</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/1ux6949e8g.png" alt></p>
+<p>安装器将尝试创建配置文件到/var/www/html/poweradmin-2.1.7/inc目录下，文件名是config.inc.php。</p>
+<p>[root@PowerDNS ~]# cd /var/www/html/poweradmin-2.1.7/inc<br>[root@PowerDNS inc]# vim config.inc.php<br>[root@PowerDNS inc]# cat config.inc.php<br>&lt;?php</p>
+<p>$db_host    = ‘localhost’;<br>$db_user    = ‘poweradmin’;<br>$db_pass    = ‘poweradmin’;<br>$db_name    = ‘powerdns’;<br>$db_type    = ‘mysql’;<br>$db_layer   = ‘PDO’;</p>
+<p>$session_key    = ‘6swx#944CycA9F2GkOAM7c&amp;z6vU=ay[oGFnZZF{TC1te}7’;</p>
+<p>$iface_lang   = ‘en_EN’;</p>
+<p>$dns_hostmaster   = ‘PowerDNS-server’;<br>$dns_ns1    = ‘172.16.51.151’;<br>$dns_ns2    = ‘172.16.51.152’;</p>
+<p>现在，进入最后页面，该页面会告知你安装已经完成以及如何访问安装好的PowerAdmin：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/eepj9u3rj4.png" alt></p>
+<p><strong>然后，需要移除从PowerAdmin的根目录中移除”install”文件夹，这一点很重要。使用以下命令：</strong></p>
+<p>[root@PowerDNS ~]# ll /var/www/html/poweradmin-2.1.7/install/<br>[root@PowerDNS ~]# rm -rf /var/www/html/poweradmin-2.1.7/install/</p>
+<p>在此之后，你可以通过以下方式访问PowerAdmin，访问地址<a href="http://192.168.10.239/poweradmin-2.1.7/" target="_blank" rel="noopener">http://192.168.10.239/poweradmin-2.1.7/</a></p>
+<p>如下图，使用admin/poweradmin@123的用户名和密码（上面设置的密码）进行登录</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/ycfwnuxxve.png" alt></p>
+<p>在登录后，你应该会看到PowerAdmin的主页：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/9t3432pb9l.png" alt></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/14/e8-ae-a1-e7-ae-97-e6-9c-ba-e7-9a-84-e5-90-af-e5-8a-a8-e6-b5-81-e7-a8-8b/" rel="next" title="计算机的启动流程">
+                  <i class="fa fa-chevron-left"></i> 计算机的启动流程
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/14/wordpress-e5-a4-87-e4-bb-bd-e5-88-b0-e7-99-be-e5-ba-a6-e4-ba-91-e7-9b-98-trashed/" rel="prev" title="wordpress备份到百度云盘">
+                  wordpress备份到百度云盘 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
