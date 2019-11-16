@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="nginx指令中的优化（配置文件）nginx进程数，建议按照cpu数目来指定，一般为它的倍数。worker_processes 8;为每个进程分配cpu，上例中将8个进程分配到8个cpu，当然可以写多个，或者将一个进程分配到多个cpu。worker_cpu_affinity 00000001 00000010 00000100 00001000 00010000 00100000 01000000">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx 之八：nginx优化 突破十万并发">
+<meta property="og:url" content="http://yoursite.com/2019/11/16/nginx-e4-b9-8b-e5-85-ab-ef-bc-9anginx-e4-bc-98-e5-8c-96-e7-aa-81-e7-a0-b4-e5-8d-81-e4-b8-87-e5-b9-b6-e5-8f-91/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="nginx指令中的优化（配置文件）nginx进程数，建议按照cpu数目来指定，一般为它的倍数。worker_processes 8;为每个进程分配cpu，上例中将8个进程分配到8个cpu，当然可以写多个，或者将一个进程分配到多个cpu。worker_cpu_affinity 00000001 00000010 00000100 00001000 00010000 00100000 01000000">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-11-16T07:42:20.270Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx 之八：nginx优化 突破十万并发">
+<meta name="twitter:description" content="nginx指令中的优化（配置文件）nginx进程数，建议按照cpu数目来指定，一般为它的倍数。worker_processes 8;为每个进程分配cpu，上例中将8个进程分配到8个cpu，当然可以写多个，或者将一个进程分配到多个cpu。worker_cpu_affinity 00000001 00000010 00000100 00001000 00010000 00100000 01000000">
+  <link rel="canonical" href="http://yoursite.com/2019/11/16/nginx-e4-b9-8b-e5-85-ab-ef-bc-9anginx-e4-bc-98-e5-8c-96-e7-aa-81-e7-a0-b4-e5-8d-81-e4-b8-87-e5-b9-b6-e5-8f-91/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Nginx 之八：nginx优化 突破十万并发 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/16/nginx-e4-b9-8b-e5-85-ab-ef-bc-9anginx-e4-bc-98-e5-8c-96-e7-aa-81-e7-a0-b4-e5-8d-81-e4-b8-87-e5-b9-b6-e5-8f-91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            Nginx 之八：nginx优化 突破十万并发
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-11-16 13:45:28 / Modified: 15:42:20" itemprop="dateCreated datePublished" datetime="2019-11-16T13:45:28+08:00">2019-11-16</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LNMP/" itemprop="url" rel="index">
+                    <span itemprop="name">LNMP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="nginx指令中的优化（配置文件）"><a href="#nginx指令中的优化（配置文件）" class="headerlink" title="nginx指令中的优化（配置文件）"></a>nginx指令中的优化（配置文件）</h3><p>nginx进程数，建议按照cpu数目来指定，一般为它的倍数。</p><pre><code>worker_processes 8;</code></pre><p>为每个进程分配cpu，上例中将8个进程分配到8个cpu，当然可以写多个，或者将一个进程分配到多个cpu。</p><pre><code>worker_cpu_affinity 00000001 00000010 00000100 00001000 00010000 00100000 01000000 10000000;</code></pre><a id="more"></a>
+
+<p>这个指令是指当一个nginx进程打开的最多文件描述符数目，理论值应该是最多打开文件数（ulimit -n）与nginx进程数相除，但是nginx分配请求并不是那么均匀，所以最好与ulimit -n的值保持一致。</p>
+<pre><code>worker_rlimit_nofile 102400;</code></pre><p>使用epoll的I/O模型，这个不用说了吧。</p>
+<pre><code>use epoll;</code></pre><p>每个进程允许的最多连接数，理论上每台nginx服务器的最大连接数为worker_processes*worker_connections。</p>
+<pre><code>worker_connections 102400;</code></pre><p>keepalive超时时间。</p>
+<pre><code>keepalive_timeout 60;</code></pre><p>客户端请求头部的缓冲区大小，这个可以根据你的系统分页大小来设置，一般一个请求的头部大小不会超过1k，不过由于一般系统分页都要大于1k，所以这里设置为分页大小。分页大小可以用命令getconf PAGESIZE取得。</p>
+<pre><code>client_header_buffer_size 4k;</code></pre><p>这个将为打开文件指定缓存，默认是没有启用的，max指定缓存数量，建议和打开文件数一致，inactive是指经过多长时间文件没被请求后删除缓存。</p>
+<pre><code>open_file_cache max=102400 inactive=20s;</code></pre><p>这个是指多长时间检查一次缓存的有效信息。</p>
+<pre><code>open_file_cache_valid 30s;</code></pre><p>open_file_cache指令中的inactive参数时间内文件的最少使用次数，如果超过这个数字，文件描述符一直是在缓存中打开的，如上例，如果有一个文件在inactive时间内一次没被使用，它将被移除。</p>
+<pre><code>open_file_cache_min_uses 1;</code></pre><h3 id="内核参数的优化"><a href="#内核参数的优化" class="headerlink" title="内核参数的优化"></a>内核参数的优化</h3><p>timewait的数量，默认是180000。</p>
+<pre><code>net.ipv4.tcp_max_tw_buckets = 6000</code></pre><p>允许系统打开的端口范围。</p>
+<pre><code>net.ipv4.ip_local_port_range = 1024    65000</code></pre><p>启用timewait快速回收。</p>
+<pre><code>net.ipv4.tcp_tw_recycle = 1</code></pre><p>开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接。</p>
+<pre><code>net.ipv4.tcp_tw_reuse = 1</code></pre><p>开启SYN Cookies，当出现SYN等待队列溢出时，启用cookies来处理。</p>
+<pre><code>net.ipv4.tcp_syncookies = 1</code></pre><p>web应用中listen函数的backlog默认会给我们内核参数的net.core.somaxconn限制到128，而nginx定义的NGX_LISTEN_BACKLOG默认为511，所以有必要调整这个值。</p>
+<pre><code>net.core.somaxconn = 262144</code></pre><p>每个网络接口接收数据包的速率比内核处理这些包的速率快时，允许送到队列的数据包的最大数目。</p>
+<pre><code>net.core.netdev_max_backlog = 262144</code></pre><p>系统中最多有多少个TCP套接字不被关联到任何一个用户文件句柄上。如果超过这个数字，孤儿连接将即刻被复位并打印出警告信息。这个限制仅仅是为了防止简单的DoS攻击，不能过分依靠它或者人为地减小这个值，更应该增加这个值(如果增加了内存之后)。</p>
+<pre><code>net.ipv4.tcp_max_orphans = 262144</code></pre><p>记录的那些尚未收到客户端确认信息的连接请求的最大值。对于有128M内存的系统而言，缺省值是1024，小内存的系统则是128。</p>
+<pre><code>net.ipv4.tcp_max_syn_backlog = 262144</code></pre><p>时间戳可以避免序列号的卷绕。一个1Gbps的链路肯定会遇到以前用过的序列号。时间戳能够让内核接受这种“异常”的数据包。这里需要将其关掉。</p>
+<pre><code>net.ipv4.tcp_timestamps = 0</code></pre><p>为了打开对端的连接，内核需要发送一个SYN并附带一个回应前面一个SYN的ACK。也就是所谓三次握手中的第二次握手。这个设置决定了内核放弃连接之前发送SYN+ACK包的数量。</p>
+<pre><code>net.ipv4.tcp_synack_retries = 1</code></pre><p>在内核放弃建立连接之前发送SYN包的数量。</p>
+<pre><code>net.ipv4.tcp_syn_retries = 1</code></pre><p>如果套接字由本端要求关闭，这个参数决定了它保持在FIN-WAIT-2状态的时间。对端可以出错并永远不关闭连接，甚至意外当机。缺省值是60秒。2.2 内核的通常值是180秒，你可以按这个设置，但要记住的是，即使你的机器是一个轻载的WEB服务器，也有因为大量的死套接字而内存溢出的风险，FIN- WAIT-2的危险性比FIN-WAIT-1要小，因为它最多只能吃掉1.5K内存，但是它们的生存期长些。</p>
+<pre><code>net.ipv4.tcp_fin_timeout = 1</code></pre><p>当keepalive起用的时候，TCP发送keepalive消息的频度。缺省是2小时。</p>
+<pre><code>net.ipv4.tcp_keepalive_time = 30</code></pre><h3 id="一个完整的内核优化配置"><a href="#一个完整的内核优化配置" class="headerlink" title="一个完整的内核优化配置"></a>一个完整的内核优化配置</h3><pre><code>net.ipv4.ip_forward = 0
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.conf.default.accept_source_route = 0
+kernel.sysrq = 0
+kernel.core_uses_pid = 1
+net.ipv4.tcp_syncookies = 1
+kernel.msgmnb = 65536
+kernel.msgmax = 65536
+kernel.shmmax = 68719476736
+kernel.shmall = 4294967296
+net.ipv4.tcp_max_tw_buckets = 6000
+net.ipv4.tcp_sack = 1
+net.ipv4.tcp_window_scaling = 1
+net.ipv4.tcp_rmem = 4096        87380   4194304
+net.ipv4.tcp_wmem = 4096        16384   4194304
+net.core.wmem_default = 8388608
+net.core.rmem_default = 8388608
+net.core.rmem_max = 16777216
+net.core.wmem_max = 16777216
+net.core.netdev_max_backlog = 262144
+net.core.somaxconn = 262144
+net.ipv4.tcp_max_orphans = 3276800
+net.ipv4.tcp_max_syn_backlog = 262144
+net.ipv4.tcp_timestamps = 0
+net.ipv4.tcp_synack_retries = 1
+net.ipv4.tcp_syn_retries = 1
+net.ipv4.tcp_tw_recycle = 1
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_mem = 94500000 915000000 927000000
+net.ipv4.tcp_fin_timeout = 1
+net.ipv4.tcp_keepalive_time = 30
+net.ipv4.ip_local_port_range = 1024    65000</code></pre><h3 id="一个简单的nginx优化配置文件"><a href="#一个简单的nginx优化配置文件" class="headerlink" title="一个简单的nginx优化配置文件"></a>一个简单的nginx优化配置文件</h3><pre><code>user  www www;
+worker_processes 8;
+worker_cpu_affinity 00000001 00000010 00000100 00001000 00010000 00100000 01000000;
+error_log  /www/log/nginx_error.log  crit;
+pid        /usr/local/nginx/nginx.pid;
+worker_rlimit_nofile 204800;
+
+events
+{
+  use epoll;
+  worker_connections 204800;
+}
+
+http
+{
+  include       mime.types;
+  default_type  application/octet-stream;
+
+  charset  utf-8;
+
+  server_names_hash_bucket_size 128;
+  client_header_buffer_size 2k;
+  large_client_header_buffers 4 4k;
+  client_max_body_size 8m;
+
+  sendfile on;
+  tcp_nopush     on;
+
+  keepalive_timeout 60;
+
+  fastcgi_cache_path /usr/local/nginx/fastcgi_cache levels=1:2
+                keys_zone=TEST:10m
+                inactive=5m;
+  fastcgi_connect_timeout 300;
+  fastcgi_send_timeout 300;
+  fastcgi_read_timeout 300;
+  fastcgi_buffer_size 16k;
+  fastcgi_buffers 16 16k;
+  fastcgi_busy_buffers_size 16k;
+  fastcgi_temp_file_write_size 16k;
+  fastcgi_cache TEST;
+  fastcgi_cache_valid 200 302 1h;
+  fastcgi_cache_valid 301 1d;
+  fastcgi_cache_valid any 1m;
+  fastcgi_cache_min_uses 1;
+  fastcgi_cache_use_stale error timeout invalid_header http_500;
+
+  open_file_cache max=204800 inactive=20s;
+  open_file_cache_min_uses 1;
+  open_file_cache_valid 30s;
+
+
+
+  tcp_nodelay on;
+
+  gzip on;
+  gzip_min_length  1k;
+  gzip_buffers     4 16k;
+  gzip_http_version 1.0;
+  gzip_comp_level 2;
+  gzip_types       text/plain application/x-javascript text/css application/xml;
+  gzip_vary on;
+
+
+  server
+  {
+    listen       8080;
+    server_name  ad.test.com;
+    index index.php index.htm;
+    root  /www/html/;
+
+    location /status
+    {
+        stub_status on;
+    }
+
+    location ~ .*\.(php|php5)?$
+    {
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        include fcgi.conf;
+    }
+
+    location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|js|css)$
+    {
+      expires      30d;
+    }
+
+    log_format  access  &apos;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &apos;
+              &apos;$status $body_bytes_sent &quot;$http_referer&quot; &apos;
+              &apos;&quot;$http_user_agent&quot; $http_x_forwarded_for&apos;;
+    access_log  /www/log/access.log  access;
+      }
+}</code></pre><h3 id="关于FastCGI的几个指令"><a href="#关于FastCGI的几个指令" class="headerlink" title="关于FastCGI的几个指令"></a>关于FastCGI的几个指令</h3><p>这个指令为FastCGI缓存指定一个路径，目录结构等级，关键字区域存储时间和非活动删除时间。</p>
+<pre><code>fastcgi_cache_path /usr/local/nginx/fastcgi_cache levels=1:2 keys_zone=TEST:10m inactive=5m;</code></pre><p>指定连接到后端FastCGI的超时时间。</p>
+<pre><code>fastcgi_connect_timeout 300;</code></pre><p>向FastCGI传送请求的超时时间，这个值是指已经完成两次握手后向FastCGI传送请求的超时时间。</p>
+<pre><code>fastcgi_send_timeout 300;</code></pre><p>接收FastCGI应答的超时时间，这个值是指已经完成两次握手后接收FastCGI应答的超时时间。</p>
+<pre><code>fastcgi_read_timeout 300;</code></pre><p>指定读取FastCGI应答第一部分需要用多大的缓冲区，这里可以设置为fastcgi_buffers指令指定的缓冲区大小，上面的指令指定它将使用1个16k的缓冲区去读取应答的第一部分，即应答头，其实这个应答头一般情况下都很小（不会超过1k），但是你如果在fastcgi_buffers指令中指定了缓冲区的大小，那么它也会分配一个fastcgi_buffers指定的缓冲区大小去缓存。</p>
+<pre><code>fastcgi_buffer_size 16k;</code></pre><p>指定本地需要用多少和多大的缓冲区来缓冲FastCGI的应答，如上所示，如果一个php脚本所产生的页面大小为256k，则会为其分配16个16k的缓冲区来缓存，如果大于256k，增大于256k的部分会缓存到fastcgi_temp指定的路径中，当然这对服务器负载来说是不明智的方案，因为内存中处理数据速度要快于硬盘，通常这个值的设置应该选择一个你的站点中的php脚本所产生的页面大小的中间值，比如你的站点大部分脚本所产生的页面大小为256k就可以把这个值设置为16 16k，或者4 64k 或者64 4k，但很显然，后两种并不是好的设置方法，因为如果产生的页面只有32k，如果用4 64k它会分配1个64k的缓冲区去缓存，而如果使用64 4k它会分配8个4k的缓冲区去缓存，而如果使用16 16k则它会分配2个16k去缓存页面，这样看起来似乎更加合理。</p>
+<pre><code>fastcgi_buffers 16 16k;</code></pre><p>这个指令我也不知道是做什么用，只知道默认值是fastcgi_buffers的两倍。</p>
+<pre><code>fastcgi_busy_buffers_size 32k;</code></pre><p>在写入fastcgi_temp_path时将用多大的数据块，默认值是fastcgi_buffers的两倍。</p>
+<pre><code>fastcgi_temp_file_write_size 32k;</code></pre><p>开启FastCGI缓存并且为其制定一个名称。个人感觉开启缓存非常有用，可以有效降低CPU负载，并且防止502错误。但是这个缓存会引起很多问题，因为它缓存的是动态页面。具体使用还需根据自己的需求。</p>
+<pre><code>fastcgi_cache TEST</code></pre><p>为指定的应答代码指定缓存时间，如上例中将200，302应答缓存一小时，301应答缓存1天，其他为1分钟。</p>
+<pre><code>fastcgi_cache_valid 200 302 1h;
+fastcgi_cache_valid 301 1d;
+fastcgi_cache_valid any 1m;</code></pre><p>缓存在fastcgi_cache_path指令inactive参数值时间内的最少使用次数，如上例，如果在5分钟内某文件1次也没有被使用，那么这个文件将被移除。</p>
+<pre><code>fastcgi_cache_min_uses 1;</code></pre><p>不知道这个参数的作用，猜想应该是让nginx知道哪些类型的缓存是没用的。 以上为nginx中FastCGI相关参数，另外，FastCGI自身也有一些配置需要进行优化，如果你使用php-fpm来管理FastCGI，可以修改配置文件中的以下值：</p>
+<pre><code>fastcgi_cache_use_stale error timeout invalid_header http_500;
+同时处理的并发请求数，即它将开启最多60个子线程来处理并发连接。
+60
+最多打开文件数。
+102400
+每个进程在重置之前能够执行的最多请求数。
+204800</code></pre>
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/16/nginx-e4-b9-8b-e4-b8-83-ef-bc-9a-nginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e7-9a-84-e6-ad-a3-e5-90-91-e5-8f-8a-e5-8f-8d-e5-90-91-e4-bb-a3-e7-90-86-e5-8a-9f-e8-83-bd/" rel="next" title="Nginx 之七： Nginx服务器的正向及反向代理功能">
+                  <i class="fa fa-chevron-left"></i> Nginx 之七： Nginx服务器的正向及反向代理功能
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/16/tcpdump-e5-91-bd-e4-bb-a4-e4-bd-bf-e7-94-a8-e8-af-a6-e8-a7-a3/" rel="prev" title="tcpdump命令使用详解">
+                  tcpdump命令使用详解 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#nginx指令中的优化（配置文件）"><span class="nav-number">1.</span> <span class="nav-text">nginx指令中的优化（配置文件）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内核参数的优化"><span class="nav-number">2.</span> <span class="nav-text">内核参数的优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一个完整的内核优化配置"><span class="nav-number">3.</span> <span class="nav-text">一个完整的内核优化配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一个简单的nginx优化配置文件"><span class="nav-number">4.</span> <span class="nav-text">一个简单的nginx优化配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于FastCGI的几个指令"><span class="nav-number">5.</span> <span class="nav-text">关于FastCGI的几个指令</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="在Nginx服务器配置文件中可以通过配置Gzip的使用，可以配置在http块，server 块或者location块中设置，Nginx服务器可以通过ngx_http_gzip_module模块、ngx_http_static_module 模块功能ngx_http_gunzip_module模块对这些指令进行分析和处理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx 之四： Nginx服务器的压缩功能和缓存功能">
+<meta property="og:url" content="http://yoursite.com/2019/11/16/nginx-e4-b9-8b-e5-9b-9b-ef-bc-9a-nginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e7-9a-84-e5-8e-8b-e7-bc-a9-e5-8a-9f-e8-83-bd-e5-92-8c-e7-bc-93-e5-ad-98-e5-8a-9f-e8-83-bd/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="在Nginx服务器配置文件中可以通过配置Gzip的使用，可以配置在http块，server 块或者location块中设置，Nginx服务器可以通过ngx_http_gzip_module模块、ngx_http_static_module 模块功能ngx_http_gunzip_module模块对这些指令进行分析和处理。">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-11-16T07:42:20.270Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx 之四： Nginx服务器的压缩功能和缓存功能">
+<meta name="twitter:description" content="在Nginx服务器配置文件中可以通过配置Gzip的使用，可以配置在http块，server 块或者location块中设置，Nginx服务器可以通过ngx_http_gzip_module模块、ngx_http_static_module 模块功能ngx_http_gunzip_module模块对这些指令进行分析和处理。">
+  <link rel="canonical" href="http://yoursite.com/2019/11/16/nginx-e4-b9-8b-e5-9b-9b-ef-bc-9a-nginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e7-9a-84-e5-8e-8b-e7-bc-a9-e5-8a-9f-e8-83-bd-e5-92-8c-e7-bc-93-e5-ad-98-e5-8a-9f-e8-83-bd/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Nginx 之四： Nginx服务器的压缩功能和缓存功能 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/16/nginx-e4-b9-8b-e5-9b-9b-ef-bc-9a-nginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e7-9a-84-e5-8e-8b-e7-bc-a9-e5-8a-9f-e8-83-bd-e5-92-8c-e7-bc-93-e5-ad-98-e5-8a-9f-e8-83-bd/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            Nginx 之四： Nginx服务器的压缩功能和缓存功能
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-11-16 12:05:14 / Modified: 15:42:20" itemprop="dateCreated datePublished" datetime="2019-11-16T12:05:14+08:00">2019-11-16</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LNMP/" itemprop="url" rel="index">
+                    <span itemprop="name">LNMP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>　　在Nginx服务器配置文件中可以通过配置Gzip的使用，可以配置在http块，server 块或者location块中设置，Nginx服务器可以通过ngx_http_gzip_module模块、ngx_http_static_module 模块功能ngx_http_gunzip_module模块对这些指令进行分析和处理。</p><a id="more"></a>
+<p><strong>一：ngx_http_gzip_module模块处理的指令：</strong></p>
+<p>1、gzip：</p>
+<p>用于打开或者关闭gzip压缩的功能，用法如下</p>
+<pre><code>gzip on  | off ; #默认为off</code></pre><p>2、gzip_buffers：</p>
+<p>用于指定gzip功能压缩文件时使用的缓存空间的大小，语法结构为：</p>
+<pre><code>gzip_buffers numner | size ；
+number #指定Nginx服务器需要向服务器申请的缓存空间的个数
+size #指定每个缓存空间的大小，从Nginx 0.7.8开始，默认number * siez的的值为128，其中size取系统中内存页一页的大小，为4k或者8k等
+
+gzip_buffers 32 4k | 12 8k；</code></pre><p>3、gzip_comp_level  </p>
+<p>　指定gzip压缩级别，级别为1-9，默认为1，级别越高压缩率越高即压缩后的文件越小，但是越占用CPU，压缩率越小压缩后的文件越大，但是节约CPU。</p>
+<pre><code>gzip_comp_level  4；  #推荐先设置为中间的值，比如4或者5</code></pre><p>4、gzip_disbale</p>
+<p>针对不同客户端发起的请求进行有选择的打开或关闭gzip命令，后面跟浏览器的名称，用法如下：</p>
+<pre><code>gzip_disable MSIE[1-6]\.   #使用正则表达式可以匹配UC字符串中MSIE 1-6 的浏览器，这三个浏览器在发起请求后Nginx将不进行数据包的压缩。</code></pre><p>5、gzip_http_verson</p>
+<p>早期的一些浏览器或者http客户端可能不支持gzip压缩，因此有客户有时候会看到乱码，那是应为客户端无法进行解压，因此可以根据不同的http协议版本进行选择性的打开或关闭gzip功能，用法如下：</p>
+<pre><code>gzip_http_version 1.0 | 1.1; #对使用htto协议1.0和1.1的请求进行压缩</code></pre><p>6、gzip_min_length</p>
+<p>设置最少压缩的数据包大小，小于此值的数据包将不被压缩，因为大量的小的数据压缩后没有明显的效果还占用了CPU的资源，因此可以设置最少多大的数据才进行压缩，用法如下：</p>
+<pre><code>gzip_min_length 1024;  #默认为20，建议设置位1KB，如果设置为0则表示压缩全部数据包</code></pre><p>7、gzip_proxine </p>
+<p>在Nginx 服务器作为反向代理的时候有效，用于设置nginx 服务器是否对后端返回的结果进行gzip压缩，用法如下：</p>
+<pre><code>gzip_proxied off | any; #off为关闭，any为压缩所有后端服务器返回的数据。</code></pre><p>8、gzip_types</p>
+<p>设置Nginx服务器可以根据响应页面的类型进行选择性的打开或关闭gzip功能，用法如下：</p>
+<pre><code>gzip_types       text/plain application/x-javascript text/css application/xml;   #一般情况下如此设置</code></pre><p>9、gzip_vary</p>
+<p>用于设置是否在使用gzip功能时发送带有”vary:Accept-Encoding” 头域的响应头部，该头域的主要功能时要告诉客户端数据已经在服务器进行了压缩，默认设置为off，用法如下：</p>
+<pre><code>gzip_vary on| off;  #默认为off
+还可以使用Nginx 配置的add_header指令强制在Nginx服务器的响应头部添加“Vary:Accept-Encoding”也可以实现相同的效果。</code></pre><p><strong>二：ngx_http_gzip_static_module 模块：</strong></p>
+<p>该模块辅助用于搜索和发送经过gzip功能压缩的数据，这些数据以*.gz作为后缀名存储在服务器上，如果客户端请求的数据之前被压缩过，并且客户端的浏览器支持压缩，将直接范湖压缩后的数据，该模块使用的是静态编码，在http响应头部包含content-length头域来指明报文的长度，用于服务器可以确定响应数据的长度的情况，而ngx_http_gzip_module使用chunked编码动态压缩，主要用于服务器无法确定响应数据长度的情况，比如较大文件的下载等情形，此时就要实时生成数据的长度，用法与ngx_http_gzip_module一样，如下：</p>
+<p>1、gzip_static </p>
+<pre><code>gzip_static off | on | always; #on为开启并检查客户端浏览器是否中吃gzip压缩功能，off为关闭，always一直发送gzip压缩文件，而不检查浏览器是否支持gzip压缩</code></pre><p>注：这是一个可选模块，如果要使用，必须在编译nginx时添加–with-http_gzip_static_module编译，与该模块有关的 指令与<strong>ngx_http_gzip_module</strong>的模块使用方法是一致的，本模块有gzip_static、gzip_http_version、gzip_proxied、gzip_disable和gzip_vary等。</p>
+<p><strong>三：ngx_http_gunzip_module 模块处理的两个指令</strong></p>
+<p>1、gunzip</p>
+<p>设置Nginx服务器对不支持gzip的客户端返回解压后的数据，如果客户的浏览器支持压缩还仍然返回压缩的后的数据，及可以同时响应支持gzip的浏览器进程压缩，有可以响应不支持gzip的浏览器。</p>
+<pre><code>gunzip on|off ；#on为打开off为关闭</code></pre><p>2、gunzip_buffers #用于设置nginx服务器解压gzip文件时候使用的缓存空间大小的，用法如下：</p>
+<pre><code>gunzip_buffers number size； #number为nginx服务器向系统向系统申请缓存空间的个数，size为每个空间的大小，单位为k，默认情况下number * size的大小为128k，其中size 的值取系统内存页一页的大小为4KB或者8KB即可，用法如下：
+gunzip_buffers 32 4k | 16 8k;  #与ngx_http_gzip_module模块下的使用方法一致。</code></pre><p>注：这是一个可选模块，如果要使用需要在nginx 编译安装的时候使用–with-http_gunzip_module 指令进行编译</p>
+<p>四：缓存功能：</p>
+<p>1.memcached缓存数据库常用数据。</p>
+<p>2.xcache缓存php编译的结果，可以在多个进程之间共享xcode结果。</p>
+<p>3.nginx的缓存是缓存opcode处理后的结果，避免客户端请求同一个页面而导致程序每次都处理一下，即再访问同一个页面，直接使用处理后的缓存即可直接返回。</p>
+<p>五：正向代理和反向代理：</p>
+<p>1.正向代理:工作在用户前端，用户请求的所有内容都经过代理服务器。</p>
+<p>2.反向代理：工作在服务器前端，只代理请求次服务器的客户端请求，被其代理的服务器叫做”代理服务器”或者”上游服务器”。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/16/nginx-e4-b9-8b-e4-b8-89-ef-bc-9anginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e6-a8-a1-e5-9d-97-e3-80-81web-e8-af-b7-e6-b1-82-e5-a4-84-e7-90-86-e6-9c-ba-e5-88-b6-e5-8f-8a-e4-ba-8b-e4-bb-b6-e9-a9-b1-e5-8a-a8/" rel="next" title="Nginx 之三：nginx服务器模块、web请求处理机制及事件驱动模型、进程功能和进程间通信">
+                  <i class="fa fa-chevron-left"></i> Nginx 之三：nginx服务器模块、web请求处理机制及事件驱动模型、进程功能和进程间通信
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/16/nginx-e4-b9-8b-e4-ba-94-ef-bc-9a-nginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e7-9a-84rewrite-e3-80-81-e5-85-a8-e5-b1-80-e5-8f-98-e9-87-8f-e3-80-81-e9-87-8d-e5-ae-9a-e5-90-91-e5-92-8c-e9-98-b2-e7-9b-97-e9-93-be/" rel="prev" title="Nginx 之五： Nginx服务器的rewrite、全局变量、重定向和防盗链相关功能">
+                  Nginx 之五： Nginx服务器的rewrite、全局变量、重定向和防盗链相关功能 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

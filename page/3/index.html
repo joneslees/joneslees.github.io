@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/31/vmware-vsphere-6-x-e5-ae-89-e8-a3-85-e6-96-87-e6-a1-a3-trashed/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -221,7 +221,7 @@
         <h1 class="post-title" itemprop="name headline">
           
             
-            <a href="/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f/" class="post-title-link" itemprop="url">用Python做窗口化滚动点名系统</a>
+            <a href="/2019/10/31/vmware-vsphere-6-x-e5-ae-89-e8-a3-85-e6-96-87-e6-a1-a3-trashed/" class="post-title-link" itemprop="url">VMware vSphere 6.x安装文档</a>
           
         </h1>
 
@@ -236,7 +236,7 @@
                 
               
 
-              <time title="Created: 2019-10-11 16:34:05" itemprop="dateCreated datePublished" datetime="2019-10-11T16:34:05+08:00">2019-10-11</time>
+              <time title="Created: 2019-10-31 13:18:31" itemprop="dateCreated datePublished" datetime="2019-10-31T13:18:31+08:00">2019-10-31</time>
             </span>
           
             
@@ -247,7 +247,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-10-13 10:52:28" itemprop="dateModified" datetime="2019-10-13T10:52:28+08:00">2019-10-13</time>
+                <time title="Modified: 2019-11-16 15:42:20" itemprop="dateModified" datetime="2019-11-16T15:42:20+08:00">2019-11-16</time>
               </span>
             
           
@@ -258,8 +258,8 @@
               <span class="post-meta-item-text">In</span>
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
+                  <a href="/categories/容器与编排/" itemprop="url" rel="index">
+                    <span itemprop="name">容器与编排</span>
                   </a>
                 </span>
 
@@ -280,11 +280,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>先上图看效果:</p><p><img src="https://images2015.cnblogs.com/blog/1176578/201706/1176578-20170621154007320-936394311.gif" alt></p><p>主要思路:</p><p>1.用Python内置模块做图形界面;</p><p>2.用时间产生随机数,作为下标更新名字;</p><p>3.有需要可以用Pyinstaller打包为.EXE格式,方便其他用户使用.</p><p>代码如下:</p><p><a href="void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p><p>from tkinter import *<br>import time</p><p>class RandomName(Frame):<br>    def __init__(self, parent=None, **kw):<br>        Frame.__init__(self, parent, kw)<br>        self.name_list = []<br>        self._start = 0.0<br>        self._elapsedtime = 0.0<br>        self._running = False<br>        self.timestr = StringVar()<br>        self.makeWidgets()</p>
+          <p><img src="http://www.pever.cn/wp-content/uploads/2019/10/vmware_vsphere.png" alt></p><h1 id="1-VMware简介"><a href="#1-VMware简介" class="headerlink" title="1. VMware简介"></a>1. VMware简介</h1><p>VMware成立于1998年，2003年存储厂商EMC以6.35亿美元收购了VMware；2015年10月，戴尔宣布以670亿美元收购EMC，VMware 2018全年收入79.2亿美元。 官网：<a href="https://www.vmware.com/cn.html" target="_blank" rel="noopener">https://www.vmware.com/cn.html</a></p><h2 id="1-1-主要产品"><a href="#1-1-主要产品" class="headerlink" title="1.1. 主要产品"></a>1.1. 主要产品</h2><p><strong>Workstation Pro</strong>：面向windows的虚拟化 <strong>Fusion for Mac</strong>：面向Mac的虚拟化 <strong>ThinApp</strong>：是一款无代理应用虚拟化解决方案 <strong>Horizon</strong>：用于管理虚拟桌面(VDI)、应用和在线服务的领先平台 <strong>Horizon Cloud</strong>：用于托管虚拟桌面和应用的灵活计算平台 <strong>NSX for Horizon</strong>：一款虚拟桌面基础架构VDI(Virtual Destop Infrastructure)网络连接解决方案 <strong>VMware Enterprise PKS</strong>：面向多去企业和服务提供商的生产级Kubernetes <strong>VMware vSphere Integrated Containers</strong>：用于传统应用和容器化应用的企业级容器基础架构 <strong>vSAN</strong>：经过闪存优化的vSphere原生存储，适用于私有云和公有云 <strong>VMware vSphere</strong>：业界领先的服务器虚拟化平台，作为基础平台，是任何云环境的理想之选 <strong>VMware vCenter Server</strong>：用于管理跨混全云的vSphere环境的集中式平台</p>
           <!--noindex-->
           
             <div class="post-button">
-              <a class="btn" href="/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f/#more" rel="contents">
+              <a class="btn" href="/2019/10/31/vmware-vsphere-6-x-e5-ae-89-e8-a3-85-e6-96-87-e6-a1-a3-trashed/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -310,7 +310,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f-1/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/wordpress-e5-a4-87-e4-bb-bd-e5-88-b0-e7-99-be-e5-ba-a6-e4-ba-91-e7-9b-98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -325,7 +325,7 @@
         <h1 class="post-title" itemprop="name headline">
           
             
-            <a href="/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f-1/" class="post-title-link" itemprop="url">用Python做窗口化滚动点名系统</a>
+            <a href="/2019/10/14/wordpress-e5-a4-87-e4-bb-bd-e5-88-b0-e7-99-be-e5-ba-a6-e4-ba-91-e7-9b-98/" class="post-title-link" itemprop="url">wordpress备份到百度云盘</a>
           
         </h1>
 
@@ -340,215 +340,7 @@
                 
               
 
-              <time title="Created: 2019-10-11 16:34:05" itemprop="dateCreated datePublished" datetime="2019-10-11T16:34:05+08:00">2019-10-11</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>先上图看效果:</p><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/1176578-20170621154007320-936394311.gif" alt></p><p>主要思路:</p><p>1.用Python内置模块做图形界面;</p><p>2.用时间产生随机数,作为下标更新名字;</p><p>3.有需要可以用Pyinstaller打包为.EXE格式,方便其他用户使用.</p><p>代码如下:</p><p><a href="void(0);"><img src="https://common.cnblogs.com/images/copycode.gif" alt="复制代码"></a></p><p>from tkinter import *<br>import time</p><p>class RandomName(Frame):<br>    def __init__(self, parent=None, **kw):<br>        Frame.__init__(self, parent, kw)<br>        self.name_list = []<br>        self._start = 0.0<br>        self._elapsedtime = 0.0<br>        self._running = False<br>        self.timestr = StringVar()<br>        self.makeWidgets()</p>
-          <!--noindex-->
-          
-            <div class="post-button">
-              <a class="btn" href="/2019/10/11/e7-94-a8python-e5-81-9a-e7-aa-97-e5-8f-a3-e5-8c-96-e6-bb-9a-e5-8a-a8-e7-82-b9-e5-90-8d-e7-b3-bb-e7-bb-9f-1/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f/" class="post-title-link" itemprop="url">修改CentOS7网卡名称为传统名称eth0格式</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              
-                
-              
-
-              <time title="Created: 2019-10-10 09:11:49" itemprop="dateCreated datePublished" datetime="2019-10-10T09:11:49+08:00">2019-10-10</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-10-13 10:52:28" itemprop="dateModified" datetime="2019-10-13T10:52:28+08:00">2019-10-13</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/苦逼之旅/" itemprop="url" rel="index">
-                    <span itemprop="name">苦逼之旅</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>起因，很多使用CentOS7以前系统的小伙伴装完CentOS7以后发现了一个问题，那就是网卡名改变为了“en016777736”，而不是以前的eth0的简易模式了，如图：</p><p><a href="https://s5.51cto.com/wyfs02/M02/9B/8E/wKioL1lkeU6B5lHzAABMryQXEEE979.png" target="_blank" rel="noopener"><img src="https://s5.51cto.com/wyfs02/M02/9B/8E/wKioL1lkeU6B5lHzAABMryQXEEE979.png" alt="wKioL1lkeU6B5lHzAABMryQXEEE979.png"></a></p><p>   这是为什么呢？开发者吃饱撑的么？当然不是。</p><p>   以往的CentOS7以前的系统网卡命名虽然简单方便，但也会带来一些问题，例如，当eth0接口对应的网卡出问题以后，更换掉新网卡后新网卡的名字就可能不是eth0了。而CentOS7使用了新的网卡命名模式接口名称被自动基于固件，拓扑结构和位置信息来确定。即使添加或移除网络设备，接口名称仍然保持固定，而无需重新枚举，和坏掉的硬件可以无缝替换。</p>
-          <!--noindex-->
-          
-            <div class="post-button">
-              <a class="btn" href="/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f-1/" class="post-title-link" itemprop="url">修改CentOS7网卡名称为传统名称eth0格式</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              
-                
-              
-
-              <time title="Created: 2019-10-10 09:11:49" itemprop="dateCreated datePublished" datetime="2019-10-10T09:11:49+08:00">2019-10-10</time>
+              <time title="Created: 2019-10-14 15:43:54" itemprop="dateCreated datePublished" datetime="2019-10-14T15:43:54+08:00">2019-10-14</time>
             </span>
           
             
@@ -592,11 +384,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>起因，很多使用CentOS7以前系统的小伙伴装完CentOS7以后发现了一个问题，那就是网卡名改变为了“en016777736”，而不是以前的eth0的简易模式了，如图：</p><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/wKioL1lkeU6B5lHzAABMryQXEEE979.png" alt="wKioL1lkeU6B5lHzAABMryQXEEE979.png"></p><p>   这是为什么呢？开发者吃饱撑的么？当然不是。</p><p>   以往的CentOS7以前的系统网卡命名虽然简单方便，但也会带来一些问题，例如，当eth0接口对应的网卡出问题以后，更换掉新网卡后新网卡的名字就可能不是eth0了。而CentOS7使用了新的网卡命名模式接口名称被自动基于固件，拓扑结构和位置信息来确定。即使添加或移除网络设备，接口名称仍然保持固定，而无需重新枚举，和坏掉的硬件可以无缝替换。</p>
+          <h1 id="1-wordpress备份"><a href="#1-wordpress备份" class="headerlink" title="1. wordpress备份"></a>1. wordpress备份</h1><p>先说说wordpress的备份插件，有很多，比较出名的有 1. UpdraftPlus Backup 2. BackWPup</p><p>不过好像都没有能支持百度云盘的，下面推荐一个<code>bypy</code>工具，python代码写的，可以用来管理百度云盘。</p><h1 id="2-配置安装过程"><a href="#2-配置安装过程" class="headerlink" title="2. 配置安装过程"></a>2. 配置安装过程</h1><ol>
+<li><p>下载pip</p>
+<p>yum install pip<br>pip install bypy</p>
+</li>
+</ol>
           <!--noindex-->
           
             <div class="post-button">
-              <a class="btn" href="/2019/10/10/e4-bf-ae-e6-94-b9centos7-e7-bd-91-e5-8d-a1-e5-90-8d-e7-a7-b0-e4-b8-ba-e4-bc-a0-e7-bb-9f-e5-90-8d-e7-a7-b0eth0-e6-a0-bc-e5-bc-8f-1/#more" rel="contents">
+              <a class="btn" href="/2019/10/14/wordpress-e5-a4-87-e4-bb-bd-e5-88-b0-e7-99-be-e5-ba-a6-e4-ba-91-e7-9b-98/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -622,7 +418,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/10/linux-e5-90-84-e7-9b-ae-e5-bd-95-e5-8f-8a-e6-af-8f-e4-b8-aa-e7-9b-ae-e5-bd-95-e7-9a-84-e8-af-a6-e7-bb-86-e4-bb-8b-e7-bb-8d-1/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/wordpress-e5-a4-87-e4-bb-bd-e5-88-b0-e7-99-be-e5-ba-a6-e4-ba-91-e7-9b-98-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -637,7 +433,7 @@
         <h1 class="post-title" itemprop="name headline">
           
             
-            <a href="/2019/10/10/linux-e5-90-84-e7-9b-ae-e5-bd-95-e5-8f-8a-e6-af-8f-e4-b8-aa-e7-9b-ae-e5-bd-95-e7-9a-84-e8-af-a6-e7-bb-86-e4-bb-8b-e7-bb-8d-1/" class="post-title-link" itemprop="url">Linux各目录及每个目录的详细介绍</a>
+            <a href="/2019/10/14/wordpress-e5-a4-87-e4-bb-bd-e5-88-b0-e7-99-be-e5-ba-a6-e4-ba-91-e7-9b-98-1/" class="post-title-link" itemprop="url">wordpress备份到百度云盘</a>
           
         </h1>
 
@@ -652,7 +448,333 @@
                 
               
 
-              <time title="Created: 2019-10-10 09:11:11" itemprop="dateCreated datePublished" datetime="2019-10-10T09:11:11+08:00">2019-10-10</time>
+              <time title="Created: 2019-10-14 15:43:54" itemprop="dateCreated datePublished" datetime="2019-10-14T15:43:54+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-16 15:42:20" itemprop="dateModified" datetime="2019-11-16T15:42:20+08:00">2019-11-16</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/成长之旅/" itemprop="url" rel="index">
+                    <span itemprop="name">成长之旅</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="1-wordpress备份"><a href="#1-wordpress备份" class="headerlink" title="1. wordpress备份"></a>1. wordpress备份</h1><p>先说说wordpress的备份插件，有很多，比较出名的有 1. UpdraftPlus Backup 2. BackWPup</p><p>不过好像都没有能支持百度云盘的，下面推荐一个<code>bypy</code>工具，python代码写的，可以用来管理百度云盘。</p><h1 id="2-配置安装过程"><a href="#2-配置安装过程" class="headerlink" title="2. 配置安装过程"></a>2. 配置安装过程</h1><ol>
+<li><p>下载pip</p>
+<p>yum install pip<br>pip install bypy</p>
+</li>
+</ol>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/14/wordpress-e5-a4-87-e4-bb-bd-e5-88-b0-e7-99-be-e5-ba-a6-e4-ba-91-e7-9b-98-1/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/jumpserver-e5-85-a5-e9-97-a8-e4-bd-bf-e7-94-a8-e6-89-8b-e5-86-8c-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/14/jumpserver-e5-85-a5-e9-97-a8-e4-bd-bf-e7-94-a8-e6-89-8b-e5-86-8c-1/" class="post-title-link" itemprop="url">jumpserver入门使用手册</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 15:38:50" itemprop="dateCreated datePublished" datetime="2019-10-14T15:38:50+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-16 15:42:20" itemprop="dateModified" datetime="2019-11-16T15:42:20+08:00">2019-11-16</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/容器与编排/" itemprop="url" rel="index">
+                    <span itemprop="name">容器与编排</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="jumpserver"><a href="#jumpserver" class="headerlink" title="jumpserver"></a>jumpserver</h1><p>官方地址： <a href="http://www.jumpserver.org/" target="_blank" rel="noopener">http://www.jumpserver.org/</a></p><h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><ol>
+<li>身份验证Authentication <strong>登录认证</strong>：资源统一登录和认证、LDAP 认证、支持 OpenID，实现单点登录 <strong>多因子认证</strong>：MFA（ GoogleAuthenticator）</li>
+<li>账号管理Account <strong>集中账号管理</strong>：管理用户管理、系统用户管理 <strong>统一密码管理</strong>：资产密码托管、自动生成密码、密码自动推送、密码过期设置 <strong>批量密码变更(X-PACK)</strong>：定期批量修改密码、生成随机密码 <strong>多云环境的资产纳管(XPACK)</strong>：对私有云、公有云资产统一纳管</li>
+<li>授权控制Authorization <strong>资产授权管理</strong>：资产树、资产或资产组灵活授权、节点内资产自动继承授权 <strong>RemoteApp(X-PACK)</strong>： 实现更细粒度的应用级授权 <strong>组织管理(X-PACK)</strong>： 实现多租户管理，权限隔离 <strong>多维度授权</strong>： 可对用户、用户组或系统角色授权 <strong>指令限制</strong>： 限制特权指令使用，支持黑白名单 <strong>统一文件传输</strong>： SFTP 文件上传/下载 <strong>文件管理</strong>： Web SFTP 文件管理</li>
+<li>安全审计 Audit <strong>会话管理</strong>：在线会话管理、历史会话管理 <strong>录像管理</strong>：Linux 录像支持、Windows 录像支持 <strong>指令审计</strong>：指令记录 <strong>文件传输审计</strong>：上传/下载记录审计</li>
+</ol>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/14/jumpserver-e5-85-a5-e9-97-a8-e4-bd-bf-e7-94-a8-e6-89-8b-e5-86-8c-1/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/jumpserver-e5-85-a5-e9-97-a8-e4-bd-bf-e7-94-a8-e6-89-8b-e5-86-8c/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/14/jumpserver-e5-85-a5-e9-97-a8-e4-bd-bf-e7-94-a8-e6-89-8b-e5-86-8c/" class="post-title-link" itemprop="url">jumpserver入门使用手册</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 15:38:50" itemprop="dateCreated datePublished" datetime="2019-10-14T15:38:50+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/容器与编排/" itemprop="url" rel="index">
+                    <span itemprop="name">容器与编排</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="jumpserver"><a href="#jumpserver" class="headerlink" title="jumpserver"></a>jumpserver</h1><p>官方地址： <a href="http://www.jumpserver.org/" target="_blank" rel="noopener">http://www.jumpserver.org/</a></p><h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><ol>
+<li>身份验证Authentication <strong>登录认证</strong>：资源统一登录和认证、LDAP 认证、支持 OpenID，实现单点登录 <strong>多因子认证</strong>：MFA（ GoogleAuthenticator）</li>
+<li>账号管理Account <strong>集中账号管理</strong>：管理用户管理、系统用户管理 <strong>统一密码管理</strong>：资产密码托管、自动生成密码、密码自动推送、密码过期设置 <strong>批量密码变更(X-PACK)</strong>：定期批量修改密码、生成随机密码 <strong>多云环境的资产纳管(XPACK)</strong>：对私有云、公有云资产统一纳管</li>
+<li>授权控制Authorization <strong>资产授权管理</strong>：资产树、资产或资产组灵活授权、节点内资产自动继承授权 <strong>RemoteApp(X-PACK)</strong>： 实现更细粒度的应用级授权 <strong>组织管理(X-PACK)</strong>： 实现多租户管理，权限隔离 <strong>多维度授权</strong>： 可对用户、用户组或系统角色授权 <strong>指令限制</strong>： 限制特权指令使用，支持黑白名单 <strong>统一文件传输</strong>： SFTP 文件上传/下载 <strong>文件管理</strong>： Web SFTP 文件管理</li>
+<li>安全审计 Audit <strong>会话管理</strong>：在线会话管理、历史会话管理 <strong>录像管理</strong>：Linux 录像支持、Windows 录像支持 <strong>指令审计</strong>：指令记录 <strong>文件传输审计</strong>：上传/下载记录审计</li>
+</ol>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/14/jumpserver-e5-85-a5-e9-97-a8-e4-bd-bf-e7-94-a8-e6-89-8b-e5-86-8c/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/wordpress-e5-a4-87-e4-bb-bd-e5-88-b0-e7-99-be-e5-ba-a6-e4-ba-91-e7-9b-98-trashed/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/14/wordpress-e5-a4-87-e4-bb-bd-e5-88-b0-e7-99-be-e5-ba-a6-e4-ba-91-e7-9b-98-trashed/" class="post-title-link" itemprop="url">wordpress备份到百度云盘</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 15:29:57" itemprop="dateCreated datePublished" datetime="2019-10-14T15:29:57+08:00">2019-10-14</time>
             </span>
           
             
@@ -696,11 +818,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>【常见目录说明】</p><p>目录</p><p>/bin</p><p>存放二进制可执行文件(ls,cat,mkdir等)，常用命令一般都在这里。</p><p>/etc</p><p>存放系统管理和配置文件</p><p>/home</p><p>存放所有用户文件的根目录，是用户主目录的基点，比如用户user的主目录就是/home/user，可以用~user表示 </p><p>/usr</p><p>用于存放系统应用程序，比较重要的目录/usr/local 本地系统管理员软件安装目录（安装系统级的应用）。这是最庞大的目录，要用到的应用程序和文件几乎都在这个目录。/usr/x11r6 存放x window的目录/usr/bin 众多的应用程序  /usr/sbin 超级用户的一些管理程序  /usr/doc linux文档  /usr/include linux下开发和编译应用程序所需要的头文件  /usr/lib 常用的动态链接库和软件包的配置文件  /usr/man 帮助文档  /usr/src 源代码，linux内核的源代码就放在/usr/src/linux里  /usr/local/bin 本地增加的命令  /usr/local/lib 本地增加的库</p>
+          <h1 id="1-wordpress备份"><a href="#1-wordpress备份" class="headerlink" title="1. wordpress备份"></a>1. wordpress备份</h1><p>先说说wordpress的备份插件，有很多，比较出名的有<br>1. UpdraftPlus Backup<br>2. BackWPup</p><p>不过好像都没有能支持百度云盘的，下面推荐一个<code>bypy</code>工具，python代码写的，可以用来管理百度云盘。</p><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/wordpress-baidu.png" alt="wordpress-baidu.png (750×350)"></p><h1 id="2-配置安装过程"><a href="#2-配置安装过程" class="headerlink" title="2. 配置安装过程"></a>2. 配置安装过程</h1><ol>
+<li><p>下载pip</p>
+<p>yum install pip<br>pip install bypy</p>
+</li>
+</ol>
           <!--noindex-->
           
             <div class="post-button">
-              <a class="btn" href="/2019/10/10/linux-e5-90-84-e7-9b-ae-e5-bd-95-e5-8f-8a-e6-af-8f-e4-b8-aa-e7-9b-ae-e5-bd-95-e7-9a-84-e8-af-a6-e7-bb-86-e4-bb-8b-e7-bb-8d-1/#more" rel="contents">
+              <a class="btn" href="/2019/10/14/wordpress-e5-a4-87-e4-bb-bd-e5-88-b0-e7-99-be-e5-ba-a6-e4-ba-91-e7-9b-98-trashed/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -726,7 +852,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/10/linux-e5-90-84-e7-9b-ae-e5-bd-95-e5-8f-8a-e6-af-8f-e4-b8-aa-e7-9b-ae-e5-bd-95-e7-9a-84-e8-af-a6-e7-bb-86-e4-bb-8b-e7-bb-8d/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/205-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -741,7 +867,7 @@
         <h1 class="post-title" itemprop="name headline">
           
             
-            <a href="/2019/10/10/linux-e5-90-84-e7-9b-ae-e5-bd-95-e5-8f-8a-e6-af-8f-e4-b8-aa-e7-9b-ae-e5-bd-95-e7-9a-84-e8-af-a6-e7-bb-86-e4-bb-8b-e7-bb-8d/" class="post-title-link" itemprop="url">Linux各目录及每个目录的详细介绍</a>
+            <a href="/2019/10/14/205-1/" class="post-title-link" itemprop="url">Centos7.4下部署PowerDNS的操作记录</a>
           
         </h1>
 
@@ -756,7 +882,7 @@
                 
               
 
-              <time title="Created: 2019-10-10 09:11:11" itemprop="dateCreated datePublished" datetime="2019-10-10T09:11:11+08:00">2019-10-10</time>
+              <time title="Created: 2019-10-14 15:28:58" itemprop="dateCreated datePublished" datetime="2019-10-14T15:28:58+08:00">2019-10-14</time>
             </span>
           
             
@@ -767,7 +893,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-10-13 10:52:28" itemprop="dateModified" datetime="2019-10-13T10:52:28+08:00">2019-10-13</time>
+                <time title="Modified: 2019-11-16 15:42:20" itemprop="dateModified" datetime="2019-11-16T15:42:20+08:00">2019-11-16</time>
               </span>
             
           
@@ -778,8 +904,8 @@
               <span class="post-meta-item-text">In</span>
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/苦逼之旅/" itemprop="url" rel="index">
-                    <span itemprop="name">苦逼之旅</span>
+                  <a href="/categories/容器与编排/" itemprop="url" rel="index">
+                    <span itemprop="name">容器与编排</span>
                   </a>
                 </span>
 
@@ -800,11 +926,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>【常见目录说明】</p><p>目录</p><p>/bin</p><p>存放二进制可执行文件(ls,cat,mkdir等)，常用命令一般都在这里。</p><p>/etc</p><p>存放系统管理和配置文件</p><p>/home</p><p>存放所有用户文件的根目录，是用户主目录的基点，比如用户user的主目录就是/home/user，可以用~user表示 </p><p>/usr</p><p>用于存放系统应用程序，比较重要的目录/usr/local 本地系统管理员软件安装目录（安装系统级的应用）。这是最庞大的目录，要用到的应用程序和文件几乎都在这个目录。/usr/x11r6 存放x window的目录/usr/bin 众多的应用程序  /usr/sbin 超级用户的一些管理程序  /usr/doc linux文档  /usr/include linux下开发和编译应用程序所需要的头文件  /usr/lib 常用的动态链接库和软件包的配置文件  /usr/man 帮助文档  /usr/src 源代码，linux内核的源代码就放在/usr/src/linux里  /usr/local/bin 本地增加的命令  /usr/local/lib 本地增加的库</p>
+          <p>本文的自建 DNS 是指的是权威 DNS，即给自己的域名配置的 DNS，而非在客户端配置的缓存 DNS。</p><p><strong>一、部署以MariaDB作为后端数据的PowerDNS系统</strong></p><p><strong>1）关闭防火墙和selinux</strong></p><p>[root@PowerDNS ~]# cat /etc/redhat-release<br>CentOS Linux release 7.4.1708 (Core) </p>
           <!--noindex-->
           
             <div class="post-button">
-              <a class="btn" href="/2019/10/10/linux-e5-90-84-e7-9b-ae-e5-bd-95-e5-8f-8a-e6-af-8f-e4-b8-aa-e7-9b-ae-e5-bd-95-e7-9a-84-e8-af-a6-e7-bb-86-e4-bb-8b-e7-bb-8d/#more" rel="contents">
+              <a class="btn" href="/2019/10/14/205-1/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -830,7 +956,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/10/tcp-e7-9a-84-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-90-86-e8-a7-a3-e5-8f-8a-e9-9d-a2-e8-af-95-e9-a2-98-ef-bc-88-e5-be-88-e5-85-a8-e9-9d-a2-ef-bc-89-1/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/205/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -845,7 +971,7 @@
         <h1 class="post-title" itemprop="name headline">
           
             
-            <a href="/2019/10/10/tcp-e7-9a-84-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-90-86-e8-a7-a3-e5-8f-8a-e9-9d-a2-e8-af-95-e9-a2-98-ef-bc-88-e5-be-88-e5-85-a8-e9-9d-a2-ef-bc-89-1/" class="post-title-link" itemprop="url">TCP的三次握手与四次挥手理解及面试题（很全面）</a>
+            <a href="/2019/10/14/205/" class="post-title-link" itemprop="url">Centos7.4下部署PowerDNS的操作记录</a>
           
         </h1>
 
@@ -860,7 +986,215 @@
                 
               
 
-              <time title="Created: 2019-10-10 09:10:01" itemprop="dateCreated datePublished" datetime="2019-10-10T09:10:01+08:00">2019-10-10</time>
+              <time title="Created: 2019-10-14 15:28:58" itemprop="dateCreated datePublished" datetime="2019-10-14T15:28:58+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/容器与编排/" itemprop="url" rel="index">
+                    <span itemprop="name">容器与编排</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>本文的自建 DNS 是指的是权威 DNS，即给自己的域名配置的 DNS，而非在客户端配置的缓存 DNS。</p><p><strong>一、部署以MariaDB作为后端数据的PowerDNS系统</strong></p><p><strong>1）关闭防火墙和selinux</strong></p><p>[root@PowerDNS ~]# cat /etc/redhat-release<br>CentOS Linux release 7.4.1708 (Core) </p>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/14/205/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/e8-ae-a1-e7-ae-97-e6-9c-ba-e7-9a-84-e5-90-af-e5-8a-a8-e6-b5-81-e7-a8-8b-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/14/e8-ae-a1-e7-ae-97-e6-9c-ba-e7-9a-84-e5-90-af-e5-8a-a8-e6-b5-81-e7-a8-8b-1/" class="post-title-link" itemprop="url">计算机的启动流程</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 13:51:38" itemprop="dateCreated datePublished" datetime="2019-10-14T13:51:38+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-16 15:42:20" itemprop="dateModified" datetime="2019-11-16T15:42:20+08:00">2019-11-16</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>服务器或PC机从按下电源按钮开始，会首先进行自检流程，其实一个非常复杂的过程，只见屏幕上字幕乱飞，各种check和ok，那么其间究竟发生了什么事情呢？</p><p>启动又称为boot，而boot的原意为靴子，那么启动与靴子有什么关系呢？其实boot是boot是bootstrap（鞋带）的缩写，它来自于一句谚语：</p><p>　“pull oneself up by one’s bootstraps”</p>
+          <!--noindex-->
+          
+            <div class="post-button">
+              <a class="btn" href="/2019/10/14/e8-ae-a1-e7-ae-97-e6-9c-ba-e7-9a-84-e5-90-af-e5-8a-a8-e6-b5-81-e7-a8-8b-1/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+    
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/e8-ae-a1-e7-ae-97-e6-9c-ba-e7-9a-84-e5-90-af-e5-8a-a8-e6-b5-81-e7-a8-8b/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            
+            <a href="/2019/10/14/e8-ae-a1-e7-ae-97-e6-9c-ba-e7-9a-84-e5-90-af-e5-8a-a8-e6-b5-81-e7-a8-8b/" class="post-title-link" itemprop="url">计算机的启动流程</a>
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 13:51:38" itemprop="dateCreated datePublished" datetime="2019-10-14T13:51:38+08:00">2019-10-14</time>
             </span>
           
             
@@ -904,343 +1238,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><img src="http://www.pever.cn/wp-content/uploads/2019/10/ae7431abbc4a595ac06399e1acf8ee34.jpg" alt></p><pre><code>序列号seq：占4个字节，用来标记数据段的顺序，TCP把连接中发送的所有数据字节都编上一个序号，第一个字节的编号由本地随机产生；给字节编上序号后，就给每一个报文段指派一个序号；序列号seq就是这个报文段中的第一个字节的数据编号。
-
-确认号ack：占4个字节，期待收到对方下一个报文段的第一个数据字节的序号；序列号表示报文段携带数据的第一个字节的编号；而确认号指的是期望接收到下一个字节的编号；因此当前报文段最后一个字节的编号+1即为确认号。
-
-确认ACK：占1位，仅当ACK=1时，确认号字段才有效。ACK=0时，确认号无效
-
-同步SYN：连接建立时用于同步序号。当SYN=1，ACK=0时表示：这是一个连接请求报文段。若同意连接，则在响应报文段中使得SYN=1，ACK=1。因此，SYN=1表示这是一个连接请求，或连接接受报文。SYN这个标志位只有在TCP建产连接时才会被置1，握手完成后SYN标志位被置0。
-
-终止FIN：用来释放一个连接。FIN=1表示：此报文段的发送方的数据已经发送完毕，并要求释放运输连接
-
-PS：ACK、SYN和FIN这些大写的单词表示标志位，其值要么是1，要么是0；ack、seq小写的单词表示序号。</code></pre>
+          <p>服务器或PC机从按下电源按钮开始，会首先进行自检流程，其实一个非常复杂的过程，只见屏幕上字幕乱飞，各种check和ok，那么其间究竟发生了什么事情呢？</p><p>启动又称为boot，而boot的原意为靴子，那么启动与靴子有什么关系呢？其实boot是boot是bootstrap（鞋带）的缩写，它来自于一句谚语：</p><p>　“pull oneself up by one’s bootstraps”</p>
           <!--noindex-->
           
             <div class="post-button">
-              <a class="btn" href="/2019/10/10/tcp-e7-9a-84-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-90-86-e8-a7-a3-e5-8f-8a-e9-9d-a2-e8-af-95-e9-a2-98-ef-bc-88-e5-be-88-e5-85-a8-e9-9d-a2-ef-bc-89-1/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/10/tcp-e7-9a-84-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-90-86-e8-a7-a3-e5-8f-8a-e9-9d-a2-e8-af-95-e9-a2-98-ef-bc-88-e5-be-88-e5-85-a8-e9-9d-a2-ef-bc-89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/10/10/tcp-e7-9a-84-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-90-86-e8-a7-a3-e5-8f-8a-e9-9d-a2-e8-af-95-e9-a2-98-ef-bc-88-e5-be-88-e5-85-a8-e9-9d-a2-ef-bc-89/" class="post-title-link" itemprop="url">TCP的三次握手与四次挥手理解及面试题（很全面）</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              
-                
-              
-
-              <time title="Created: 2019-10-10 09:10:01" itemprop="dateCreated datePublished" datetime="2019-10-10T09:10:01+08:00">2019-10-10</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-10-13 10:52:28" itemprop="dateModified" datetime="2019-10-13T10:52:28+08:00">2019-10-13</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux基础/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux基础</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="https://img-blog.csdn.net/20180717201939345?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4OTUwMzE2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt></p><pre><code>序列号seq：占4个字节，用来标记数据段的顺序，TCP把连接中发送的所有数据字节都编上一个序号，第一个字节的编号由本地随机产生；给字节编上序号后，就给每一个报文段指派一个序号；序列号seq就是这个报文段中的第一个字节的数据编号。
-
-确认号ack：占4个字节，期待收到对方下一个报文段的第一个数据字节的序号；序列号表示报文段携带数据的第一个字节的编号；而确认号指的是期望接收到下一个字节的编号；因此当前报文段最后一个字节的编号+1即为确认号。
-
-确认ACK：占1位，仅当ACK=1时，确认号字段才有效。ACK=0时，确认号无效
-
-同步SYN：连接建立时用于同步序号。当SYN=1，ACK=0时表示：这是一个连接请求报文段。若同意连接，则在响应报文段中使得SYN=1，ACK=1。因此，SYN=1表示这是一个连接请求，或连接接受报文。SYN这个标志位只有在TCP建产连接时才会被置1，握手完成后SYN标志位被置0。
-
-终止FIN：用来释放一个连接。FIN=1表示：此报文段的发送方的数据已经发送完毕，并要求释放运输连接
-
-PS：ACK、SYN和FIN这些大写的单词表示标志位，其值要么是1，要么是0；ack、seq小写的单词表示序号。</code></pre>
-          <!--noindex-->
-          
-            <div class="post-button">
-              <a class="btn" href="/2019/10/10/tcp-e7-9a-84-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-90-86-e8-a7-a3-e5-8f-8a-e9-9d-a2-e8-af-95-e9-a2-98-ef-bc-88-e5-be-88-e5-85-a8-e9-9d-a2-ef-bc-89/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/10/e7-90-86-e8-a7-a3tcp-ip-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-9a-84-e6-ad-a3-e7-a1-ae-e5-a7-bf-e5-8a-bf/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/10/10/e7-90-86-e8-a7-a3tcp-ip-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-9a-84-e6-ad-a3-e7-a1-ae-e5-a7-bf-e5-8a-bf/" class="post-title-link" itemprop="url">理解TCP/IP三次握手与四次挥手的正确姿势</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              
-                
-              
-
-              <time title="Created: 2019-10-10 09:08:57" itemprop="dateCreated datePublished" datetime="2019-10-10T09:08:57+08:00">2019-10-10</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-10-13 10:52:28" itemprop="dateModified" datetime="2019-10-13T10:52:28+08:00">2019-10-13</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/苦逼之旅/" itemprop="url" rel="index">
-                    <span itemprop="name">苦逼之旅</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>和女朋友异地恋一年多，为了保持感情我提议每天晚上视频聊天一次。</p><p>从好上开始，到现在，一年多也算坚持下来了。</p><p>问题</p><p>有时候聊天的过程中，我的网络或者她的网络可能会不好，视频就会卡住，听不到对方的声音，过一会儿之后才会恢复。</p><p>中间双方可能就要不断的确认网络是否恢复，但是有时候会：</p><p>她：“你可以听到了吗？”</p><p>我：“可以了，你呢？”、</p>
-          <!--noindex-->
-          
-            <div class="post-button">
-              <a class="btn" href="/2019/10/10/e7-90-86-e8-a7-a3tcp-ip-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-9a-84-e6-ad-a3-e7-a1-ae-e5-a7-bf-e5-8a-bf/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-    
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/10/e7-90-86-e8-a7-a3tcp-ip-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-9a-84-e6-ad-a3-e7-a1-ae-e5-a7-bf-e5-8a-bf-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            
-            <a href="/2019/10/10/e7-90-86-e8-a7-a3tcp-ip-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-9a-84-e6-ad-a3-e7-a1-ae-e5-a7-bf-e5-8a-bf-1/" class="post-title-link" itemprop="url">理解TCP/IP三次握手与四次挥手的正确姿势</a>
-          
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              
-                
-              
-
-              <time title="Created: 2019-10-10 09:08:57" itemprop="dateCreated datePublished" datetime="2019-10-10T09:08:57+08:00">2019-10-10</time>
-            </span>
-          
-            
-
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-10-15 09:19:13" itemprop="dateModified" datetime="2019-10-15T09:19:13+08:00">2019-10-15</time>
-              </span>
-            
-          
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/苦逼之旅/" itemprop="url" rel="index">
-                    <span itemprop="name">苦逼之旅</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>和女朋友异地恋一年多，为了保持感情我提议每天晚上视频聊天一次。</p><p>从好上开始，到现在，一年多也算坚持下来了。</p><p>问题</p><p>有时候聊天的过程中，我的网络或者她的网络可能会不好，视频就会卡住，听不到对方的声音，过一会儿之后才会恢复。</p><p>中间双方可能就要不断的确认网络是否恢复，但是有时候会：</p><p>她：“你可以听到了吗？”</p><p>我：“可以了，你呢？”、</p>
-          <!--noindex-->
-          
-            <div class="post-button">
-              <a class="btn" href="/2019/10/10/e7-90-86-e8-a7-a3tcp-ip-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e4-b8-8e-e5-9b-9b-e6-ac-a1-e6-8c-a5-e6-89-8b-e7-9a-84-e6-ad-a3-e7-a1-ae-e5-a7-bf-e5-8a-bf-1/#more" rel="contents">
+              <a class="btn" href="/2019/10/14/e8-ae-a1-e7-ae-97-e6-9c-ba-e7-9a-84-e5-90-af-e5-8a-a8-e6-b5-81-e7-a8-8b/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -1266,7 +1268,7 @@ PS：ACK、SYN和FIN这些大写的单词表示标志位，其值要么是1，�
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -1311,7 +1313,7 @@ PS：ACK、SYN和FIN这些大写的单词表示标志位，其值要么是1，�
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1320,8 +1322,17 @@ PS：ACK、SYN和FIN这些大写的单词表示标志位，其值要么是1，�
       
       <div class="site-state-item site-state-categories">
         
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
         
       </div>
     

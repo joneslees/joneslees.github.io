@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="一：Nginx作为正向代理服务器：1.正向代理：代理（proxy）服务也可以称为是正向代理，指的是将服务器部署在公司的网关，代理公司内部员工上外网的请求，可以起到一定的安全作用和管理限制作用，正向代理不支持从外网向内网访问资源，一般很少用，经本人测试，效果也不好，有很多页面打不开，在百度搜索的页面也无法返回。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx 之七： Nginx服务器的正向及反向代理功能">
+<meta property="og:url" content="http://yoursite.com/2019/11/16/nginx-e4-b9-8b-e4-b8-83-ef-bc-9a-nginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e7-9a-84-e6-ad-a3-e5-90-91-e5-8f-8a-e5-8f-8d-e5-90-91-e4-bb-a3-e7-90-86-e5-8a-9f-e8-83-bd/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="一：Nginx作为正向代理服务器：1.正向代理：代理（proxy）服务也可以称为是正向代理，指的是将服务器部署在公司的网关，代理公司内部员工上外网的请求，可以起到一定的安全作用和管理限制作用，正向代理不支持从外网向内网访问资源，一般很少用，经本人测试，效果也不好，有很多页面打不开，在百度搜索的页面也无法返回。">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160516184549716-1778845146.png">
+<meta property="og:updated_time" content="2019-11-16T07:42:20.270Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx 之七： Nginx服务器的正向及反向代理功能">
+<meta name="twitter:description" content="一：Nginx作为正向代理服务器：1.正向代理：代理（proxy）服务也可以称为是正向代理，指的是将服务器部署在公司的网关，代理公司内部员工上外网的请求，可以起到一定的安全作用和管理限制作用，正向代理不支持从外网向内网访问资源，一般很少用，经本人测试，效果也不好，有很多页面打不开，在百度搜索的页面也无法返回。">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160516184549716-1778845146.png">
+  <link rel="canonical" href="http://yoursite.com/2019/11/16/nginx-e4-b9-8b-e4-b8-83-ef-bc-9a-nginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e7-9a-84-e6-ad-a3-e5-90-91-e5-8f-8a-e5-8f-8d-e5-90-91-e4-bb-a3-e7-90-86-e5-8a-9f-e8-83-bd/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Nginx 之七： Nginx服务器的正向及反向代理功能 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/16/nginx-e4-b9-8b-e4-b8-83-ef-bc-9a-nginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e7-9a-84-e6-ad-a3-e5-90-91-e5-8f-8a-e5-8f-8d-e5-90-91-e4-bb-a3-e7-90-86-e5-8a-9f-e8-83-bd/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            Nginx 之七： Nginx服务器的正向及反向代理功能
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-11-16 13:23:29 / Modified: 15:42:20" itemprop="dateCreated datePublished" datetime="2019-11-16T13:23:29+08:00">2019-11-16</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LNMP/" itemprop="url" rel="index">
+                    <span itemprop="name">LNMP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>一：Nginx作为正向代理服务器：</strong></p><p><strong>1.正向代理：代理（proxy）服务也可以称为是正向代理，指的是将服务器部署在公司的网关，代理公司内部员工上外网的请求，可以起到一定的安全作用和管理限制作用，正向代理不支持从外网向内网访问资源，一般很少用，经本人测试，效果也不好，有很多页面打不开，在百度搜索的页面也无法返回。</strong></p><a id="more"></a>
+
+<pre><code>server {
+    server_name localhost;
+    resolver 202.106.0.20 8.8.8.8; #只能有一个resolve，但是可以用空格隔开，继续写下一个
+    resolver_timeout 5s;
+    listen  8080;
+    location / {
+        proxy_pass   $scheme://$http_host/$request_uri;
+        proxy_set_header Host $http_host;
+
+        proxy_buffers 256 4k;
+        proxy_max_temp_file_size 0;
+
+        proxy_connect_timeout 30;
+
+        proxy_cache_valid 200 302 10m;
+        proxy_cache_valid 301 1h;
+        proxy_cache_valid any 1m;
+    }
+}</code></pre><p><strong>2.错误码502 ：Nginx作为代理服务器向后端转发请求过程中超时。</strong></p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160516184549716-1778845146.png" alt></p>
+<p><strong>二：Nginx作为反向代理服务器：</strong></p>
+<p><strong>反向代理：反向代理也叫reverse proxy，指的是代理外网用户的请求到内部的指定web服务器，并将数据返回给用户的一种方式，这是用的比较多的一种方式。</strong></p>
+<p><strong>反向代理的常用指令：</strong></p>
+<p><strong>1.proxy_pass:用来设置将请求转发给的后端服务器的主机，可以是主机名、IP地址：端口的方式，也可以代理到通过upstream设置的主机组,如下：</strong></p>
+<pre><code>upstream webserver {
+        #ip_hash;  
+        server  192.168.0.201 weight=1 max_fails=2  fail_timeout=2;
+        server  192.168.0.202 weight=1 max_fails=2  fail_timeout=2;
+        server 127.0.0.1:9008 backup;
+}
+
+server {
+        server_name  hfnginx.chinacloudapp.cn;
+        #access_log  logs/host.access.log  main;
+        location / {  #静态网页在本机
+            root   html;
+            index  index.html;
+        }
+        location ~* ^/form {  #指定目录在后端服务器
+            proxy_pass  http://webserver; #此处http://webserver后面不能加/，如果加了会提示语法错误
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+}</code></pre><p><strong>2：proxy_hide_header:用于nginx服务器作为反向代理的时候，在返回给客户端http响应的时候，隐藏后端服务版本（如php版本）的信息，可以设置在http/server或location块，如下：</strong></p>
+<p>Nginx会将上游服务器的响应转发给客户端，但默认不会转发以下HTTP头部字段：Date、Server、X-Pad和X-Accel-*。使用proxy_hide_header后可以任意地指定哪些HTTP头部字段不能被转发。例如：</p>
+<pre><code>proxy_hide_header Cache-Control;  
+proxy_hide_header MicrosoftOfficeWebServer; </code></pre><p>注：如果是nginx直接作为web服务器，要隐藏版本信息的话，使用fastcgi_hide_header：</p>
+<p><strong>3：proxy_pass_header:与proxy_hide_header功能相反，proxy_pass_header会将原来禁止转发的header设置为允许转发,可以设置在http/server或location块例如：</strong></p>
+<pre><code>proxy_pass_header X-Accel-Redirect; </code></pre><p><strong>4:proxy_pass_request_body:是否向后端服务器发送HTTP包体部分,</strong>可以设置在http/server或location块,如下：****</p>
+<pre><code>proxy_pass_request_body on|off;  #默认为on</code></pre><p><strong>5：proxy_pass_request_headers:是否将客户端的请求头部转发给后端服务器，</strong>可以设置在http/server或location块,如下：****</p>
+<pre><code>proxy_pass_request_headers on | off; #默认为on</code></pre><p><strong>6：proxy_set_header:可以更改或添加客户端的请求头部信息内容，并转发之后端服务器，比如在后端服务器想要获取客户端的真实IP的时候，就要更改每一个报文的头部，如下：</strong></p>
+<pre><code>proxy_set_header HOST  $remote_addr; #添加HOST到报文头部，其值为客户端的公网IP地址</code></pre><p>7：proxy_set_body：更改nginx服务器接收到的客户端请求的请求内容，然后将修改后的请求转发给后端的服务器，用法如下：</p>
+<pre><code>proxy_set_body value；  #其中value为要修改的目标内容，可以是变量、文本或者变量的组合。</code></pre><p>8：proxy_ip:Nginx 0.8.22版本及以上支持此功能，用于Nginx配置了多个基于域名或IP的主机的情况下，可以指定代理连接到特定的主机处理，就是强制将客户端请求绑定到指定的IP地址：</p>
+<pre><code>proxy_bind x.x.x.x; </code></pre><p>9：proxy_connect_timeout：配置nginx服务器与后端服务器尝试建立连接的超时时间，默认为60秒，用法如下：</p>
+<pre><code>proxy_connect_timeout 10s； #10s为自定义nginx与后端服务器建立连接的超时时间</code></pre><p>10:proxy_read_time：配置nginx服务器向后端服务器或服务器组发起read请求后，等待的超时时间：</p>
+<pre><code>proxy_read_time 10s； #默认为60秒</code></pre><p>11：proxy_send_time； 配置nginx项后端服务器或服务器组发起write请求后，等待的超时时间：</p>
+<pre><code>proxy_send_time 10s； #默认为60s</code></pre><p>12：proxy_http_version：用于设置nginx提供代理服务的HTTP协议的版本：</p>
+<pre><code>proxy_http_version 1.0|1.1；</code></pre><p>13：proxy_method：设置nginx服务器请求后端服务器时使用的方法，一般为POST或者GET，客户端的请求方法将被忽略：</p>
+<pre><code>proxy_method GET|PUT;</code></pre><p>14：proxy_ignore_client_abort：设置在客户端网络中断请求时，nginx服务器是否中断对被代理服务器的请求：</p>
+<pre><code>proxy_ignore_client_abort off|on； #默认为off，当客户端网络中断请求时，nginx服务器中断其对后端服务器的请求。</code></pre><p>15：proxy_ignore_headers:设置nginx不处理后端服务器返回的数据中包含某些指定字段的报文，可以指定的有：”X-Accel-Redirect”, “X-Accel-Expires”, “Expires”或”Cache-Control”：</p>
+<pre><code>proxy_ignore_headers Expires；</code></pre><p>16：proxy_redirect：修改后端服务器返回的响应头部中的location货refresh，与proxy_pass配合使用：</p>
+<p>17：proxy_intercept_errors:设置nginx服务器返回客户端的错误状态，当后端服务器返回大于等于400的错误码的是，如果本功能是打开的，则nginx服务器返回自定义的错误页面（使用error page定义的），如果没有开启就将后端服务器返回的HTTP状态直接返回给客户端，默认为关闭：</p>
+<pre><code>proxy_intercept_errors on | off；</code></pre><p>18：proxy_headers_hash_max_size：设置nginx保存HTTP报文头的hash表的上限，默认为512字节：</p>
+<pre><code>proxy_headers_hash_bucket_size 512；#申请nginx保存HTTP报文头的hash表的空间大小，默认为64个字节
+proxy_headers_hash_max_size 512； #上限
+server_names_hash_max_szie   512; #设置服务器名称的上限
+server_namse_hash_bucket_size 512; #申请空间大小</code></pre><p>19：proxy_headers_hash_bucket_size：#申请nginx保存HTTP报文头的hash表的空间大小，默认为64个字节</p>
+<pre><code>proxy_headers_hash_bucket_size 512； #默认为64字节</code></pre><p>20：proxy_net_upstream：当使用了upstream的时候，可以定义在发生了特定的情况下将请求依次交给下一个组内的服务器处理，状态包括：</p>
+<pre><code>proxy_next_upstream  http_404 http_502;  //让404报错进入max_fails计数 
+        upstream online { 
+        sticky; 
+        server 172.28.70.161:8080 max_fails=0 fail_timeout=3s ; 
+        server 172.28.70.163:8080  max_fails=0 fail_timeout=3s ; 
+
+        check interval=3000 rise=2 fall=1 timeout=1000 type=http; 
+        check_http_send &quot;GET / HTTP/1.0\r\n\r\n&quot;; 
+        check_http_expect_alive http_2xx http_3xx; 
+        } 
+
+        upstream backup { 
+        server 172.28.22.29:7777  max_fails=0 fail_timeout=3s; 
+        }</code></pre><p>21:proxy_ssl_session_reuse:配置是否基于SSL协议与后端服务器建立连接，如下：</p>
+<pre><code>proxy_ssl_session_reuse on | off;</code></pre>
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/16/nginx-e4-b9-8b-e5-85-ad-ef-bc-9a-nginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e7-9a-84-e8-b4-9f-e8-bd-bd-e5-9d-87-e8-a1-a1-e3-80-81-e7-bc-93-e5-ad-98-e4-b8-8e-e5-8a-a8-e9-9d-99-e5-88-86-e7-a6-bb-e5-8a-9f/" rel="next" title="Nginx 之六： Nginx服务器的负载均衡、缓存与动静分离功能">
+                  <i class="fa fa-chevron-left"></i> Nginx 之六： Nginx服务器的负载均衡、缓存与动静分离功能
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/16/nginx-e4-b9-8b-e5-85-ab-ef-bc-9anginx-e4-bc-98-e5-8c-96-e7-aa-81-e7-a0-b4-e5-8d-81-e4-b8-87-e5-b9-b6-e5-8f-91/" rel="prev" title="Nginx 之八：nginx优化 突破十万并发">
+                  Nginx 之八：nginx优化 突破十万并发 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

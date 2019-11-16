@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="一：mysqldump是mysql自带的一个具备简单数据备份和恢复功能的命令，可以实现将MySQL数据的数据备份成SQL文件，然后copy到其他MySQL服务器使用mysqldump命令进行数据还原，适用于备份数据量不是很大的业务场景，例如10G左右的场景，基本的使用方法如下：1.1：命令的基本使用：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySql备份工具之Mysqldump">
+<meta property="og:url" content="http://yoursite.com/2019/11/16/mysql-e5-a4-87-e4-bb-bd-e5-b7-a5-e5-85-b7-e4-b9-8bmysqldump/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="一：mysqldump是mysql自带的一个具备简单数据备份和恢复功能的命令，可以实现将MySQL数据的数据备份成SQL文件，然后copy到其他MySQL服务器使用mysqldump命令进行数据还原，适用于备份数据量不是很大的业务场景，例如10G左右的场景，基本的使用方法如下：1.1：命令的基本使用：">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20170124032514_13717.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20170124032136_41977.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20170124033148_33942.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20170124051926_63490.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20170124060143_56698.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20170124061729_12435.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20170124064604_47917.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20170124065017_28603.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20170124070103_17113.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20170123110256_65761.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20170123110326_85879.png">
+<meta property="og:updated_time" content="2019-11-16T07:42:20.270Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySql备份工具之Mysqldump">
+<meta name="twitter:description" content="一：mysqldump是mysql自带的一个具备简单数据备份和恢复功能的命令，可以实现将MySQL数据的数据备份成SQL文件，然后copy到其他MySQL服务器使用mysqldump命令进行数据还原，适用于备份数据量不是很大的业务场景，例如10G左右的场景，基本的使用方法如下：1.1：命令的基本使用：">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20170124032514_13717.png">
+  <link rel="canonical" href="http://yoursite.com/2019/11/16/mysql-e5-a4-87-e4-bb-bd-e5-b7-a5-e5-85-b7-e4-b9-8bmysqldump/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>MySql备份工具之Mysqldump | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/16/mysql-e5-a4-87-e4-bb-bd-e5-b7-a5-e5-85-b7-e4-b9-8bmysqldump/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            MySql备份工具之Mysqldump
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-11-16 11:22:14 / Modified: 15:42:20" itemprop="dateCreated datePublished" datetime="2019-11-16T11:22:14+08:00">2019-11-16</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Mysql/" itemprop="url" rel="index">
+                    <span itemprop="name">Mysql</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一：mysqldump是mysql自带的一个具备简单数据备份和恢复功能的命令，可以实现将MySQL数据的数据备份成SQL文件，然后copy到其他MySQL服务器使用mysqldump命令进行数据还原，适用于备份数据量不是很大的业务场景，例如10G左右的场景，基本的使用方法如下：</p><p>1.1：命令的基本使用：</p><a id="more"></a>
+
+<p>1.1.1：只备份指定的单个库，如果备份全部的库备份时间慢而且导入时间慢，并且另外的服务器可能还用不上：</p>
+<p>[root@sql-slave ~]# /usr/local/mysql/bin/mysqldump -S /var/lib/mysql/mysql.sock -uroot -p123456 testdatabase &gt; testdatabase_bak.sql<br>Warning: Using a password on the command line interface can be insecure.<br>[root@sql-slave ~]# egrep -v “#|\*|^$” testdatabase_bak.sql #查看备份文件而不显示注释信息</p>
+<p>1.1.2：-B：在备份的时候添加-B的参数，是为了增加在在创建数据库和使用数据库的语句，如下：</p>
+<p>[root@sql-slave ~]# /usr/local/mysql/bin/mysqldump -S /var/lib/mysql/mysql.sock -B  -uroot -p123456 testdatabase &gt; testdatabas_1.sql</p>
+<p>#不加-B的效果：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20170124032514_13717.png" alt></p>
+<p>#加-的效果：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20170124032136_41977.png" alt></p>
+<p>1.1.3：–compact：将备份后的文件注释信息减少的最少，很多注释信息不被写入文件，因此文件大小将减小很多，一般用于测试：</p>
+<p>root@sql-slave ~]# /usr/local/mysql/bin/mysqldump -S /var/lib/mysql/mysql.sock -B –compact  -uroot -p123456 testdatabase &gt; testdatabas_2.sql</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20170124033148_33942.png" alt></p>
+<p>1.1.4：压缩备份的文件后的sql文件：</p>
+<p>[root@sql-slave ~]# /usr/local/mysql/bin/mysqldump -S /var/lib/mysql/mysql.sock -B –compact  -uroot -p123456 testdatabase | gzip  &gt; testdatabas_2.sql.gz</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20170124051926_63490.png" alt></p>
+<p>1.1.5：分库备份，数据库有点儿多的话一个个备份太慢，全部备份不好恢复，就写了一个脚本，自动按库名分类备份，这样便于后期只有某个库出现问题的时候恢复数据，而且还不影响其他的库:</p>
+<p>#!/bin/sh<br>#Author:ZhangJie<br>BAK_TIME=$(date  +%Y-%m-%d_%H:%M:%S)<br>USER_PSWD=123456<br>USER_NAME=root<br>SOCKET=”/var/lib/mysql/mysql.sock”<br>MYLOGIN=”mysql -u${USER_NAME} -p${USER_PSWD} -S ${SOCKET}”<br>DUMP_CMD=”/usr/local/mysql/bin/mysqldump -u${USER_NAME} -p${USER_PSWD} -S${SOCKET} -B”<br>DATABASE=”$($MYLOGIN -e “show databases;”|egrep -vi “_schema|mysql”)” #不备份的数据库列表写在这里，自带的mysql、test等可以不备份</p>
+<p>for dbname in ${DATABASE}<br>  do<br>   MYDIR=/data/backup/${dbname}<br>   [ ! -d ${MYDIR} ] &amp;&amp; mkdir -p ${MYDIR}<br> $DUMP_CMD ${dbname}|gzip &gt;${MYDIR}/${dbname}_${BAK_TIME}.sql.gz<br>done</p>
+<p>#备份效果如下：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20170124060143_56698.png" alt></p>
+<p>1.1.6：通过参数备份，可以接收多个不固定的参数，将传递的参数作为数据库进行备份：</p>
+<p>#!/bin/sh<br>#Author:ZhangJie<br>BAK_TIME=$(date  +%Y-%m-%d_%H:%M:%S)<br>USER_PSWD=123456<br>USER_NAME=root<br>SOCKET=”/var/lib/mysql/mysql.sock”<br>MYLOGIN=”mysql -u${USER_NAME} -p${USER_PSWD} -S ${SOCKET}”<br>DUMP_CMD=”/usr/local/mysql/bin/mysqldump -u${USER_NAME} -p${USER_PSWD} -S${SOCKET} -B”<br>DATABASE=$* #接收所有的参数</p>
+<p>for dbname in ${DATABASE} #循环参数<br>  do<br>    MYDIR=/data/backup/${dbname}<br>    [ ! -d ${MYDIR} ] &amp;&amp; mkdir -p ${MYDIR}<br>    $DUMP_CMD ${dbname}|gzip &gt;${MYDIR}/${dbname}_${BAK_TIME}.sql.gz<br>done</p>
+<p>#通过传递蚕食备份数据库的备份结果：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20170124061729_12435.png" alt></p>
+<p>1.2：针对表的备份：</p>
+<p>1.2.1：备份指定的多个多个表，即不备份一个库里面所有的表：</p>
+<p>[root@sql-slave ~]# /usr/local/mysql/bin/mysqldump -uroot -hlocalhost -p123456 -S /var/lib/mysql/mysql.sock    testdatabase testtable testtableN &gt; /opt/test_table_bak.sql</p>
+<p>1.2.2：只备份一个数据里面的表结构，可以理解为将创建表的语句备份：</p>
+<p>[root@sql-slave ~]# /usr/local/mysql/bin/mysqldump -uroot -hlocalhost -p123456 -S /var/lib/mysql/mysql.sock -B  -d  testdatabase   &gt; /opt/test.sql</p>
+<p>#备份文件的 效果：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20170124064604_47917.png" alt></p>
+<p>1.2.3：只备份表中的数据，即不包含表结构：</p>
+<p>[root@sql-slave ~]# /usr/local/mysql/bin/mysqldump -uroot -hlocalhost -p123456 -S /var/lib/mysql/mysql.sock  –compact  -B  -t  testdatabase   &gt; /opt/test.sq</p>
+<p>#备份的数据结果：:</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20170124065017_28603.png" alt></p>
+<p>1.3：记录MSQYL服务的日志文件及POS位置，用于配置Slave同步的时候使用：</p>
+<p>[root@sql-master ~]# /usr/local/mysql/bin/mysqldump -uroot -hlocalhost -p123456  –master-data=2  -B   testdatabase   &gt; /opt/test_table_bak.sql</p>
+<p>#日志文件和POS位置记录结果如下：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20170124070103_17113.png" alt></p>
+<p>1.4：mysqldump的时候，要去掉drop table的语句，默认导出表的时候会在每个表的前面加上drop table的语句，即导出的sql文件在别的服务器导入时会直接删除该服务器已经存在同名的table而导致会丢失数据，因此在Master或者其他MySQL服务器使用mysqldump导出数据的时候要将默认添加的drop-table去掉，如下：</p>
+<p>1.4.1：默认是开启添加drop-table语句的：</p>
+<p>[root@sql-master ~]# mysqldump –help | grep  drop-table<br>  –add-drop-table    Add a DROP TABLE before each create.<br>                      (Defaults to on; use –skip-add-drop-table to disable.)<br>                      options –skip-add-drop-table –skip-add-locks<br>  –opt               Same as –add-drop-table, –add-locks, –create-options,<br>  –skip-opt          Disable –opt. Disables –add-drop-table, –add-locks,<br>add-drop-table                    TRUE</p>
+<p>1.4.2：默认导出的sql文件内容：</p>
+<p>[root@sql-master ~]# /usr/local/mysql/bin/mysqldump –single_transaction –flush-logs –master-data=2 –lock-tables &gt; /backup.sql</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20170123110256_65761.png" alt></p>
+<p>[root@sql-master ~]# /usr/local/mysql/bin/mysqldump   -uroot -p123456 –all-databases  –single_transaction –flush-logs –master-data=2 –skip-add-drop-table –lock-tables &gt; /backup1.sql</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20170123110326_85879.png" alt></p>
+<p>1.4.3：备份所有的数据库：</p>
+<p>[root@sql-master ~]#/usr/local/mysql/bin/mysqldump   –all-databases  –single_transaction –flush-logs –master-data=2 –lock-tables &gt; /backup.sql</p>
+<p>1.5：推荐使用的命令：</p>
+<p>1.5.1：推荐备份的命令：</p>
+<p>/usr/local/mysql/bin/mysqldump -u xx  -p xx  -Sxx  -B –master-data=2 –single_transaction –flush-logs –skip-add-drop-table  [要执行的操作]</p>
+<p>1.5.2：推荐使用分库备份的脚本：</p>
+<p>#!/bin/sh<br>#Author:ZhangJie<br>BAK_TIME=$(date  +%Y-%m-%d_%H:%M:%S)<br>USER_PSWD=123456<br>USER_NAME=root<br>SOCKET=”/var/lib/mysql/mysql.sock”<br>MYLOGIN=”mysql -u${USER_NAME} -p${USER_PSWD} -S ${SOCKET}”<br>DUMP_CMD=”/usr/local/mysql/bin/mysqldump -u${USER_NAME} -p${USER_PSWD} -S${SOCKET} -B –master-data=2 –single_transaction –flush-logs –skip-add-drop-table”<br>DATABASE=”$($MYLOGIN -e “show databases;”|egrep -vi “_schema|mysql”)”</p>
+<p>for dbname in ${DATABASE}<br>  do<br>   MYDIR=/data/backup/${dbname}<br>   [ ! -d ${MYDIR} ] &amp;&amp; mkdir -p ${MYDIR}<br> $DUMP_CMD ${dbname}|gzip &gt;${MYDIR}/${dbname}_${BAK_TIME}.sql.gz<br>done</p>
+<p>1.6：比较常用的命令：</p>
+<p>show processlist; #查看数据库里正在执行的SQL语句，可能无法看全完整的SQL语句。<br>show full processlist;     #查看正在执行的完整SQL语句，完整显示。<br>set global key_buffer_size = 1024*1024*32;    #不重启数据库调整数据库参数，直接生效，重启后失效。<br>show variables;    #查看数据库的配置参数信息，例如：my.cnf里参数的生效情况。<br>kill id  杀掉线程的命令，id为线程号（mysql下）<br>show status  查看当前会话的数据库状态信息。<br>show global status 查看整个数据库的运行状态信息。很重要，要分析并要做好监控。<br>show engine innodb status 显示innodb引擎的性能状态</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/16/tcp-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e3-80-81-e5-9b-9b-e6-ac-a1-e6-96-ad-e5-bc-80-e4-b8-8e-e5-8d-81-e4-b8-80-e7-a7-8d-e7-8a-b6-e6-80-81/" rel="next" title="TCP三次握手、四次断开与十一种状态">
+                  <i class="fa fa-chevron-left"></i> TCP三次握手、四次断开与十一种状态
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/16/nginx-e4-b9-8b-e4-b8-80-ef-bc-9a-e7-bc-96-e8-af-91-e5-ae-89-e8-a3-85nginx-1-8-1-e5-8f-8a-e9-85-8d-e7-bd-ae/" rel="prev" title="Nginx 之一：编译安装nginx 1.8.1 及配置">
+                  Nginx 之一：编译安装nginx 1.8.1 及配置 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

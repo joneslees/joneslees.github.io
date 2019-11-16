@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Linux磁盘管理好坏直接关系到整个系统的性能问题。 Linux磁盘管理常用三个命令为df、du和fdisk。 df：列出文件系统的整体磁盘使用量 du：检查磁盘空间使用量 fdisk：用于磁盘分区 dfdf命令参数功能：检查文件系统的磁盘空间占用情况。可以利用该命令来获取硬盘被占用了多少空间，目前还剩下多少空间等信息。 语法：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 磁盘管理">
+<meta property="og:url" content="http://yoursite.com/2019/10/14/linux-e7-a3-81-e7-9b-98-e7-ae-a1-e7-90-86-1/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Linux磁盘管理好坏直接关系到整个系统的性能问题。 Linux磁盘管理常用三个命令为df、du和fdisk。 df：列出文件系统的整体磁盘使用量 du：检查磁盘空间使用量 fdisk：用于磁盘分区 dfdf命令参数功能：检查文件系统的磁盘空间占用情况。可以利用该命令来获取硬盘被占用了多少空间，目前还剩下多少空间等信息。 语法：">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-11-16T07:42:20.267Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux 磁盘管理">
+<meta name="twitter:description" content="Linux磁盘管理好坏直接关系到整个系统的性能问题。 Linux磁盘管理常用三个命令为df、du和fdisk。 df：列出文件系统的整体磁盘使用量 du：检查磁盘空间使用量 fdisk：用于磁盘分区 dfdf命令参数功能：检查文件系统的磁盘空间占用情况。可以利用该命令来获取硬盘被占用了多少空间，目前还剩下多少空间等信息。 语法：">
+  <link rel="canonical" href="http://yoursite.com/2019/10/14/linux-e7-a3-81-e7-9b-98-e7-ae-a1-e7-90-86-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Linux 磁盘管理 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/linux-e7-a3-81-e7-9b-98-e7-ae-a1-e7-90-86-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            Linux 磁盘管理
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 13:47:14" itemprop="dateCreated datePublished" datetime="2019-10-14T13:47:14+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-16 15:42:20" itemprop="dateModified" datetime="2019-11-16T15:42:20+08:00">2019-11-16</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Linux磁盘管理好坏直接关系到整个系统的性能问题。 Linux磁盘管理常用三个命令为df、du和fdisk。</p><ul>
+<li>df：列出文件系统的整体磁盘使用量</li>
+<li>du：检查磁盘空间使用量</li>
+<li>fdisk：用于磁盘分区</li>
+</ul><hr><h2 id="df"><a href="#df" class="headerlink" title="df"></a>df</h2><p>df命令参数功能：检查文件系统的磁盘空间占用情况。可以利用该命令来获取硬盘被占用了多少空间，目前还剩下多少空间等信息。 语法：</p><a id="more"></a>
+
+
+
+<p>df [-ahikHTm] [目录或文件名]</p>
+<p>选项与参数：</p>
+<ul>
+<li>-a ：列出所有的文件系统，包括系统特有的 /proc 等文件系统；</li>
+<li>-k ：以 KBytes 的容量显示各文件系统；</li>
+<li>-m ：以 MBytes 的容量显示各文件系统；</li>
+<li>-h ：以人们较易阅读的 GBytes, MBytes, KBytes 等格式自行显示；</li>
+<li>-H ：以 M=1000K 取代 M=1024K 的进位方式；</li>
+<li>-T ：显示文件系统类型, 连同该 partition 的 filesystem 名称 (例如 ext3) 也列出；</li>
+<li>-i ：不用硬盘容量，而以 inode 的数量来显示</li>
+</ul>
+<h3 id="实例-1"><a href="#实例-1" class="headerlink" title="实例 1"></a>实例 1</h3><p>将系统内所有的文件系统列出来！</p>
+<p>[root@www ~]# df<br>Filesystem      1K-blocks      Used Available Use% Mounted on<br>/dev/hdc2         9920624   3823112   5585444  41% /<br>/dev/hdc3         4956316    141376   4559108   4% /home<br>/dev/hdc1          101086     11126     84741  12% /boot<br>tmpfs              371332         0    371332   0% /dev/shm</p>
+<p>在 Linux 底下如果 df 没有加任何选项，那么默认会将系统内所有的 (不含特殊内存内的文件系统与 swap) 都以 1 Kbytes 的容量来列出来！</p>
+<h3 id="实例-2"><a href="#实例-2" class="headerlink" title="实例 2"></a>实例 2</h3><p>将容量结果以易读的容量格式显示出来</p>
+<p>[root@www ~]# df -h<br>Filesystem            Size  Used Avail Use% Mounted on<br>/dev/hdc2             9.5G  3.7G  5.4G  41% /<br>/dev/hdc3             4.8G  139M  4.4G   4% /home<br>/dev/hdc1              99M   11M   83M  12% /boot<br>tmpfs                 363M     0  363M   0% /dev/shm</p>
+<h3 id="实例-3"><a href="#实例-3" class="headerlink" title="实例 3"></a>实例 3</h3><p>将系统内的所有特殊文件格式及名称都列出来</p>
+<p>[root@www ~]# df -aT<br>Filesystem    Type 1K-blocks    Used Available Use% Mounted on<br>/dev/hdc2     ext3   9920624 3823112   5585444  41% /<br>proc          proc         0       0         0   -  /proc<br>sysfs        sysfs         0       0         0   -  /sys<br>devpts      devpts         0       0         0   -  /dev/pts<br>/dev/hdc3     ext3   4956316  141376   4559108   4% /home<br>/dev/hdc1     ext3    101086   11126     84741  12% /boot<br>tmpfs        tmpfs    371332       0    371332   0% /dev/shm<br>none   binfmt_misc         0       0         0   -  /proc/sys/fs/binfmt_misc<br>sunrpc  rpc_pipefs         0       0         0   -  /var/lib/nfs/rpc_pipefs</p>
+<h3 id="实例-4"><a href="#实例-4" class="headerlink" title="实例 4"></a>实例 4</h3><p>将 /etc 底下的可用的磁盘容量以易读的容量格式显示</p>
+<p>[root@www ~]# df -h /etc<br>Filesystem            Size  Used Avail Use% Mounted on<br>/dev/hdc2             9.5G  3.7G  5.4G  41% /</p>
+<hr>
+<h2 id="du"><a href="#du" class="headerlink" title="du"></a>du</h2><p>Linux du命令也是查看使用空间的，但是与df命令不同的是Linux du命令是对文件和目录磁盘使用的空间的查看，还是和df命令有一些区别的，这里介绍Linux du命令。 语法：</p>
+<p>du [-ahskm] 文件或目录名称</p>
+<p>选项与参数：</p>
+<ul>
+<li>-a ：列出所有的文件与目录容量，因为默认仅统计目录底下的文件量而已。</li>
+<li>-h ：以人们较易读的容量格式 (G/M) 显示；</li>
+<li>-s ：列出总量而已，而不列出每个各别的目录占用容量；</li>
+<li>-S ：不包括子目录下的总计，与 -s 有点差别。</li>
+<li>-k ：以 KBytes 列出容量显示；</li>
+<li>-m ：以 MBytes 列出容量显示；</li>
+</ul>
+<h3 id="实例-1-1"><a href="#实例-1-1" class="headerlink" title="实例 1"></a>实例 1</h3><p>只列出当前目录下的所有文件夹容量（包括隐藏文件夹）:</p>
+<p>[root@www ~]# du<br>8       ./test4     &lt;==每个目录都会列出来<br>8       ./test2<br>….中间省略….<br>12      ./.gconfd   &lt;==包括隐藏文件的目录<br>220     .           &lt;==这个目录(.)所占用的总量</p>
+<p>直接输入 du 没有加任何选项时，则 du 会分析当前所在目录的文件与目录所占用的硬盘空间。</p>
+<h3 id="实例-2-1"><a href="#实例-2-1" class="headerlink" title="实例 2"></a>实例 2</h3><p>将文件的容量也列出来</p>
+<p>[root@www ~]# du -a<br>12      ./install.log.syslog   &lt;==有文件的列表了<br>8       ./.bash_logout<br>8       ./test4<br>8       ./test2<br>….中间省略….<br>12      ./.gconfd<br>220     .</p>
+<h3 id="实例-3-1"><a href="#实例-3-1" class="headerlink" title="实例 3"></a>实例 3</h3><p>检查根目录底下每个目录所占用的容量</p>
+<p>[root@www ~]# du -sm /*<br>7       /bin<br>6       /boot<br>…..中间省略….<br>0       /proc<br>…..中间省略….<br>1       /tmp<br>3859    /usr     &lt;==系统初期最大就是他了啦！<br>77      /var</p>
+<p>通配符 * 来代表每个目录。 与 df 不一样的是，du 这个命令其实会直接到文件系统内去搜寻所有的文件数据。</p>
+<hr>
+<h2 id="fdisk"><a href="#fdisk" class="headerlink" title="fdisk"></a>fdisk</h2><p>fdisk 是 Linux 的磁盘分区表操作工具。 语法：</p>
+<p>fdisk [-l] 装置名称</p>
+<p>选项与参数：</p>
+<ul>
+<li>-l ：输出后面接的装置所有的分区内容。若仅有 fdisk -l 时， 则系统将会把整个系统内能够搜寻到的装置的分区均列出来。</li>
+</ul>
+<h3 id="实例-1-2"><a href="#实例-1-2" class="headerlink" title="实例 1"></a>实例 1</h3><p>列出所有分区信息</p>
+<p>[root@AY120919111755c246621 tmp]# fdisk -l</p>
+<p>Disk /dev/xvda: 21.5 GB, 21474836480 bytes<br>255 heads, 63 sectors/track, 2610 cylinders<br>Units = cylinders of 16065 * 512 = 8225280 bytes<br>Sector size (logical/physical): 512 bytes / 512 bytes<br>I/O size (minimum/optimal): 512 bytes / 512 bytes<br>Disk identifier: 0x00000000</p>
+<pre><code>Device Boot      Start         End      Blocks   Id  System</code></pre><p>/dev/xvda1   *           1        2550    20480000   83  Linux<br>/dev/xvda2            2550        2611      490496   82  Linux swap / Solaris</p>
+<p>Disk /dev/xvdb: 21.5 GB, 21474836480 bytes<br>255 heads, 63 sectors/track, 2610 cylinders<br>Units = cylinders of 16065 * 512 = 8225280 bytes<br>Sector size (logical/physical): 512 bytes / 512 bytes<br>I/O size (minimum/optimal): 512 bytes / 512 bytes<br>Disk identifier: 0x56f40944</p>
+<pre><code>Device Boot      Start         End      Blocks   Id  System</code></pre><p>/dev/xvdb2               1        2610    20964793+  83  Linux</p>
+<h3 id="实例-2-2"><a href="#实例-2-2" class="headerlink" title="实例 2"></a>实例 2</h3><p>找出你系统中的根目录所在磁盘，并查阅该硬盘内的相关信息</p>
+<p>[root@www ~]# df /            &lt;==注意：重点在找出磁盘文件名而已<br>Filesystem           1K-blocks      Used Available Use% Mounted on<br>/dev/hdc2              9920624   3823168   5585388  41% /</p>
+<p>[root@www ~]# fdisk /dev/hdc  &lt;==仔细看，不要加上数字喔！<br>The number of cylinders for this disk is set to 5005.<br>There is nothing wrong with that, but this is larger than 1024,<br>and could in certain setups cause problems with:</p>
+<p>1) software that runs at boot time (e.g., old versions of LILO)<br>2) booting and partitioning software from other OSs<br>   (e.g., DOS FDISK, OS/2 FDISK)</p>
+<p>Command (m for help):     &lt;==等待你的输入！</p>
+<p>输入 m 后，就会看到底下这些命令介绍</p>
+<p>Command (m for help): m   &lt;== 输入 m 后，就会看到底下这些命令介绍<br>Command action<br>   a   toggle a bootable flag<br>   b   edit bsd disklabel<br>   c   toggle the dos compatibility flag<br>   d   delete a partition            &lt;==删除一个partition<br>   l   list known partition types<br>   m   print this menu<br>   n   add a new partition           &lt;==新增一个partition<br>   o   create a new empty DOS partition table<br>   p   print the partition table     &lt;==在屏幕上显示分割表<br>   q   quit without saving changes   &lt;==不储存离开fdisk程序<br>   s   create a new empty Sun disklabel<br>   t   change a partition’s system id<br>   u   change display/entry units<br>   v   verify the partition table<br>   w   write table to disk and exit  &lt;==将刚刚的动作写入分割表<br>   x   extra functionality (experts only)</p>
+<p>离开 fdisk 时按下 <code>q</code>，那么所有的动作都不会生效！相反的， 按下<code>w</code>就是动作生效的意思。</p>
+<p>Command (m for help): p  &lt;== 这里可以输出目前磁盘的状态</p>
+<p>Disk /dev/hdc: 41.1 GB, 41174138880 bytes        &lt;==这个磁盘的文件名与容量<br>255 heads, 63 sectors/track, 5005 cylinders      &lt;==磁头、扇区与磁柱大小<br>Units = cylinders of 16065 * 512 = 8225280 bytes &lt;==每个磁柱的大小</p>
+<p>   Device Boot      Start         End      Blocks   Id  System<br>/dev/hdc1   *           1          13      104391   83  Linux<br>/dev/hdc2              14        1288    10241437+  83  Linux<br>/dev/hdc3            1289        1925     5116702+  83  Linux<br>/dev/hdc4            1926        5005    24740100    5  Extended<br>/dev/hdc5            1926        2052     1020096   82  Linux swap / Solaris<br># 装置文件名 启动区否 开始磁柱    结束磁柱  1K大小容量 磁盘分区槽内的系统</p>
+<p>Command (m for help): q</p>
+<p>想要不储存离开吗？按下 q 就对了！不要随便按 w 啊！ 使用 <code>p</code> 可以列出目前这颗磁盘的分割表信息，这个信息的上半部在显示整体磁盘的状态。</p>
+<hr>
+<h3 id="磁盘格式化"><a href="#磁盘格式化" class="headerlink" title="磁盘格式化"></a>磁盘格式化</h3><p>磁盘分割完毕后自然就是要进行文件系统的格式化，格式化的命令非常的简单，使用 <code>mkfs</code>（make filesystem） 命令。 语法：</p>
+<p>mkfs [-t 文件系统格式] 装置文件名</p>
+<p>选项与参数：</p>
+<ul>
+<li>-t ：可以接文件系统格式，例如 ext3, ext2, vfat 等(系统有支持才会生效)</li>
+</ul>
+<h3 id="实例-1-3"><a href="#实例-1-3" class="headerlink" title="实例 1"></a>实例 1</h3><p>查看 mkfs 支持的文件格式</p>
+<p>[root@www ~]# mkfs[tab][tab]<br>mkfs         mkfs.cramfs  mkfs.ext2    mkfs.ext3    mkfs.msdos   mkfs.vfat</p>
+<p>按下两个[tab]，会发现 mkfs 支持的文件格式如上所示。</p>
+<h3 id="实例-2-3"><a href="#实例-2-3" class="headerlink" title="实例 2"></a>实例 2</h3><p>将分区 /dev/hdc6（可指定你自己的分区） 格式化为 ext3 文件系统：</p>
+<p>[root@www ~]# mkfs -t ext3 /dev/hdc6<br>mke2fs 1.39 (29-May-2006)<br>Filesystem label=                &lt;==这里指的是分割槽的名称(label)<br>OS type: Linux<br>Block size=4096 (log=2)          &lt;==block 的大小配置为 4K<br>Fragment size=4096 (log=2)<br>251392 inodes, 502023 blocks     &lt;==由此配置决定的inode/block数量<br>25101 blocks (5.00%) reserved for the super user<br>First data block=0<br>Maximum filesystem blocks=515899392<br>16 block groups<br>32768 blocks per group, 32768 fragments per group<br>15712 inodes per group<br>Superblock backups stored on blocks:<br>        32768, 98304, 163840, 229376, 294912</p>
+<p>Writing inode tables: done<br>Creating journal (8192 blocks): done &lt;==有日志记录<br>Writing superblocks and filesystem accounting information: done</p>
+<p>This filesystem will be automatically checked every 34 mounts or<br>180 days, whichever comes first.  Use tune2fs -c or -i to override.<br># 这样就创建起来我们所需要的 Ext3 文件系统了！简单明了！</p>
+<hr>
+<h2 id="磁盘检验"><a href="#磁盘检验" class="headerlink" title="磁盘检验"></a>磁盘检验</h2><p>fsck（file system check）用来检查和维护不一致的文件系统。 若系统掉电或磁盘发生问题，可利用fsck命令对文件系统进行检查。 语法：</p>
+<p>fsck [-t 文件系统] [-ACay] 装置名称</p>
+<p>选项与参数：</p>
+<ul>
+<li>-t : 给定档案系统的型式，若在 /etc/fstab 中已有定义或 kernel 本身已支援的则不需加上此参数</li>
+<li>-s : 依序一个一个地执行 fsck 的指令来检查</li>
+<li>-A : 对/etc/fstab 中所有列出来的 分区（partition）做检查</li>
+<li>-C : 显示完整的检查进度</li>
+<li>-d : 打印出 e2fsck 的 debug 结果</li>
+<li>-p : 同时有 -A 条件时，同时有多个 fsck 的检查一起执行</li>
+<li>-R : 同时有 -A 条件时，省略 / 不检查</li>
+<li>-V : 详细显示模式</li>
+<li>-a : 如果检查有错则自动修复</li>
+<li>-r : 如果检查有错则由使用者回答是否修复</li>
+<li>-y : 选项指定检测每个文件是自动输入yes，在不确定那些是不正常的时候，可以执行 # fsck -y 全部检查修复。</li>
+</ul>
+<h3 id="实例-1-4"><a href="#实例-1-4" class="headerlink" title="实例 1"></a>实例 1</h3><p>查看系统有多少文件系统支持的 fsck 命令：</p>
+<p>[root@www ~]# fsck[tab][tab]<br>fsck         fsck.cramfs  fsck.ext2    fsck.ext3    fsck.msdos   fsck.vfat</p>
+<h3 id="实例-2-4"><a href="#实例-2-4" class="headerlink" title="实例 2"></a>实例 2</h3><p>强制检测 /dev/hdc6 分区:</p>
+<p>[root@www ~]# fsck -C -f -t ext3 /dev/hdc6<br>fsck 1.39 (29-May-2006)<br>e2fsck 1.39 (29-May-2006)<br>Pass 1: Checking inodes, blocks, and sizes<br>Pass 2: Checking directory structure<br>Pass 3: Checking directory connectivity<br>Pass 4: Checking reference counts<br>Pass 5: Checking group summary information<br>vbird_logical: 11/251968 files (9.1% non-contiguous), 36926/1004046 blocks</p>
+<p>如果没有加上 -f 的选项，则由于这个文件系统不曾出现问题，检查的经过非常快速！若加上 -f 强制检查，才会一项一项的显示过程。</p>
+<hr>
+<h2 id="磁盘挂载与卸除"><a href="#磁盘挂载与卸除" class="headerlink" title="磁盘挂载与卸除"></a>磁盘挂载与卸除</h2><p>Linux 的磁盘挂载使用 <code>mount</code> 命令，卸载使用 <code>umount</code> 命令。 磁盘挂载语法：</p>
+<p>mount [-t 文件系统] [-L Label名] [-o 额外选项] [-n]  装置文件名  挂载点</p>
+<h3 id="实例-1-5"><a href="#实例-1-5" class="headerlink" title="实例 1"></a>实例 1</h3><p>用默认的方式，将刚刚创建的 /dev/hdc6 挂载到 /mnt/hdc6 上面！</p>
+<p>[root@www ~]# mkdir /mnt/hdc6<br>[root@www ~]# mount /dev/hdc6 /mnt/hdc6<br>[root@www ~]# df<br>Filesystem           1K-blocks      Used Available Use% Mounted on<br>…..中间省略…..<br>/dev/hdc6              1976312     42072   1833836   3% /mnt/hdc6</p>
+<p>磁盘卸载命令 <code>umount</code> 语法：</p>
+<p>umount [-fn] 装置文件名或挂载点</p>
+<p>选项与参数：</p>
+<ul>
+<li>-f ：强制卸除！可用在类似网络文件系统 (NFS) 无法读取到的情况下；</li>
+<li>-n ：不升级 /etc/mtab 情况下卸除。</li>
+</ul>
+<p>卸载/dev/hdc6</p>
+<p>[root@www ~]# umount /dev/hdc6</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/14/linux-e7-a3-81-e7-9b-98-e7-ae-a1-e7-90-86/" rel="next" title="Linux 磁盘管理">
+                  <i class="fa fa-chevron-left"></i> Linux 磁盘管理
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/14/linux-vi-vim/" rel="prev" title="Linux vi/vim">
+                  Linux vi/vim <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#df"><span class="nav-number">1.</span> <span class="nav-text">df</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-1"><span class="nav-number">1.1.</span> <span class="nav-text">实例 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-2"><span class="nav-number">1.2.</span> <span class="nav-text">实例 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-3"><span class="nav-number">1.3.</span> <span class="nav-text">实例 3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-4"><span class="nav-number">1.4.</span> <span class="nav-text">实例 4</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#du"><span class="nav-number">2.</span> <span class="nav-text">du</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-1-1"><span class="nav-number">2.1.</span> <span class="nav-text">实例 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-2-1"><span class="nav-number">2.2.</span> <span class="nav-text">实例 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-3-1"><span class="nav-number">2.3.</span> <span class="nav-text">实例 3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fdisk"><span class="nav-number">3.</span> <span class="nav-text">fdisk</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-1-2"><span class="nav-number">3.1.</span> <span class="nav-text">实例 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-2-2"><span class="nav-number">3.2.</span> <span class="nav-text">实例 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#磁盘格式化"><span class="nav-number">3.3.</span> <span class="nav-text">磁盘格式化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-1-3"><span class="nav-number">3.4.</span> <span class="nav-text">实例 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-2-3"><span class="nav-number">3.5.</span> <span class="nav-text">实例 2</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#磁盘检验"><span class="nav-number">4.</span> <span class="nav-text">磁盘检验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-1-4"><span class="nav-number">4.1.</span> <span class="nav-text">实例 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-2-4"><span class="nav-number">4.2.</span> <span class="nav-text">实例 2</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#磁盘挂载与卸除"><span class="nav-number">5.</span> <span class="nav-text">磁盘挂载与卸除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实例-1-5"><span class="nav-number">5.1.</span> <span class="nav-text">实例 1</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

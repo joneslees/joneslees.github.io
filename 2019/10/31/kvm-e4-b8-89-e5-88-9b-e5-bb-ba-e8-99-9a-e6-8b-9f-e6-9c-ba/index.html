@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="创建虚拟机 上传镜像并安装虚拟机  创建磁盘 #raw格式：性能好，直接吃掉10G储存qemu-img create -f raw /var/lib/libvirt/images/Centos7.raw 10G#qcow2格式：用多少占多少，不会一次性占用10Gqemu-img create -f qcow2 /var/lib/libvirt/images/centos7.qcow2 10G">
+<meta property="og:type" content="article">
+<meta property="og:title" content="KVM(三)_创建虚拟机">
+<meta property="og:url" content="http://yoursite.com/2019/10/31/kvm-e4-b8-89-e5-88-9b-e5-bb-ba-e8-99-9a-e6-8b-9f-e6-9c-ba/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="创建虚拟机 上传镜像并安装虚拟机  创建磁盘 #raw格式：性能好，直接吃掉10G储存qemu-img create -f raw /var/lib/libvirt/images/Centos7.raw 10G#qcow2格式：用多少占多少，不会一次性占用10Gqemu-img create -f qcow2 /var/lib/libvirt/images/centos7.qcow2 10G">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190819145417580.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190819145639769.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019082015111274.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190820150943878.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190820151231530.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190820151631187.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190820151705315.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190820151719566.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190820151802186.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190820151824566.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190820152050668.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190820152126574.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019082015233169.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190820152341855.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190820153351997.png">
+<meta property="og:updated_time" content="2019-11-16T07:42:20.269Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KVM(三)_创建虚拟机">
+<meta name="twitter:description" content="创建虚拟机 上传镜像并安装虚拟机  创建磁盘 #raw格式：性能好，直接吃掉10G储存qemu-img create -f raw /var/lib/libvirt/images/Centos7.raw 10G#qcow2格式：用多少占多少，不会一次性占用10Gqemu-img create -f qcow2 /var/lib/libvirt/images/centos7.qcow2 10G">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190819145417580.png">
+  <link rel="canonical" href="http://yoursite.com/2019/10/31/kvm-e4-b8-89-e5-88-9b-e5-bb-ba-e8-99-9a-e6-8b-9f-e6-9c-ba/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>KVM(三)_创建虚拟机 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/31/kvm-e4-b8-89-e5-88-9b-e5-bb-ba-e8-99-9a-e6-8b-9f-e6-9c-ba/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            KVM(三)_创建虚拟机
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-31 14:32:17" itemprop="dateCreated datePublished" datetime="2019-10-31T14:32:17+08:00">2019-10-31</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-16 15:42:20" itemprop="dateModified" datetime="2019-11-16T15:42:20+08:00">2019-11-16</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/容器与编排/" itemprop="url" rel="index">
+                    <span itemprop="name">容器与编排</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="创建虚拟机"><a href="#创建虚拟机" class="headerlink" title="创建虚拟机"></a>创建虚拟机</h1><ol>
+<li><p>上传镜像并安装虚拟机</p>
+</li>
+<li><p>创建磁盘</p>
+<p>#raw格式：性能好，直接吃掉10G储存<br>qemu-img create -f raw /var/lib/libvirt/images/Centos7.raw 10G<br>#qcow2格式：用多少占多少，不会一次性占用10G<br>qemu-img create -f qcow2 /var/lib/libvirt/images/centos7.qcow2 10G</p>
+</li>
+</ol><a id="more"></a>
+<p>Bash</p>
+<p>Copy</p>
+<ol start="3">
+<li><p>创建默认网络虚拟机</p>
+<p>virt-install –virt-type kvm <br>–name centos7_201 <br>–ram 1024 <br>–vcpus 1 <br>–cdrom=/data/CentOS-7-x86_64-Minimal-1810.iso <br>–disk path=/var/lib/libvirt/images/centos7.201.qcow2 <br>–network bridge=br0 <br>–graphics vnc,listen=0.0.0.0 <br>–noautoconsole</p>
+<p>#其它选项：<br>–network bridge=br0   # 指定桥接网卡br0</p>
+</li>
+</ol>
+<p>Bash</p>
+<p>Copy</p>
+<ol start="4">
+<li>使用vnc连接安装 <img src="http://www.pever.cn/wp-content/uploads/2019/10/20190819145417580.png" alt="在这里插入图片描述"></li>
+</ol>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190819145639769.png" alt="在这里插入图片描述"> 安装完成后点reboot，但并不能重启，因为</p>
+<pre><code>[kvm]$ virsh list --all
+ Id    Name                           State
+----------------------------------------------------
+ -     centos7                        shut off</code></pre><p>Bash</p>
+<p>Copy</p>
+<p>启动命令</p>
+<pre><code>[kvm]$ virsh start centos7
+Domain centos7 started
+
+[kvm]$ virsh list --all
+ Id    Name                           State
+----------------------------------------------------
+ 3     centos7                        running</code></pre><p>Bash</p>
+<p>Copy</p>
+<hr>
+<h1 id="创建windows虚拟机"><a href="#创建windows虚拟机" class="headerlink" title="创建windows虚拟机"></a>创建windows虚拟机</h1><p><strong>驱动下载地址：</strong> <a href="https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/" target="_blank" rel="noopener">https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/</a></p>
+<ol>
+<li><p>准备好镜像和驱动 (1)、windows_server_2008_r2_sp1.iso (2)、virtio-win-0.1.141_amd64.vfd</p>
+</li>
+<li><p>创建磁盘</p>
+<p>qemu-img create -f qcow2 /var/lib/libvirt/images/winserver.qcow2 30G</p>
+</li>
+</ol>
+<p>Bash</p>
+<p>Copy</p>
+<ol start="3">
+<li><p>安装</p>
+<p>virt-install –virt-type kvm <br>–name win98 <br>–ram 2048 <br>–vcpus 1 <br>–os-type=windows <br>–cdrom=/data/windows_server_2008_r2_sp1.iso <br>–disk path=/var/lib/libvirt/images/winserver.qcow2,format=qcow2,bus=virtio <br>–disk path=/virt/virtio-win-0.1.141_amd64.vfd,device=floppy <br>–network bridge=virbr0,model=virtio <br>–graphics vnc,listen=0.0.0.0 <br>–noautoconsole</p>
+</li>
+</ol>
+<p>Bash</p>
+<p>Copy</p>
+<ol start="4">
+<li>命令<code>virt-manager</code>进入图形管理（百度下载xmanager） <img src="http://www.pever.cn/wp-content/uploads/2019/10/2019082015111274.png" alt="在这里插入图片描述"></li>
+</ol>
+<hr>
+<ol start="5">
+<li>选第一个==&gt;下一步 <img src="http://www.pever.cn/wp-content/uploads/2019/10/20190820150943878.png" alt="在这里插入图片描述"></li>
+</ol>
+<hr>
+<ol start="6">
+<li>接受，下一步 <img src="http://www.pever.cn/wp-content/uploads/2019/10/20190820151231530.png" alt="在这里插入图片描述"></li>
+</ol>
+<hr>
+<ol start="7">
+<li>自定义安装，下一步 <img src="http://www.pever.cn/wp-content/uploads/2019/10/20190820151631187.png" alt="在这里插入图片描述"></li>
+</ol>
+<hr>
+<ol start="8">
+<li>加载驱动 <img src="http://www.pever.cn/wp-content/uploads/2019/10/20190820151705315.png" alt="在这里插入图片描述"></li>
+</ol>
+<hr>
+<ol start="9">
+<li>浏览 <img src="http://www.pever.cn/wp-content/uploads/2019/10/20190820151719566.png" alt="在这里插入图片描述"></li>
+</ol>
+<hr>
+<ol start="10">
+<li>选择win2008R2 <img src="http://www.pever.cn/wp-content/uploads/2019/10/20190820151802186.png" alt="在这里插入图片描述"></li>
+</ol>
+<hr>
+<ol start="11">
+<li>这里要装驱动，要做2遍，先选第一个，下一步 <img src="http://www.pever.cn/wp-content/uploads/2019/10/20190820151824566.png" alt="在这里插入图片描述"></li>
+</ol>
+<hr>
+<ol start="12">
+<li>重复上面操作，选第2个，下一步 <img src="http://www.pever.cn/wp-content/uploads/2019/10/20190820152050668.png" alt="在这里插入图片描述"></li>
+</ol>
+<hr>
+<ol start="13">
+<li>装完后就可以看到这里了，新建分区，看你大小分。C盘至少8G，给多点 <img src="http://www.pever.cn/wp-content/uploads/2019/10/20190820152126574.png" alt="在这里插入图片描述"></li>
+</ol>
+<hr>
+<ol start="14">
+<li>新建完后选做系统盘，下一步 <img src="http://www.pever.cn/wp-content/uploads/2019/10/2019082015233169.png" alt="在这里插入图片描述"></li>
+</ol>
+<hr>
+<ol start="15">
+<li>等待安装 <img src="http://www.pever.cn/wp-content/uploads/2019/10/20190820152341855.png" alt="在这里插入图片描述"></li>
+</ol>
+<hr>
+<ol start="16">
+<li>安装完成</li>
+</ol>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190820153351997.png" alt="在这里插入图片描述"></p>
+<hr>
+<h1 id="快速创建虚拟机"><a href="#快速创建虚拟机" class="headerlink" title="快速创建虚拟机"></a>快速创建虚拟机</h1><ol>
+<li><p>通过copy虚拟机磁盘文件，可以快速创建虚拟机</p>
+<p>[kvm]$ cd /var/lib/libvirt/images/</p>
+</li>
+</ol>
+<p>Bash</p>
+<p>Copy</p>
+<ol start="2">
+<li><p>复制磁盘文件</p>
+<p>[kvm]$ cp Centos7.raw centos7_2.raw</p>
+</li>
+</ol>
+<p>Bash</p>
+<p>Copy</p>
+<ol start="3">
+<li><p>创建虚拟机</p>
+<p>[kvm]$ virt-install –virt-type kvm <br>–name centos7_2 <br>–ram 1024 <br>–vcpus 1 <br>–cdrom=/data/CentOS-7-x86_64-Minimal-1810.iso <br>–disk path=/var/lib/libvirt/images/centos7_2.raw <br>–network bridge=br0 <br>–graphics vnc,listen=0.0.0.0 <br>–noautoconsole<br>#虚拟机不要开始安装过程，即虚拟机启动后立即强制关系重新启动即可进入到虚拟机系统</p>
+</li>
+</ol>
+<p>Bash</p>
+<p>Copy</p>
+<hr>
+<h1 id="虚拟机管理命令"><a href="#虚拟机管理命令" class="headerlink" title="虚拟机管理命令"></a>虚拟机管理命令</h1><ol>
+<li><p>列出当前开机的</p>
+<p>virsh list </p>
+</li>
+</ol>
+<p>Bash</p>
+<p>Copy</p>
+<ol start="2">
+<li><p>列出所有</p>
+<p>virsh list –all </p>
+</li>
+</ol>
+<p>Bash</p>
+<p>Copy</p>
+<ol start="3">
+<li><p>正常关机</p>
+<p>virsh shutdown CentOS-7-x86_64 </p>
+</li>
+</ol>
+<p>Bash</p>
+<p>Copy</p>
+<ol start="4">
+<li><p>正常开机</p>
+<p>virsh start CentOS-7-x86_64 </p>
+</li>
+</ol>
+<p>Bash</p>
+<p>Copy</p>
+<ol start="5">
+<li><p>强制停止/关机</p>
+<p>virsh destroy centos7 </p>
+</li>
+</ol>
+<p>Bash</p>
+<p>Copy</p>
+<ol start="6">
+<li><p>强制删除</p>
+<p>virsh undefine Win_2008_r2-x86_64 </p>
+</li>
+</ol>
+<p>Bash</p>
+<p>Copy</p>
+<ol start="7">
+<li><p>设置开机自启动</p>
+<p>virsh autostart centos7</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/31/e8-99-9a-e6-8b-9f-e5-8c-96-e6-8a-80-e6-9c-af-e4-b9-8bkvm/" rel="next" title="虚拟化技术之KVM">
+                  <i class="fa fa-chevron-left"></i> 虚拟化技术之KVM
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/31/openstack-stein-e7-89-88-e6-9c-ac-e5-ae-89-e8-a3-85-e6-96-87-e6-a1-a3/" rel="prev" title="openstack Stein 版本安装文档">
+                  openstack Stein 版本安装文档 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#创建虚拟机"><span class="nav-number">1.</span> <span class="nav-text">创建虚拟机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建windows虚拟机"><span class="nav-number">2.</span> <span class="nav-text">创建windows虚拟机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#快速创建虚拟机"><span class="nav-number">3.</span> <span class="nav-text">快速创建虚拟机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#虚拟机管理命令"><span class="nav-number">4.</span> <span class="nav-text">虚拟机管理命令</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

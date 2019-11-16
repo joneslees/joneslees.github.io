@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="一：Nginx的模块化结构设计：1、核心模块：指的是nginx服务器运行当中必不可少的模块，这些模块提供了最基本最核心的服务，比如权限控制、进程管理、错误日志、事件驱动、正则表达式解析等,nginx的源码模块位于/root/nginx-1.8.1/src目录：[root@Server1 src]# pwd /root/nginx-1.8.1/src [root@Server1 src]# ls c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx 之三：nginx服务器模块、web请求处理机制及事件驱动模型、进程功能和进程间通信">
+<meta property="og:url" content="http://yoursite.com/2019/11/16/nginx-e4-b9-8b-e4-b8-89-ef-bc-9anginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e6-a8-a1-e5-9d-97-e3-80-81web-e8-af-b7-e6-b1-82-e5-a4-84-e7-90-86-e6-9c-ba-e5-88-b6-e5-8f-8a-e4-ba-8b-e4-bb-b6-e9-a9-b1-e5-8a-a8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="一：Nginx的模块化结构设计：1、核心模块：指的是nginx服务器运行当中必不可少的模块，这些模块提供了最基本最核心的服务，比如权限控制、进程管理、错误日志、事件驱动、正则表达式解析等,nginx的源码模块位于/root/nginx-1.8.1/src目录：[root@Server1 src]# pwd /root/nginx-1.8.1/src [root@Server1 src]# ls c">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160507093844404-1534840102.jpg">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160428151952236-1487292877.jpg">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160428091935517-336016248.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160428092123923-2088340257.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160428191552830-490542419-1024x415.jpg">
+<meta property="og:updated_time" content="2019-11-16T07:42:20.270Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx 之三：nginx服务器模块、web请求处理机制及事件驱动模型、进程功能和进程间通信">
+<meta name="twitter:description" content="一：Nginx的模块化结构设计：1、核心模块：指的是nginx服务器运行当中必不可少的模块，这些模块提供了最基本最核心的服务，比如权限控制、进程管理、错误日志、事件驱动、正则表达式解析等,nginx的源码模块位于/root/nginx-1.8.1/src目录：[root@Server1 src]# pwd /root/nginx-1.8.1/src [root@Server1 src]# ls c">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160507093844404-1534840102.jpg">
+  <link rel="canonical" href="http://yoursite.com/2019/11/16/nginx-e4-b9-8b-e4-b8-89-ef-bc-9anginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e6-a8-a1-e5-9d-97-e3-80-81web-e8-af-b7-e6-b1-82-e5-a4-84-e7-90-86-e6-9c-ba-e5-88-b6-e5-8f-8a-e4-ba-8b-e4-bb-b6-e9-a9-b1-e5-8a-a8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Nginx 之三：nginx服务器模块、web请求处理机制及事件驱动模型、进程功能和进程间通信 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/16/nginx-e4-b9-8b-e4-b8-89-ef-bc-9anginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e6-a8-a1-e5-9d-97-e3-80-81web-e8-af-b7-e6-b1-82-e5-a4-84-e7-90-86-e6-9c-ba-e5-88-b6-e5-8f-8a-e4-ba-8b-e4-bb-b6-e9-a9-b1-e5-8a-a8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            Nginx 之三：nginx服务器模块、web请求处理机制及事件驱动模型、进程功能和进程间通信
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-11-16 11:58:51 / Modified: 15:42:20" itemprop="dateCreated datePublished" datetime="2019-11-16T11:58:51+08:00">2019-11-16</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/LNMP/" itemprop="url" rel="index">
+                    <span itemprop="name">LNMP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一：Nginx的模块化结构设计：</p><p>1、核心模块：指的是nginx服务器运行当中必不可少的模块，这些模块提供了最基本最核心的服务，比如权限控制、进程管理、错误日志、事件驱动、正则表达式解析等,nginx的源码模块位于/root/nginx-1.8.1/src目录：</p><p>[root@Server1 src]# pwd<br> /root/nginx-1.8.1/src<br> [root@Server1 src]# ls<br> core   #核心模块<br> event  #事件模块<br> http   #http模块<br> mail   #邮件模块<br> misc   #其他模块<br> os     #系统模块</p><a id="more"></a>
+
+
+<p>2、标准HTTP模块：默认即被编译到了Nginx当中，除非使用–with-out-module_name参数声明不编译，如：</p>
+<p>ngx_http_core  #配置端口、URL分析、服务器响应错误处理，别名控制以及其他HTTP核心事物。<br> ngx_http_auth_basic_module #基于http的认证<br> ngx_http_access_module #基于IP地址的访问控制策略<br> ngx_http_autoindex_module #处理以“/”结尾的请求并自动生成目录列表。<br> ngx_http_browser_module #解析HTTP请求头中的”User-Agent“ 的值。<br> ngx_http_charset_module#指定网页的编码。<br> 。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。</p>
+<p>3、可选HTTP模块：</p>
+<p>ngx_http_perl_module #在nginx 的配置文件中可以使用perl脚本。<br> ngx_http_flv_module  #支持flash多媒体信息文件传输。<br> ngx_http_gzip_module #支持时时压缩<br> ngx_http_image_filter_module #支持JPEG,GIF和PNG的图片的尺寸和旋转方向<br> ngx_http_ssl_module  #支持对HTTPS/SSL的支持<br> ngx_http_sub_module  #支持使用指定的字符串替换相应信息的中的信息</p>
+<p>4、邮件模块；默认没有编译，使用的场景也不多。</p>
+<p>ngx_mail_auth_http_module.c<br> ngx_mail.c<br> ngx_mail_core_module.c<br> ngx_mail.h<br> ngx_mail_handler.c<br> ngx_mail_imap_handler.c<br> ngx_mail_imap_module.c<br> ngx_mail_imap_module.h<br> ngx_mail_parse.c<br> ngx_mail_pop3_handler.c<br> ngx_mail_pop3_module.c<br> ngx_mail_pop3_module.h<br> ngx_mail_proxy_module.c<br> ngx_mail_smtp_handler.c<br> ngx_mail_smtp_module.c<br> ngx_mail_smtp_module.h<br> ngx_mail_ssl_module.c<br> ngx_mail_ssl_module.h</p>
+<p>5、第三方模块：</p>
+<p> echo-nginx-module #支持在配置文件中使用echo、sleep、time即exec等类似shell命令。 memc-nginx-module #对标准http模块ngx_http_memcached_module的扩展，支持set、add、delete等命令 lua-nginx-module #支持lua脚本语言 </p>
+<p>6、安装 echo-nginx-module 模块：</p>
+<p>6.1：模块地址： <a href="https://github.com/openresty/echo-nginx-module.git" target="_blank" rel="noopener">https://github.com/openresty/echo-nginx-module.git</a></p>
+<p>6.2：进到在nginx源码目录下，执行编译安装echo-nginx-module模块：</p>
+<pre><code>cd nginx-1.8.1
+./configure   --prefix=/usr/local/nginx/ --add-module=/home/tianqi/echo-nginx-module-master
+make
+make install</code></pre><p>6.3：配置nginx.conf：</p>
+<pre><code>server {
+        listen       80;
+        server_name  hfnginx.chinacloudapp.cn;
+        location / {
+            root   html;
+            index  index.html index.htm;
+            echo $remote_addr;
+            echo $remote_port;
+            echo &quot;zhangjie&quot;;
+        }</code></pre><p>6.4:访问测试：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160507093844404-1534840102.jpg" alt></p>
+<p>6.5:Nginx模块组织工作图：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160428151952236-1487292877.jpg" alt></p>
+<p>二：web请求处理机制：</p>
+<p>1、多进程方式：服务器没接受到一个客户端请求就有服务器的主进程生成一个子进程响应客户端，直到用户关闭连接，这样的优势是处理速度快，子进程之间相互独立，但是如果访问过大会导致服务器资源耗尽而无法提供请求。</p>
+<p>2、多线程方式：与多进程方式类似，但是每收到一个客户端请求会有服务进程派生出一个线程来个客户方进行交互，一个线程的开销远远小于一个进程，因此多线程方式在很大程度减轻了web服务器对系统资源的要求，但是多线程也有自己的缺点，即当多个线程位于同一个进程内工作的时候，可以相互访问同样的内存地址空间，所以他们相互影响，一旦主进程挂掉则所有子线程都不能工作了，IIS服务器使用了多线程的方式，需要间隔一段时间就重启一次才能稳定。</p>
+<p>三：同步和异步、阻塞与非阻塞：</p>
+<p>1、同步与异步：主要是针对应用程序与内核的交互方式而言的：</p>
+<p>同步：进程发出数据后，等内核返回响应以后才继续下一个请求，即如果内核一直不返回数据，那么进程就一直等，直到天荒地老，死机error。</p>
+<p>异步：进程发出数据后，不等内核返回响应，接着处理下一个请求,Nginx是异步的。</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160428091935517-336016248.png" alt></p>
+<p>2、阻塞与非阻塞：</p>
+<p>可以理解为内核与IO设备的交互方式，当内核收到进程请求IO数据时候的处理方式：</p>
+<p>也可以简单理解为内核需要做一件事能不能立即得到返回应答，如果不能立即获得返回，需要等待，那就阻塞了，否则就可以理解为非阻塞。</p>
+<p>阻塞：IO调用不能立即返回结果，即一个进程发起的IO请求不能得到立即满足时，进程就要一直等到内核响应，内核要把数据从IO设备复制到内核空间，再返回给进程，这是阻塞。</p>
+<p>非阻塞：IO调用可以立即返回结果，一个进程发起的IO进程不能立即满足时，不在等待，而是一遍一遍的轮训查看IO是否完成。</p>
+<p>详细区别如下图所示：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160428092123923-2088340257.png" alt></p>
+<p>3、混合总结：</p>
+<p>3.1：同步阻塞：程序进程向内核发送IO请求后一直等待内核响应，如果内核处理请求的IO操作不能立即返回,则进程将一直等待并不再接受新的请求，并由进程轮训查看IO是否完成，完成后进程将IO结果返回给Client，在IO没有返回期间进程不能接受其他客户的请求，而且是有进程自己去查看IO是否完成，这种方式简单，但是比较慢，用的比较少。</p>
+<p>3.2：同步非阻塞：，进程向内核发送请IO求后一直等待内核响应，如果内核处理请求的IO操作不能立即返回IO结果，进程将不再等待，而且继续处理其他请求，但是仍然需要进程隔一段时间就要查看内核IO是否完成。</p>
+<p>3.3：异步阻塞：event-diver，进程向内核发送IO调用后，不用等待内核响应，可以继续接受其他请求，内核收到进程请求后进行的IO如果不能立即返回，就由内核等待结果，直到IO完成后内核再通知进程，此方式比较占用内核，因此也很少使用。</p>
+<p>3.4：异步非阻塞：AIO,进程向内核发送IO调用后，不用等待内核响应，可以继续接受其他请求，内核调用的IO如果不能立即返回，内核会继续处理其他事物，直到IO完成后将结果通知给内核，内核在将IO完成的结果返回给进程，期间进程可以接受新的请求，内核也可以处理新的事物，因此相互不影响，可以实现较大的同时并实现较高的IO复用，因此异步非阻塞使用最多的一种通信方式。</p>
+<p> 四：Nginx支持的事件驱动模型：</p>
+<p> 1、select：</p>
+<p> select库是在linux和windows平台都基本支持的 事件驱动模型库，并且在接口的定义也基本相同，只是部分参数的含义略有差异，最大并发限制1024，只最早期的事件驱动模型。 </p>
+<p>2、poll：</p>
+<p> 在Linux 的基本驱动模型，windows不支持此驱动模型，是select的升级版，取消了最大的并发限制，在编译nginx的时候可以使用–with-poll_module和–without-poll_module这两个指定是否编译select库。 </p>
+<p>3、epoll：</p>
+<p> epoll是库是Nginx服务器支持的最高性能的事件驱动库之一，是公认的非常优秀的事件驱动模型，它和select和poll有很大的区别，epoll是poll的升级版，但是与poll的效率有很大的区别.<br>epoll的处理方式是创建一个待处理的事件列表，然后把这个列表发给内核，返回的时候在去轮训检查这个表，以判断事件是否发生，epoll支持一个进程打开的最大事件描述符的上限是系统可以打开的文件的最大数，同时epoll库的IO效率不随描述符数目增加而线性下降，因为它只会对内核上报的“活跃”的描述符进行操作。 </p>
+<p>4、rtsig：</p>
+<p> 不是一个常用事件驱动，最大队列1024，不是很常用 </p>
+<p>5、kqueue：</p>
+<p> 用于支持BSD系列平台的高校事件驱动模型，主要用在FreeBSD 4.1及以上版本、OpenBSD 2.0级以上版本，NetBSD级以上版本及Mac OS X 平台上，该模型也是poll库的变种，因此和epoll没有本质上的区别，都是通过避免轮训操作提供效率。 </p>
+<p> 6、/dev/poll:</p>
+<p> 用于支持unix衍生平台的高效事件驱动模型，主要在Solaris 平台、HP/UX，该模型是sun公司在开发Solaris系列平台的时候提出的用于完成事件驱动机制的方案，它使用了虚拟的/dev/poll设备，开发人员将要见识的文件描述符加入这个设备，然后通过ioctl()调用来获取事件通知，因此运行在以上系列平台的时候请使用/dev/poll事件驱动机制。 </p>
+<p>7、eventport：</p>
+<p> 该方案也是sun公司在开发Solaris的时候提出的事件驱动库，只是Solaris 10以上的版本，该驱动库看防止内核崩溃等情况的发生。 </p>
+<p>五：Nginx 进程的功能和进程间的通信：</p>
+<p>1、主进程(woker process)的功能：</p>
+<pre><code>读取Nginx 配置文件并验证其有效性和正确性
+建立、绑定和关闭socket连接
+按照配置生成、管理和结束工作进程
+接受外界指令，比如重启、升级及退出服务器等指令
+不中断服务，实现平滑升级，重启服务并应用新的配置
+开启日志文件，获取文件描述符
+不中断服务，实现平滑升级，升级失败进行回滚处理
+编译和处理perl脚本</code></pre><p>2、工作进程（woker process）的功能：</p>
+<pre><code>接受处理客户的请求
+将请求以此送入各个功能模块进行处理
+IO调用，获取响应数据
+与后端服务器通信，接收后端服务器的处理结果
+缓存数据，访问缓存索引，查询和调用缓存数据
+发送请求结果，响应客户的请求
+接收主程序指令，比如重启、升级和退出等</code></pre><p>3、Ninx进程间的通信：</p>
+<p>3.1：主进程和工作进程之间的通信：</p>
+<pre><code>工作进程是有主进程生成的，主进程使用fork()函数，在Nginx服务器启动过程中主进程根据配置文件决定启动工作进程的数量，然后建立一张全局的工作表用于存放当前未退出的所有的工作进程，主进程生成工作进程后会将新生成的工作进程加入到工作进程表中，并建立一个单向的管道并将其传递给工作进程，该管道与普通的管道不同，它是由主进程指向工作进程的单项通道，包含了主进程想工作进程发出的指令、工作进程ID、工作进程在工作进程表中的索引和必要的文件描述符等信息。
+    主进程与外界通过信号机制进行通信，当接收到需要处理的信号时，它通过管道向相关的工作进程发送正确的指令，每个工作进程都有能力捕获管道中的可读事件，当管道中有可读事件的时候，工作进程就会从管道中读取并解析指令，然后采取相应的执行动作，这样就完成了主进程与工作进程的交互。</code></pre><p><img src="http://www.pever.cn/wp-content/uploads/2019/11/875905-20160428191552830-490542419-1024x415.jpg" alt></p>
+<p>3.2：工作进程与工作进程之间的通信：</p>
+<pre><code>工作进程之间的通信原理基本上和主进程与工作进程之间的通信是一样的，只要工作进程之间能够取得彼此的信息，建立管道即可通信，但是由于工作进程之间是完全隔离的，因此一个进程想要直到另外一个进程的状态信息就只能通过主进程来设置了。     为了实现工作进程之间的交互，主进程在生成工作进程只之后，在工作进程表中进行遍历，将该新进程的ID以及针对该进程建立的管道句柄传递给工作进程中的其他进程，为工作进程之间的通信做准备，当工作进程1向工作进程2发送指令的时候，首先在主进程给它的其他工作进程工作信息中找到2的进程ID，然后将正确的指令写入指向进程2的管道，工作进程2捕获到管道中的事件后，解析指令并进行相关操作，这样就完成了工作进程之间的通信。</code></pre>
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/16/nginx-e4-b9-8b-e4-ba-8c-ef-bc-9a-nginx-conf-e9-85-8d-e7-bd-ae-e5-8f-8a-e5-9f-ba-e6-9c-ac-e4-bc-98-e5-8c-96/" rel="next" title="Nginx 之二： nginx.conf 配置及基本优化">
+                  <i class="fa fa-chevron-left"></i> Nginx 之二： nginx.conf 配置及基本优化
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/16/nginx-e4-b9-8b-e5-9b-9b-ef-bc-9a-nginx-e6-9c-8d-e5-8a-a1-e5-99-a8-e7-9a-84-e5-8e-8b-e7-bc-a9-e5-8a-9f-e8-83-bd-e5-92-8c-e7-bc-93-e5-ad-98-e5-8a-9f-e8-83-bd/" rel="prev" title="Nginx 之四： Nginx服务器的压缩功能和缓存功能">
+                  Nginx 之四： Nginx服务器的压缩功能和缓存功能 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

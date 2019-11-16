@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="CMDB 是什么，作为 IT 工程师的你想必已经听说过了，或者已经烂熟了，容我再介绍一下，以防有读者还不知道。CMDB 的全称是 Configuration Management Data Base，翻译下就是配置管理数据库，它存储与管理企业 IT 架构中设备的各种配置信息，它支撑服务流程的运转、发挥着配置信息的价值。在今天，无论是自动化运维、标准化运维、DevOps、甚至是时髦的智能运维，其实都">
+<meta property="og:type" content="article">
+<meta property="og:title" content="10 分钟为你搭建一个超好用的 cmdb 系统">
+<meta property="og:url" content="http://yoursite.com/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f-2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="CMDB 是什么，作为 IT 工程师的你想必已经听说过了，或者已经烂熟了，容我再介绍一下，以防有读者还不知道。CMDB 的全称是 Configuration Management Data Base，翻译下就是配置管理数据库，它存储与管理企业 IT 架构中设备的各种配置信息，它支撑服务流程的运转、发挥着配置信息的价值。在今天，无论是自动化运维、标准化运维、DevOps、甚至是时髦的智能运维，其实都">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-e02b24f78d317df2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-ac4482d98e5b4a02.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/740/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-50e98a3d3c3a06e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-bd3b48e95280ab30.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-e39702b9f27b6201.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-849155aad3f08d67.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/699/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-1c1ca717878ce3b4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/508/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-43bb6d9e1605376c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/966/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-fd16d5d52f15d1cc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/355/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-3cb9e754a6c696fa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-85596180e69c2848.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-b082f2cb1fbf57eb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/662/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-9c903138bb1b48a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/960/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-8cb3e74991ade140.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/951/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-84c1b6312faad907.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/761/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-db841f4d43304654.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/567/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-fb5d30eab2371c0f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/759/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-7702aaf634e4e1e0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/960/format/webp">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/12989993-27e87244c03dce40.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/496/format/webp">
+<meta property="og:updated_time" content="2019-11-16T07:42:20.267Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="10 分钟为你搭建一个超好用的 cmdb 系统">
+<meta name="twitter:description" content="CMDB 是什么，作为 IT 工程师的你想必已经听说过了，或者已经烂熟了，容我再介绍一下，以防有读者还不知道。CMDB 的全称是 Configuration Management Data Base，翻译下就是配置管理数据库，它存储与管理企业 IT 架构中设备的各种配置信息，它支撑服务流程的运转、发挥着配置信息的价值。在今天，无论是自动化运维、标准化运维、DevOps、甚至是时髦的智能运维，其实都">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/12989993-e02b24f78d317df2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp">
+  <link rel="canonical" href="http://yoursite.com/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f-2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>10 分钟为你搭建一个超好用的 cmdb 系统 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            10 分钟为你搭建一个超好用的 cmdb 系统
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-12 09:30:28" itemprop="dateCreated datePublished" datetime="2019-10-12T09:30:28+08:00">2019-10-12</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-16 15:42:20" itemprop="dateModified" datetime="2019-11-16T15:42:20+08:00">2019-11-16</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/成长之旅/" itemprop="url" rel="index">
+                    <span itemprop="name">成长之旅</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>CMDB 是什么，作为 IT 工程师的你想必已经听说过了，或者已经烂熟了，容我再介绍一下，以防有读者还不知道。CMDB 的全称是 Configuration Management Data Base，翻译下就是配置管理数据库，它存储与管理企业 IT 架构中设备的各种配置信息，它支撑服务流程的运转、发挥着配置信息的价值。在今天，无论是自动化运维、标准化运维、DevOps、甚至是时髦的智能运维，其实都离开不 CMDB，可以说 CMDB 是运维体系的基石，有了配置信息数据库，后面各种标准、流程都可以建立在 CMDB 基础之上，从而实现真正的标准化、自动化、智能化运维，节约运维成本的同时，也降低运维流程混乱带来的操作风险。</p><a id="more"></a>
+<p>今天分享一个开源的 cmdb 系统的搭建过程，通过这一系列搭建的过程你不仅可以获得一个支持全文检索、自带 restful api 的 cmdb 系统，而且还可以学到不少时髦的技术。</p>
+<p><strong>后端技术：</strong></p>
+<ul>
+<li>Python3</li>
+<li>Django</li>
+<li>Django REST framework</li>
+<li>Elasticsearch</li>
+<li>uwsgi</li>
+<li>Nginx</li>
+<li>Docker</li>
+</ul>
+<p><strong>前端技术：</strong></p>
+<ul>
+<li>Vue</li>
+<li>Element-ui</li>
+<li>Vue-Router</li>
+<li>Vuex</li>
+<li>Axios</li>
+</ul>
+<p>先看一下这个 CMDB 系统的容颜，设计上参考了饿了么内部的 cmdb 系统:</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-e02b24f78d317df2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt></p>
+<p>open-cmdb</p>
+<p>基本功能有：热添加删除表、自定义字段类型，方便增删改查的前端界面，强大的搜索查找能力（后端使用elasticsearch存储数据 ） 可以配合 kibana 使用，查看数据的删除修改记录、历史版本等，还带有表级权限管理，开放所有 API。</p>
+<p>github 仓库<br>后端：<a href="https://github.com/open-cmdb/cmdb" target="_blank" rel="noopener">https://github.com/open-cmdb/cmdb</a><br>前端：<a href="https://github.com/open-cmdb/cmdb-web" target="_blank" rel="noopener">https://github.com/open-cmdb/cmdb-web</a>  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-ac4482d98e5b4a02.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/740/format/webp" alt></p>
+<p>下面介绍两种方法搭建此开源 cmdb 系统 ，一个是使用 Docker，适用于 linux 操作系统 ，另一个是不使用 Docker，适用于 windows 和 linux 。最后介绍下 vue 环境的搭建。</p>
+<h3 id="1-使用-Docker"><a href="#1-使用-Docker" class="headerlink" title="1. 使用 Docker"></a>1. 使用 Docker</h3><p>如果你熟悉容器技术，推荐使用此方法，不过最新的 Docker 目前还不支持大多数的 windows 版本，因此如果使用容器，请使用 ubuntu 或 centos 等 Linux 操作系统。首先要安装 Docker，安装 Docker 的方法请参考我之前的一篇文章<a href="https://www.jianshu.com/p/46334b8e13bf" target="_blank" rel="noopener">docker容器从入门到痴迷</a>，或直接网上搜索对应操作系统的安装方法对着做即可，没有难度。</p>
+<h4 id="环境准备："><a href="#环境准备：" class="headerlink" title="环境准备："></a>环境准备：</h4><p>1、一台可以访问互联网的 linux 服务器 内存最好 &gt;= 4G ，并创建一个具有 sudo 权限的普通用户，<em>注意要有 yum 命令，如果没有可以安装下_。<br>2、一个 cmdb 专用的邮箱，用于发送密码和验证码，如果使用163、qq等第三方邮箱请在设置里面打开POP3/SMTP/IMAP服务并生成授权码。_如果不使用注册和忘记密码功能，也可以不准备</em></p>
+<h4 id="一键安装"><a href="#一键安装" class="headerlink" title="一键安装"></a>一键安装</h4><p>将下述代码保存到 install_cmdb.py 并执行 sudo python3 install_cmdb.py 即可一键安装。</p>
+<pre><code># -*- coding: utf-8 -*-
+import os
+import subprocess
+import argparse
+import time
+
+def base(cmd):
+    if subprocess.call(cmd, shell=True):
+        raise Exception(&quot;{} 执行失败&quot;.format(cmd))
+
+def install_docker():
+    base(&quot;sudo yum install -y yum-utils device-mapper-persistent-data lvm2&quot;)
+    base(&quot;sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo&quot;)
+    base(&quot;sudo yum makecache fast&quot;)
+    base(&quot;sudo yum -y install docker-ce&quot;)
+    if(not os.path.exists(&quot;/etc/docker&quot;)):
+        base(&quot;mkdir -p /etc/docker&quot;)
+    with open(&quot;/etc/docker/daemon.json&quot;, &quot;w&quot;) as f:
+        f.write(&apos;{n    &quot;registry-mirrors&quot;: [&quot;https://9f4w4icn.mirror.aliyuncs.com&quot;] n}&apos;)
+    base(&quot;sudo systemctl daemon-reload&quot;)
+    base(&quot;sudo systemctl start docker&quot;)
+
+def create_dir():
+    if (not os.path.exists(&quot;/var/cmdb/db&quot;)):
+        base(&quot;sudo mkdir -p /var/cmdb/db&quot;)
+    if (not os.path.exists(&quot;/var/cmdb/es&quot;)):
+        base(&quot;sudo mkdir -p /var/cmdb/es&quot;)
+
+def run_db_container():
+    base(&quot;sudo docker run --name cmdb-db -d -e MYSQL_ROOT_PASSWORD=cmdbcmdb -v /var/cmdb/db:/var/lib/mysql mysql:5.7.21&quot;)
+
+def run_es_container():
+    base(&quot;sudo docker run --name cmdb-es -d -v /var/cmdb/es:/usr/share/elasticsearch/data elasticsearch:5.6.8&quot;)
+
+def init_db():
+    base(&quot;sudo docker run -it --rm --link cmdb-db -e ENV=PRO -e DB_HOST=cmdb-db -e DB_PORT=3306 -e DB_USERNAME=root -e DB_PASSWORD=cmdbcmdb -e DB_NAME=cmdb mingmingtang/cmdb init-db&quot;)
+
+def run_cmdb_container(site_url, email_host, email_port, email_username, email_password):
+    base(&quot;sudo docker run -d --name cmdb --link cmdb-db --link cmdb-es -p 80:80 -e ENV=PRO -e SITE_URL={} -e DB_HOST=cmdb-db -e DB_PORT=3306 -e DB_USERNAME=root -e DB_PASSWORD=cmdbcmdb -e DB_NAME=cmdb -e ELASTICSEARCH_HOSTS=cmdb-es -e EMAIL_HOST={} -e EMAIL_PORT={} -e EMAIL_USERNAME={} -e EMAIL_PASSWORD={} mingmingtang/cmdb start&quot;.format(site_url, email_host, email_port, email_username, email_password))
+
+def input_para(help):
+    value = &quot;&quot;
+    while(not value):
+        value = raw_input(help)
+    return value
+
+if __name__ == &apos;__main__&apos;:
+    if(os.geteuid() != 0):
+        raise(&quot;请以root权限运行&quot;)
+    site_url = input_para(&quot;请输入网站域名或IP（http://cmdb.xxx.com）：&quot;)
+    email_host = input_para(&quot;网站邮箱服务器（smtp.163.com）：&quot;)
+    email_port = input_para(&quot;邮箱服务器端口（25）：&quot;)
+    email_username = input_para(&quot;邮箱用户名（cmdb@163.com）：&quot;)
+    email_password = input_para(&quot;邮箱密码|独立授权码（P@ssw0rd）：&quot;)
+
+    print(&quot;开始安装docker&quot;)
+    install_docker()
+    print(&quot;开始创建目录&quot;)
+    create_dir()
+    print(&quot;开始运行mysql容器&quot;)
+    run_db_container()
+    print(&quot;开始运行elasticsearch容器&quot;)
+    run_es_container()
+    print(&quot;等待数据库启动完成(10s)&quot;)
+    time.sleep(10)
+    print(&quot;开始初始化数据库&quot;)
+    init_db()
+    print(&quot;开始运行cmdb&quot;)
+    run_cmdb_container(site_url, email_host, email_port, email_username, email_password)
+    print(&quot;完成！&quot;)</code></pre><p>输入网站地址和邮箱信息开始安装，如下图所示：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-50e98a3d3c3a06e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt></p>
+<p>如果一切顺利一会儿后您将看到安装完成，如果失败了可能就要调整一些系统参数并删除已运行的容器重新执行了，不过根据我的安装经验，基本不会出错，容器还是非常方便部署的。  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-bd3b48e95280ab30.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt></p>
+<p>执行下述命令</p>
+<pre><code>sudo docker ps</code></pre><p>将看到三个正在运行的容器，分别是 cmdb，cmdb-es，cmdb-db，如下图所示  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-e39702b9f27b6201.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt></p>
+<p>其中 cmdb 运行着 web 服务器（nginx，uwsgi，django，vue.js），cmdb-es 运行着 Elasticsearch 全文检索引擎，也存储你的配置信息，cmdb-db 运行着 mysql，保存着 web 服务器的元数据（django 的知识库）。</p>
+<p>在浏览器中输入”localhost” 尽情的开始享用吧。</p>
+<h3 id="2-不使用-Docker"><a href="#2-不使用-Docker" class="headerlink" title="2. 不使用 Docker"></a>2. 不使用 Docker</h3><p>下面的内容主要是分享给 windows 用户的，linux 用户也可以对比操作。使用 Docker 虽然方便部署，但它屏蔽了一些细节，不利于二次开发和问题排查。在不使用 Docker 的情况下，我们不仅要装软件，还要安装依赖，配置环境，虽然麻烦，但是可以学到更多知识，出了问题也可以很快定位，更能加深对项目框架的理解，这点付出也是值得的。</p>
+<h4 id="（1）安装-mysql，创建数据库，配置权限"><a href="#（1）安装-mysql，创建数据库，配置权限" class="headerlink" title="（1）安装 mysql，创建数据库，配置权限"></a>（1）安装 mysql，创建数据库，配置权限</h4><p>如果你的本机已经安装 mysql，则不心再安装，直接创建数据库，配置权限即可。</p>
+<ol>
+<li>安装 mysql</li>
+</ol>
+<p>从网官下载最新的 MySQL Community Server [<a href="https://dev.mysql.com/downloads/mysql/%5D" target="_blank" rel="noopener">https://dev.mysql.com/downloads/mysql/]</a><br>比如我下载的是 mysql-8.0.12-winx64.zip ，这是个免安装版本，直接解压到你想安装的目录内，并在里面新建 my.ini 文件，位置如下图所示：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-849155aad3f08d67.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/699/format/webp" alt></p>
+<p>image.png</p>
+<p>my.ini 的文件内容如下所示：</p>
+<pre><code>[mysqld]
+# 设置3306端口
+port=3306
+# 设置mysql的安装目录
+basedir=D:programmysqlmysql-8.0.12-winx64
+# 设置mysql数据库的数据的存放目录
+datadir=D:programmysqlmysql-8.0.12-winx64data
+# 允许最大连接数
+max_connections=200
+# 允许连接失败的次数。这是为了防止有人从该主机试图攻击数据库系统
+max_connect_errors=10
+# 服务端使用的字符集默认为UTF8
+character-set-server=utf8
+# 创建新表时将使用的默认存储引擎
+default-storage-engine=INNODB
+# 默认使用“mysql_native_password”插件认证
+default_authentication_plugin=mysql_native_password
+[mysql]
+# 设置mysql客户端默认字符集
+default-character-set=utf8
+[client]
+# 设置mysql客户端连接服务端时默认使用的端口
+port=3306
+default-character-set=utf8</code></pre><p>请注意下面的路径设置要正确，</p>
+<pre><code># 设置mysql的安装目录
+basedir=D:programmysqlmysql-8.0.12-winx64
+# 设置mysql数据库的数据的存放目录
+datadir=D:programmysqlmysql-8.0.12-winx64data</code></pre><p><em>如果你想从任意一个命令窗口启动 mysql，请把 D:programmysqlmysql-8.0.12-winx64bin 加入环境变量。</em>*</p>
+<p>这个配置文件 my.ini 一定要<strong>保存为 gbk 格式</strong>，否则会报错，我费了好长时间才发现这个问题。</p>
+<p>接下来在MySQL安装目录的 bin 目录（D:programmysqlmysql-8.0.12-winx64bin）下以<strong>管理员权限</strong>执行命令：mysqld –initialize –console；执行完成后，在输出信息中会打印 root 用户的初始密码，比如</p>
+<pre><code>[Server] A temporary password is generated for root@localhost: rIafvf5f5G,a</code></pre><p>表示临时密码为 rIafvf5f5G,a ，用于 root 用户第一次登陆，之后再修改 root 用户的密码。</p>
+<p>这一步执行后完成初始化操作，并在安装目录下生成 data 文件夹，用于存放数据。执行</p>
+<pre><code>mysqld --install</code></pre><p>完成 mysql 服务的安装，安装完成之后，就可以通过命令 net start mysql 即启动 mysql 的服务了。通过命令 net stop mysql 停止服务。通过命令 sc delete mysql /mysqld -remove 卸载 mysql 服务。接下来就可以建库、用户、分配权限了。</p>
+<p>修改 root 密码：<br>在 mysql 安装目录的 bin 目录下执行命令：mysql -u root -p 然后输入上面的密码，进入 mysql 环境，执行</p>
+<pre><code>ALTER USER &apos;root&apos;@&apos;localhost&apos; IDENTIFIED WITH mysql_native_password BY &apos;新密码&apos;;</code></pre><p>注意命令尾的“；”一定要有，这是 mysql 的语法，<br>管理员 root 的 host 是 localhost，代表仅限 localhost 登录访问。如果要允许开放其他 ip 登录，则需要添加新的 host。如果要允许所有 ip 访问，可以直接修改成“%”；</p>
+<pre><code>ALTER USER &apos;root&apos;@&apos;%&apos; IDENTIFIED  BY &apos;远程登陆密码&apos;;</code></pre><ol>
+<li>创建数据库，并分配用户权限</li>
+</ol>
+<p>使用 root 用户登陆 mysql 并执行</p>
+<pre><code>mysql&gt;create database cmdb;</code></pre><p>即可创建数据库 cmdb，但是这个数据库只能有 root 访问，如果要使用其他用户访问，则先新建用户，例如让 aaron 用户可以完全控制 cmdb</p>
+<pre><code>mysql&gt;CREATE USER &apos;aaron&apos;@&apos;%&apos; IDENTIFIED  BY &apos;aaron&apos;;
+Query OK, 0 rows affected (0.48 sec)
+mysql&gt; grant all on cmdb.* to  &apos;aaron&apos;@&apos;%&apos;;
+Query OK, 0 rows affected (0.23 sec)</code></pre><p>至此 mysql 已安装配置完毕。</p>
+<h4 id="（2）安装-Elasticsearch"><a href="#（2）安装-Elasticsearch" class="headerlink" title="（2）安装 Elasticsearch"></a>（2）安装 Elasticsearch</h4><p>全文搜索属于最常见的需求，开源的 Elasticsearch （以下简称 Elastic）是目前全文搜索引擎的首选。<br>它可以快速地储存、搜索和分析海量数据。维基百科、Stack Overflow、Github 都采用它。安装 Elasticsearch 非常简单，官网下载解压，进入其 bin 目录运行如下图所示的 bat 文件即可 ：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-1c1ca717878ce3b4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/508/format/webp" alt></p>
+<p>它是一个 java 编写的程序，如果要修改占用内存的大小，请找到配置文件，例如修改为 -Xmx10g -Xms10g 表示初始化 10 个 G 的内存空间给 Elasticsearch ，Elasticsearch 最大使用的内存也是 10G，一般情况下，设置为内存的一半大小，但最好不超过 32 G，根据需求，生产环境适合调大，测试环境适当调小。</p>
+<p>如果运行失败，说明本机没有安装 java，或者没有正确地配置 java 环境变量，这些操作也非常简单，网上到处都是，不在此详述。</p>
+<h4 id="（3）运行-cmdb-后端-api-服务、前端-ui"><a href="#（3）运行-cmdb-后端-api-服务、前端-ui" class="headerlink" title="（3）运行 cmdb 后端 api 服务、前端 ui"></a>（3）运行 cmdb 后端 api 服务、前端 ui</h4><p>首先准备 Python3 的环境，这个也很简单，直接官网下载，运行即可，记得把 Python.exe 所在的路径添加到 Path 变量中。</p>
+<p>如果你的电脑里有多个项目，为防止项目的依赖包版本冲突，建议使用 virtualenv 来为每个项目前创建一个虚拟的 Python 环境，将各自的依赖包装在自己的虚拟环境里。</p>
+<p>（1）部署后端</p>
+<p>执行以下命令，注意命令后面的注释。</p>
+<pre><code>git clone https://github.com/open-cmdb/cmdb.git
+cd cmdb
+#如创建了虚拟环境，请先激活
+pip install  -r requirements.txt #如果这一步有包安装失败，提示却少 microsoft visual c++ 14.0 的话，请在网站 https://www.lfd.uci.edu/~gohlke/pythonlibs/ 上查找相应的whl文件，直接 pip install .whl文件即可。</code></pre><p><strong>接下来修改3个文件</strong></p>
+<ol>
+<li><p>修改 apps/mgmt/views.py 文件，注释掉 “ from . import initialize ”这一行。</p>
+</li>
+<li><p>修改 manage.py<br>将 APP_NAME = BASE_DIR.rsplit(“/“, 1)[-1] 修改为<br>APP_NAME = BASE_DIR.rsplit(“”, 1)[-1] ，这是因为windows的路径 在python 里会变成 。</p>
+</li>
+<li><p>修改 cmdb/settings.py 文件，修改mysql 数据库的配置信息如下所示：</p>
+<p>DATABASES = {<br>  ‘default’: {</p>
+<pre><code>&apos;ENGINE&apos;: &apos;django.db.backends.mysql&apos;,
+&apos;NAME&apos;: &quot;cmdb&quot;,
+&quot;HOST&quot;: &quot;127.0.0.1&quot;,
+&quot;PORT&quot;: 3306,
+&quot;USER&quot;: &quot;aaron&quot;,
+&quot;PASSWORD&quot;: &quot;aaron&quot;</code></pre><p>  }<br>}</p>
+</li>
+</ol>
+<p>接着在命令窗口继续执行以下操作：请关注注释内容。</p>
+<pre><code>python manage.py makemigrations 
+python manage.py migrate
+python manage.py cmdb_create_superuser #这一步创建一可以登陆的管理员用户
+#修改 apps/mgmt/views.py 文件，取消注释“ from . import initialize ”
+python manage.py runserver #这一步启动后端的 api 服务</code></pre><p>此时一个后端的服务已经启动了，在浏览器中打开 “127.0.0.1:8000”就可以看到 api 的接口了。  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-43bb6d9e1605376c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/966/format/webp" alt></p>
+<p>（2）使用 nginx 部署前端并连接后端 api 服务</p>
+<p>在命令容器执行以下命令：</p>
+<pre><code>git clone https://github.com/open-cmdb/cmdb-web.git</code></pre><p>获取前端的源代码，然后下载下载 ngnix 压缩包，并解压至安装目录，修改配置文件 nginx.conf，添加如下 server 配置：</p>
+<pre><code>server {
+    listen 8080;
+    server_name localhost;
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+    root html;
+    }
+
+    root E:GitHubcmdb-webdist;
+    index index.html;
+    location / {
+    try_files $uri $uri/ @router;
+    index index.html;
+    }
+
+    location @router {
+    rewrite ^.*$ /index.html last;
+    }
+
+    location ~ /api{
+    proxy_pass http://127.0.0.1:8000;
+    }
+}</code></pre><p>其中以配置</p>
+<pre><code>location ~ /api{
+      proxy_pass http://127.0.0.1:8000;
+      }</code></pre><p>让前台发过来中以 api 开头的 url 请求都转发至 <a href="http://127.0.0.1:8000" target="_blank" rel="noopener">http://127.0.0.1:8000</a> 进行解析，即第一步部署的 django 项目，这样就连接了前端和后端。然后我们在 nginx.exe 所在的目录下启动 nginx 服务。  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-fd16d5d52f15d1cc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/355/format/webp" alt></p>
+<p>接下来在浏览器中输入 127.0.0.1:8080 即可正常访问本文开始处的 cmdb 系统，您可以尝试下强大的搜索功能及增删改功能。  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-3cb9e754a6c696fa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt></p>
+<p>点击右上方【API 文档】 可以访问 cmdb 的接口文档，非常方便。  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-85596180e69c2848.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1200/format/webp" alt></p>
+<p>至此系统搭建完毕。如果要用于生产环境，请使用 linux 操作系统，并使用 uwsgi 来驱动 django 项目。</p>
+<h3 id="3-Vue-环境搭建"><a href="#3-Vue-环境搭建" class="headerlink" title="3. Vue 环境搭建"></a>3. Vue 环境搭建</h3><p>我想你不会仅仅满足于将别人的项目下载下来能运行就行了，你肯定想对其进行改造来满足自己的需求。因此你可能会需要修改前端或后端，后端的修改其实上面部署的已经可以了，你可以直接阅读 django 项目的源代码进行修改调试。如果要修改前端代码进行调试，你就需要搭建 Vue 环境。</p>
+<p>你可能会问了，Vue 是个啥？Vue 是一个 javascript 框架，如果说 jQuery，你可能就知道了，使用方法是类似的，在 html 上引入一行 javascript 的文件，就可以使用框架的特性了。 Vue 是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue 被设计为可以自底向上逐层应用。Vue 的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。另一方面，当与现代化的工具链以及各种支持类库结合使用时，Vue 也完全能够为复杂的单页应用提供驱动。<br>学习 vue 需要有 html、css、javascript 基础<br>新手可以通过 html 上引入 Vue 的 js 文件来使用 vue，如下所示：</p>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;title&gt;Vue 测试实例 &lt;/title&gt;
+    &lt;script src=&quot;https://cdn.staticfile.org/vue/2.4.2/vue.min.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;app&quot;&gt;
+    &lt;p&gt;{ { message }}&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    new Vue({
+      el: &apos;#app&apos;,
+      data: {
+        message: &apos;Hello Vue.js!&apos;
+      }
+})
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre><p>但是在较复杂的项目中，还是要使用工具来帮助我们管理项目的层级及文件之间的依赖关系，这就需要使用 vue 的命令行工具 vue-cli ，vue-cli 需要 npm 工具来安装，npm 工具集成在 node.js 中，因此需要安装 node.js。<br>安装 node.js 非常简单，直接官网下载解压即可使用：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-b082f2cb1fbf57eb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/662/format/webp" alt></p>
+<p>将 npm 所在路径添加到环境变量 Path 中，你就可以在任意的命令窗口使用 npm 命令了。<br>1、安装 vue-cli</p>
+<p>先安装淘宝镜像，大家都知道国内直接使用 npm 的官方镜像是非常慢的，这里推荐使用淘宝 NPM 镜像。</p>
+<pre><code>npm install -g cnpm --registry=https://registry.npm.taobao.org</code></pre><p>执行结果如下：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-9c903138bb1b48a8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/960/format/webp" alt></p>
+<p>这样就可以使用 cnpm 命令来安装模块了：使用 cnpm 安装 vue-cli  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-8cb3e74991ade140.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/951/format/webp" alt></p>
+<p>然后我们就可以使用 vue init webpack my-project 命令来来建一个项目 my-project，这里需要进行一些配置，可以直接回车来使用默认配置，如下图所示：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-84c1b6312faad907.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/761/format/webp" alt></p>
+<p>等待其初始化完毕后，进入项目，执行以下命令：</p>
+<pre><code>C:Usersxx&gt;cd my-project
+C:Usersxxmy-project&gt;cnpm install
+C:Usersxxmy-project&gt;cnpm run dev</code></pre><p>此时会自动 build ，运行成功后会打印如下信息表示服务已正常启动：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-db841f4d43304654.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/567/format/webp" alt></p>
+<p>3compliesucce.png</p>
+<p>此时打开浏览器，输入 <a href="http://localhost:8081/" target="_blank" rel="noopener">http://localhost:8081</a>，即可看到 my-project 在浏览器中的展示。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-fb5d30eab2371c0f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/759/format/webp" alt></p>
+<p>如果要把这个页面部署在 nginx 服务器上，你还需要 build 命令来生成静态资源，如下图所示：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-7702aaf634e4e1e0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/960/format/webp" alt></p>
+<p>image.png  </p>
+<p>此时会在 my-project 下生成 dist 目录，相当于我们写程序编译生成的目标文件。my-project 下的内容及说明如下图所示：  </p>
+<p><img src="https://upload-images.jianshu.io/upload_images/12989993-27e87244c03dce40.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/496/format/webp" alt></p>
+<p>Snipaste_2018-10-26_06-47-24.png<br>此时已经可以开启你的 vue 之旅了。</p>
+<p>当学会了 Vue 之后，你就可以修改本项目的前端源代码来满足自己的需求了，进入 src 目录，查看并修改源代码之后，进入 cmdb_web 的项目目录，执行</p>
+<pre><code># 安装依赖，如果慢可换成 cnpm
+npm install
+# 启动服务，默认端口为8080，如果被占用会自动选取一个未被占用的端口
+npm run dev
+# 建立静态文件，可以放在 nginx 上运行
+npm run build
+# 查看建立报告
+npm run build --report</code></pre><p>即可将生成的 dist 部署到 web 服务器了。</p>
+<p>也许你会认为这样实在太麻烦了，不如自己动手写一个 cmdb 系统，如果时间允许当然可以自己写，但是我不推荐这样做，上述这些操作其实都很简单，在熟悉之后就像打字一样容易，而且自己写一个同样效果的系统要直接拿优秀的代码来改造要慢得多，大神例外。作为一般程序员我们应该避免重复造轮子，学会站在巨人的肩膀上。因此开发一个项目最好是找 github 上类似的优秀开源项目，借鉴其优良设计，甚至可以直接拿来做二次开发，这才是最高效的做法。</p>
+<p>（完）</p>
+<p>转载自<a href="https://www.jianshu.com/p/80d233588bd4" target="_blank" rel="noopener">https://www.jianshu.com/p/80d233588bd4</a> 还没有时间试</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/12/10-e5-88-86-e9-92-9f-e4-b8-ba-e4-bd-a0-e6-90-ad-e5-bb-ba-e4-b8-80-e4-b8-aa-e8-b6-85-e5-a5-bd-e7-94-a8-e7-9a-84-cmdb-e7-b3-bb-e7-bb-9f/" rel="next" title="10 分钟为你搭建一个超好用的 cmdb 系统">
+                  <i class="fa fa-chevron-left"></i> 10 分钟为你搭建一个超好用的 cmdb 系统
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/12/e7-9c-9f-e6-ad-a3-e7-9a-84inotifyrsync-e5-ae-9e-e6-97-b6-e5-90-8c-e6-ad-a5-e5-bd-bb-e5-ba-95-e5-91-8a-e5-88-ab-e5-90-8c-e6-ad-a5-e6-85-a2/" rel="prev" title="真正的inotify+rsync实时同步 彻底告别同步慢">
+                  真正的inotify+rsync实时同步 彻底告别同步慢 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-使用-Docker"><span class="nav-number">1.</span> <span class="nav-text">1. 使用 Docker</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#环境准备："><span class="nav-number">1.1.</span> <span class="nav-text">环境准备：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一键安装"><span class="nav-number">1.2.</span> <span class="nav-text">一键安装</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-不使用-Docker"><span class="nav-number">2.</span> <span class="nav-text">2. 不使用 Docker</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）安装-mysql，创建数据库，配置权限"><span class="nav-number">2.1.</span> <span class="nav-text">（1）安装 mysql，创建数据库，配置权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）安装-Elasticsearch"><span class="nav-number">2.2.</span> <span class="nav-text">（2）安装 Elasticsearch</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）运行-cmdb-后端-api-服务、前端-ui"><span class="nav-number">2.3.</span> <span class="nav-text">（3）运行 cmdb 后端 api 服务、前端 ui</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Vue-环境搭建"><span class="nav-number">3.</span> <span class="nav-text">3. Vue 环境搭建</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

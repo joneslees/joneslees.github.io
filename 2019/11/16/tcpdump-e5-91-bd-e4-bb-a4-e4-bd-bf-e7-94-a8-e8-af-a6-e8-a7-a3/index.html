@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="一：命令介绍：    tcpdump，用简单的语言概括就是dump the traffic on a network，是一个运行在linux平台可以根据使用者需求对网络上传输的数据包进行捕获的抓包工具，windows平台有sniffer等工具，tcpdump可以将网络中传输的数据包的“包头”全部捕获过来进程分析，其支持网络层、特定的传输协议、数据发送和接收的主机、网卡和端口的过滤，并提供and、o">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tcpdump命令使用详解">
+<meta property="og:url" content="http://yoursite.com/2019/11/16/tcpdump-e5-91-bd-e4-bb-a4-e4-bd-bf-e7-94-a8-e8-af-a6-e8-a7-a3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="一：命令介绍：    tcpdump，用简单的语言概括就是dump the traffic on a network，是一个运行在linux平台可以根据使用者需求对网络上传输的数据包进行捕获的抓包工具，windows平台有sniffer等工具，tcpdump可以将网络中传输的数据包的“包头”全部捕获过来进程分析，其支持网络层、特定的传输协议、数据发送和接收的主机、网卡和端口的过滤，并提供and、o">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20160615072239_58788.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20160615072726_98342.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20160615083100_95522.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20160615084734_24470.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20160615090318_63059.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20160615091038_48242.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20160615091435_50469.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20160615092616_22497.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20160616083612_32436.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20160616084846_41095.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20160615095628_66979.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20160615095956_27325.png">
+<meta property="og:updated_time" content="2019-11-16T07:42:20.270Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="tcpdump命令使用详解">
+<meta name="twitter:description" content="一：命令介绍：    tcpdump，用简单的语言概括就是dump the traffic on a network，是一个运行在linux平台可以根据使用者需求对网络上传输的数据包进行捕获的抓包工具，windows平台有sniffer等工具，tcpdump可以将网络中传输的数据包的“包头”全部捕获过来进程分析，其支持网络层、特定的传输协议、数据发送和接收的主机、网卡和端口的过滤，并提供and、o">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20160615072239_58788.png">
+  <link rel="canonical" href="http://yoursite.com/2019/11/16/tcpdump-e5-91-bd-e4-bb-a4-e4-bd-bf-e7-94-a8-e8-af-a6-e8-a7-a3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>tcpdump命令使用详解 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/16/tcpdump-e5-91-bd-e4-bb-a4-e4-bd-bf-e7-94-a8-e8-af-a6-e8-a7-a3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            tcpdump命令使用详解
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-11-16 13:49:33 / Modified: 15:42:20" itemprop="dateCreated datePublished" datetime="2019-11-16T13:49:33+08:00">2019-11-16</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一：命令介绍：    </p><pre><code>tcpdump，用简单的语言概括就是dump the traffic on a network，是一个运行在linux平台可以根据使用者需求对网络上传输的数据包进行捕获的抓包工具，windows平台有sniffer等工具，tcpdump可以将网络中传输的数据包的“包头”全部捕获过来进程分析，其支持网络层、特定的传输协议、数据发送和接收的主机、网卡和端口的过滤，并提供and、or、not等语句进行逻辑组合捕获数据包或去掉不用的信息。
+
+1：命令选项和捕获主机对到主机的数据包：
+
+1.1：命令选项：</code></pre><a id="more"></a>
+<p>-a #将网络地址和广播地址转变成名字<br>-A #以ASCII格式打印出所有分组，并将链路层的头最小化<br>-b #数据链路层上选择协议，包括ip/arp/rarp/ipx都在这一层<br>-c #指定收取数据包的次数，即在收到指定数量的数据包后退出tcpdump<br>-d #将匹配信息包的代码以人们能够理解的汇编格式输出<br>-dd  #将匹配信息包的代码以c语言程序段的格式输出<br>-ddd #将匹配信息包的代码以十进制的形式输出<br>-D #打印系统中所有可以监控的网络接口<br>-e #在输出行打印出数据链路层的头部信息<br>-f #将外部的Internet地址以数字的形式打印出来，即不显示主机名<br>-F #从指定的文件中读取表达式，忽略其他的表达式<br>-i #指定监听网络接口<br>-l #使标准输出变为缓冲形式，可以数据导出到文件<br>-L #列出网络接口已知的数据链路<br>-n #不把网络地址转换为名字<br>-N 不输出主机名中的域名部分，例如<a href="http://www.baidu.com只输出www" target="_blank" rel="noopener">www.baidu.com只输出www</a><br>-nn #不进行端口名称的转换<br>-P #不将网络接口设置为混杂模式<br>-q #快速输出，即只输出较少的协议信息<br>-r #从指定的文件中读取数据，一般是-w保存的文件<br>-w #将捕获到的信息保存到文件中，且不分析和打印在屏幕<br>-s #从每个组中读取在开始的snaplen个字节，而不是默认的68个字节<br>-S #将tcp的序列号以绝对值形式输出，而不是相对值<br>-T #将监听到的包直接解析为指定的类型的报文，常见的类型有rpc（远程过程调用）和snmp（简单网络管理协议）<br>-t #在输出的每一行不打印时间戳<br>-tt #在每一行中输出非格式化的时间戳<br>-ttt #输出本行和前面以后之间的时间差<br>-tttt #在每一行中输出data处理的默认格式的时间戳<br>-u #输出未解码的NFS句柄<br>-v #输出稍微详细的信息，例如在ip包中可以包括ttl和服务类型的信息<br>-vv#输出相信的保报文信息</p>
+<pre><code>1.1.1：#tcpdump的表达式：</code></pre><p>表达式是一个正则表达式，tcpdump利用它作为过滤报文的条件，如果一个报文满足表达式的条件，则这个报文将会被捕获。如果没有给出任何条件，则网络上所有的信息包 将会被截获，在表达式中一般如下几种类型的关键字：</p>
+<p>a)：关于数据类型的关键字：</p>
+<pre><code>包括host、port、net，例如host 192.168.1.1表示这是一台主机，net 192.168.0.0表示这是一个网络地址，port 22指明端口号是22，如果没有指明类型，则默认的类型是host。</code></pre><p>b)：数据传输方向的关键字：</p>
+<pre><code>包括src、dst、dst or src、dst and src，这些关键字指明了传输的方向，比如src 192.168.1.1说明数据包源地址是192.168.1.1，dst net 192.168.0.0指明目的网络地址是192.168.0.0，默认是监控主机对主机的src和dst，即默认监听本机和目标主机的所有数据。</code></pre><p>c)：协议关键字：</p>
+<pre><code>包括ip、arp、rarp、tcp、udp等，</code></pre><p>d)：其他关键字：</p>
+<pre><code>运算类型的：or、and、not、!
+
+辅助功能型的：gateway、less、broadcast、greater
+
+1.2：# tcpdump 默认捕获方式  
+
+#默认监听在第一块网卡上，监听所有经过此网卡通过的数据包</code></pre><p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20160615072239_58788.png" alt></p>
+<pre><code>1.3：# tcpdump  -i eth0 监听指定网卡eth0的所有传输数据包：</code></pre><p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20160615072726_98342.png" alt></p>
+<pre><code>1.4：#tcpdump -i eth0  host 192.168.56.1  #捕获主机192.168.56.1经过本机网卡eth0的所有数据包（也可以是主机名，但要求可以解析出来IP地址）</code></pre><p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20160615083100_95522.png" alt></p>
+<pre><code>1.5：#tcpdump host 192.168.56.209  and \\( 192.168.56.210 or 192.168.56.211 \\)   #捕获主机 192.168.56.209 和主机192.168.56.210或192.168.56.211的所有通信数据包</code></pre><p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20160615084734_24470.png" alt></p>
+<pre><code>1.6：#tcpdump ip  host node9 and not www.baidu.com  #捕获主机node9与其他主机之间（不包括www.baidu.com）通信的ip数据包</code></pre><p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20160615090318_63059.png" alt></p>
+<pre><code>1.7：#tcpdump ip host node9 and ! www.baidu.com  #捕获node9与其他所有主机的通信数据包（不包括www.baidu.com）</code></pre><p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20160615091038_48242.png" alt></p>
+<pre><code>1.8：#tcpdump  -i eth0 src node10  #捕获源主机node10发送的所有的经过eth0网卡的所有数据包</code></pre><p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20160615091435_50469.png" alt></p>
+<pre><code>1.9：##tcpdump  -i eth0 dst  host  www.baidu.com  #捕获所有发送到主机www.baidu.com的数据包</code></pre><p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20160615092616_22497.png" alt></p>
+<pre><code>1.9.1:监听主机192.168.56.1和192.168.56.210之间ip协议的80端口的且排除www.baidu.com通信的所有数据包：
+
+# tcpdump  ip dst 192.168.56.1 and src 192.168.56.210 and port 80 and host  ! www.baidu.com  #也可以写成tcpdump  ip dst 192.168.56.1 and src 192.168.56.210 and port 80 and host  not  www.baidu.com，即not和！都是相同的取反的意思</code></pre><p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20160616083612_32436.png" alt></p>
+<pre><code>1.9.2：捕获arp的协议数据包：
+
+#tcpdump  arp  #监控指定主机的通信数据包与1.9.1方式相同</code></pre><p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20160616084846_41095.png" alt></p>
+<pre><code>2：捕获指定主机和端口的数据包：
+
+2.1：#tcpdump tcp  port 22  and host 192.168.56.210  #捕获主机192.168.56.210接收和发出的tcp协议的ssh的数据包：</code></pre><p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20160615095628_66979.png" alt></p>
+<pre><code>2.2：# tcpdump  udp port 53  #监听本机udp的53端口的数据包，udp是dns协议的端口，这也是一个dns域名解析的完整过程</code></pre><p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20160615095956_27325.png" alt></p>
+<p><strong>总结：tcpdump的语法类似于mysql查询语句，可以指定各种查询的条件进行组合，还可以进行与或非的条件判断进行更精确的数据搜集，语法如下：</strong></p>
+<p><strong>#tcpdump  [协议类型]  [源或目标**</strong>] [主机名称或IP]   [or/and/not/!条件组合] [源或目标] [主机名或IP]   <strong>** [or/and/not/!条件组合] [端口] [端口号] ……**</strong> [or/and/not/!条件组合] [条件]**</p>
+<p>** #tcpdump  ip dst 192.168.56.1 and src 192.168.56.210 and port 80 and host  ! <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a>   **</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/16/nginx-e4-b9-8b-e5-85-ab-ef-bc-9anginx-e4-bc-98-e5-8c-96-e7-aa-81-e7-a0-b4-e5-8d-81-e4-b8-87-e5-b9-b6-e5-8f-91/" rel="next" title="Nginx 之八：nginx优化 突破十万并发">
+                  <i class="fa fa-chevron-left"></i> Nginx 之八：nginx优化 突破十万并发
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

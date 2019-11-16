@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="*一：运维工作内容分类：个人理解级别从低到高 *  1).机房运维（负责服务器上下架、IP配置与划分、服务器打标签、机房定期巡检、服务器故障报修、服务器硬件监控)  2).基础设施运维（系统安装初始化、网络维护）  3).监控运维（7×24运维值班、简单故障处理、通知相关业务负责人）  4).基础服务运维（包含运维开发）（内部DNS管理、负载均衡配置、系统监控报警、硬件资产管理平台、监控平台搭建、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="运维与自动化运维概括">
+<meta property="og:url" content="http://yoursite.com/2019/10/09/e8-bf-90-e7-bb-b4-e4-b8-8e-e8-87-aa-e5-8a-a8-e5-8c-96-e8-bf-90-e7-bb-b4-e6-a6-82-e6-8b-ac-2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="*一：运维工作内容分类：个人理解级别从低到高 *  1).机房运维（负责服务器上下架、IP配置与划分、服务器打标签、机房定期巡检、服务器故障报修、服务器硬件监控)  2).基础设施运维（系统安装初始化、网络维护）  3).监控运维（7×24运维值班、简单故障处理、通知相关业务负责人）  4).基础服务运维（包含运维开发）（内部DNS管理、负载均衡配置、系统监控报警、硬件资产管理平台、监控平台搭建、">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20160526113756_64285.jpg">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20160526113757_39636.jpg">
+<meta property="og:updated_time" content="2019-11-16T07:42:20.266Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="运维与自动化运维概括">
+<meta name="twitter:description" content="*一：运维工作内容分类：个人理解级别从低到高 *  1).机房运维（负责服务器上下架、IP配置与划分、服务器打标签、机房定期巡检、服务器故障报修、服务器硬件监控)  2).基础设施运维（系统安装初始化、网络维护）  3).监控运维（7×24运维值班、简单故障处理、通知相关业务负责人）  4).基础服务运维（包含运维开发）（内部DNS管理、负载均衡配置、系统监控报警、硬件资产管理平台、监控平台搭建、">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20160526113756_64285.jpg">
+  <link rel="canonical" href="http://yoursite.com/2019/10/09/e8-bf-90-e7-bb-b4-e4-b8-8e-e8-87-aa-e5-8a-a8-e5-8c-96-e8-bf-90-e7-bb-b4-e6-a6-82-e6-8b-ac-2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>运维与自动化运维概括 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/09/e8-bf-90-e7-bb-b4-e4-b8-8e-e8-87-aa-e5-8a-a8-e5-8c-96-e8-bf-90-e7-bb-b4-e6-a6-82-e6-8b-ac-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            运维与自动化运维概括
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-09 17:14:20" itemprop="dateCreated datePublished" datetime="2019-10-09T17:14:20+08:00">2019-10-09</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-16 15:42:20" itemprop="dateModified" datetime="2019-11-16T15:42:20+08:00">2019-11-16</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/成长之旅/" itemprop="url" rel="index">
+                    <span itemprop="name">成长之旅</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>*<em>一：运维工作内容分类：个人理解级别从低到高 *</em></p><p>  1).机房运维（负责服务器上下架、IP配置与划分、服务器打标签、机房定期巡检、服务器故障报修、服务器硬件监控)<br>  2).基础设施运维（系统安装初始化、网络维护）<br>  3).监控运维（7×24运维值班、简单故障处理、通知相关业务负责人）<br>  4).基础服务运维（包含运维开发）（内部DNS管理、负载均衡配置、系统监控报警、硬件资产管理平台、监控平台搭建、代码发布平台）<br>  5).应用运维（精通公司业务、各种服务系统部署、业务系统部署、版本管理、灰度发布、应用监控）<br>  6).系统运维（架构层面的分布式缓存、分布式文件系统、日志收集与分析、业务环境规划（测试、开发、生产）、业务架构设计与规划实施、服务器系统性能调优）<br>  7).安全运维（关键程序包更新、整体的安全方案、规范、漏洞监测、安全防护、漏洞扫描与修补等）</p><a id="more"></a>
+
+<p><strong>二：运维的发展线路：</strong></p>
+<p>  1).搭建服务–可以安装服务并运行，由于是参加工作没有相关服务安装和部署经验，所以此阶段的主要目的是可以把服务安装并可以运行起来。 </p>
+<p>  2).用好服务–适当对服务优化，工作一两年后可以根据业务的实际需求对服务做适当的优化，比如可以对nginx做调优和监控。 </p>
+<p>  3).自动化–自动化服务的部署或监控，工作三到五年后可以结合自动化部署工具或编写脚本实现业务的自动化部署。 </p>
+<p>  4).产品设计（如何设计一个监控系统），可以根据需要设计和部署大型业务系统，现在很多公司都在用云服务，比如阿里云、Amazon的AWS，微软的Azure，以及腾讯云、青云等等各种云计算，但是 云</p>
+<p>计算的核心竞争力是运维，其始终离不开运维对业务的技术支撑，比如搭建云服务时的服务器选型、网络规划、物理机系统部署与优化、监控系统的安装等等。 </p>
+<p><strong>三：自动化运维之运维标准化</strong> </p>
+<p><strong>1.物理设备层面：</strong> </p>
+<p>  1).服务器标签化（IP地址/与交换机接口/当前服务/）、设备负责人（管理人）、设备采购详情（保修日期）、设备摆放标准（服务器之间间隔1U通风）。</p>
+<p>  2).网络划分、远程控制卡、网卡端口。</p>
+<p>  3).服务器厂商机型号同一、硬盘大小转速同一、内存统型号大小频率一、服务器课根据业务分类，有的要求IO高（存储服务器），有的要求内存大（缓存服务器），有的要求CPU块（代理服务器），有 的对CPU和IO要求CPU和内存都高（数据库服务器）。 </p>
+<p>  4).资产命名规范、编号规范、类型规范。 </p>
+<p>  5).监控标准（统一阈值和监控类型）。 </p>
+<p><strong>2.操作系统层面：</strong> </p>
+<p> 1).操作系统版本（不要混合使用linux和windows,linux发行版尽量统一）</p>
+<p> 2).系统初始化（IP、网关、掩码、DNS、NTP、内核参数调优、rsyslog、主机名规范、任务计划） </p>
+<p> 3).基础Agent配备（Zabbix Agent、Logstash Agent、Saltstack minion） </p>
+<p> 4).系统监控标准（CPU使用率、内存使用率、硬盘使用率、IO延时、网络状况、进程数与僵尸进程、运行时间等）</p>
+<p><strong>3.**</strong>应用服务层面：**</p>
+<p>  1).Web服务器选型（LNMP/LAMP/Tomcat/MySQL） </p>
+<p>  2).进程启动用户身份及目录、端口监听规范、日志收集规范（访问日志、错误日志、运行日志、系统日志）</p>
+<p>  3).配置管理（配置文件规范、脚本规范）</p>
+<p>  4).架构规范（Nginx+Keepalived、LVS+Keepalived等等）</p>
+<p>  5).部署规范（位置、包命名等）<br><strong>4.**</strong>运维操作层面：**<br>   1).机房巡检流程（巡检周期、巡检内容、硬件报修流程）<br>   2).业务部署流程（先在开发环境和测试环境测试、最后后在生产环境部署、如出现问题立即回滚、出现问题先回滚再修复）<br>   3).故障处理流程（紧急故障处理、故障升级流程及时间、重大故障管理、责任分配）<br>   4).工作日志标准（如何编写工作日志周报、月报）<br>   5).业务上线流程（1.项目发起人 2.系统安装部署优化  3.部署Nginx及相关访问 4.备案及解析域名   5.上线测试 6.对服务和主机加监控 7.数据定期备份）<br>   6).业务下线流程（谁发起，下线时间，服务器和数据如何处理。）<br>   7).运维安全规范（密码复杂度、更改周期、VPN使用规范、服务登录规范、命令使用规范、备份还原规范）  </p>
+<p><strong>运维标准化实现业务规范化和流出啊，最终达到文档化的目的，即所有和业务相关的都有文档可查，包括技术文档、故障文档等，也不会导致因为某员工离职而导致业务无法继续。</strong></p>
+<p><strong>四：自动化运维之工具化：通过相关运维工具，替代需要人工需要多次执行单一的工作内容，如：</strong></p>
+<p>  1).Shell或Python脚本（简单功能配置或修改的脚本，如自动修改配置文件、流程执行的脚本，如需要先修改完配置文件才能重启服务、检查性，如检查配置文件是否修改，日志是否生成、报表性的脚本，如生成自定义数据的文本文档并自动发送到邮箱）</p>
+<p>  2).开源监控工具：Zabbix  ELKStack  SaltStack  Cobbler  </p>
+<p>  3).开源部署工具：cobbler等</p>
+<p><strong>运维工具化带来的好处：</strong></p>
+<p>  1).促进标准化的实施</p>
+<p>  2).将重复的操作，简单化</p>
+<p>  3).将多次操作，流程化</p>
+<p>  4).减少人为操作的低效和降低故障率</p>
+<p><strong>运维工具化遇到的问题**</strong>：**</p>
+<p>  1).你至少要ssh到服务器执行。可能犯错</p>
+<p>  2).多个脚本有执行顺序的时候，可能犯错。</p>
+<p>  3).权限不好管理，日志没法统计。</p>
+<p>  4).无法避免手工操作。</p>
+<p><strong>例子：比如某天某台Web服务器磁盘可能发生问题，要在访问量较低的凌晨要将服务器的数据导出来放在其他服务器替代，那么需要考虑的是：</strong></p>
+<p>  1).是否有由其他服务器连接此服务器取数据或此服务器是否到其他服务器取数据。</p>
+<p>  2).此服务器是否有定时任务计划到其他服务器执行或有其他服务器连接到此服务器执行。</p>
+<p>  3).任务计划索要涉及的内容，以及停服务是否影响其他服务器。</p>
+<p>  4).后续的代码更新问题。</p>
+<p><strong>五：自动化运维之web化</strong>  </p>
+<p>公司基于php等语言自己开发的可以在web通过鼠标点击就能实现代码发布和回滚等功能的web界面的操作平台。<br>   1).招聘开发运维做成Web界面。<br>   2).web界面的登录权限控制。<br>   3).操作日志记录。<br>   4).一键部署所有指定服务器，弱化操作流程。<br>   5).不用ssh到每台后端服务器，减少人为误操作的故障率。<br><strong>例如：</strong></p>
+<p>  1).DNS Web管理  bind-DLZ<br>  2).负载均衡Web管理<br>  3).Job管理平台<br>  4).监控平台 Zabbix<br>  5).操作系统安装平台</p>
+<p><strong>六：自动化运维之**</strong>服务化（API化）**<br>  1).DNS Web管理 ———-&gt;bind-DLZ   dns-api（bind）<br>  2).负载均衡Web管理——&gt;slb-api（haproxy、LVS、Nginx）<br>  3).Job管理平台————-&gt;job-api（php自主开发）<br>  4).监控平台 Zabbix ——-&gt;zabbix-api（zabbix、nagios、cacti）<br>  5).操作系统安装平台——&gt;cobbler-api（cobbler、kickstack）<br>  6).部署平台——————&gt;deploy-api（安装服务软件nginx+php）<br>  7).配置管理平台————&gt;saltstack-api（saltstack、ansible）<br>  8).自动化测试平台———&gt;test-api（自主开发测试）</p>
+<p><strong>通过调用相关api实现服务器从系统安装到上线完全自动化：</strong><br>   1).调用cobbler-api自动安装指定的操作系统<br>   2).调用saltstack-api进行系统初始化和配置<br>   3).调用dns-api 解析域名和主机名<br>   4).调用zabbix-api 讲该新上线机器加上监控<br>   5).再次调用saltstack-api 部署访问软件（安装Nginx+PHP,Tomcat,Mysql）<br>   6).调用deploy-api   将当前最新稳定版本的代码部署到服务器上的指定目录。<br>   7).调用test-api  测试当前服务运行十分正常，如有异常，则执行报警等操作<br>   8).调用slb-api 将该节点加入集群  </p>
+<p><strong>七：自动化运维之智能化：</strong></p>
+<p>能根据一定的策略或条件，智能化的自动化扩容、缩容、（服务降级、故障自修复），包括自动发布代码加进负载集群等一些列操作</p>
+<p>触发:指的是触发事先定义的一个阈值，可能是CPU使用率80%，也可能是并发超过100000，也可能是web访问响应时间超过5s，这是一个触发机制，然后要定义要做的决策，如：</p>
+<p>   1).当某个集群的访问量超过最大支撑量，比如10000<br>       1.1 CPU使用率达到xx%　　内存使用率达到xx%   响应时间&gt; x秒<br>   2).此状态已经持续5分钟。<br>   3).判断不是攻击<br>   4).扩张资源池有可用资源<br>      4.1).当前网络带宽使用率<br>      4.2).如果是公有云——钱够不够<br>   5).当前后端服务支撑量是否超过阈值  如果超过应该后端先扩容<br>   6).数据库是否可以支撑当前并发<br>   7).当前自动化扩展队列，是否有正在扩容的节点<br>   8).其它业务相关的。  </p>
+<p><strong>自动化扩容机制：</strong></p>
+<p>  1).扩容之前：先判断Buffer区域是否有最近x小时，已经移除的之前创建的虚拟机，并查询软件版本是否和当前一致，如果一致，跳过 2 3 4步骤，如果不一致，跳过2 3。<br>  2). OpenStack 创建虚拟机<br>  3). Saltstack 配置环境—-监控<br>  4). 部署系统部署当前代码<br>  5). 测试服务是否可用（注意间隔和次数）<br>  6). 加入集群<br>  7). 通知（短信、邮件）<br><strong>自动化缩容机制：</strong><br>  1).触发条件和决策<br>  2).从集群中移除节点-关闭监控-移除<br>  3).通知<br>  4).移除的节点存放于Buffer里面。<br>  5).Buffer里面超过1天的虚拟机，自动关闭，存放于xx区<br>  6).Buffer区的虚拟机，每7天清理删除。  </p>
+<p><strong>八：附一次去机房的照片：</strong></p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20160526113756_64285.jpg" alt></p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/20160526113757_39636.jpg" alt></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/09/e8-bf-90-e7-bb-b4-e4-b8-8e-e8-87-aa-e5-8a-a8-e5-8c-96-e8-bf-90-e7-bb-b4-e6-a6-82-e6-8b-ac-1/" rel="next" title="运维与自动化运维概括">
+                  <i class="fa fa-chevron-left"></i> 运维与自动化运维概括
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/09/centos-7-e5-ae-89-e8-a3-85fail2banfirewalld-e9-98-b2-e6-ad-a2ssh-e7-88-86-e7-a0-b4-e4-b8-8ecc-e6-94-bb-e5-87-bb-1/" rel="prev" title="CentOS 7安装fail2ban+Firewalld防止SSH爆破与CC攻击">
+                  CentOS 7安装fail2ban+Firewalld防止SSH爆破与CC攻击 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

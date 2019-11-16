@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="1. VMware简介VMware成立于1998年，2003年存储厂商EMC以6.35亿美元收购了VMware；2015年10月，戴尔宣布以670亿美元收购EMC，VMware 2018全年收入79.2亿美元。官网：https://www.vmware.com/cn.html1.1. 主要产品Workstation Pro：面向windows的虚拟化Fusion for Mac：面向Mac的虚拟化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VMwareVsphere6.x安装文档">
+<meta property="og:url" content="http://yoursite.com/2019/10/31/vmwarevsphere6-x-e5-ae-89-e8-a3-85-e6-96-87-e6-a1-a3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1. VMware简介VMware成立于1998年，2003年存储厂商EMC以6.35亿美元收购了VMware；2015年10月，戴尔宣布以670亿美元收购EMC，VMware 2018全年收入79.2亿美元。官网：https://www.vmware.com/cn.html1.1. 主要产品Workstation Pro：面向windows的虚拟化Fusion for Mac：面向Mac的虚拟化">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/vmware_vsphere.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019090319423726-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192430819-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192440478-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192445560-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019090319245269-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192456896-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192501912-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192506622-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192513534-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192517827-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192538842-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192543719-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192549807-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192554145-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192559491-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192603238-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192610462-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192645425-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192649197-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192652933-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192657465-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019090319270442-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192709735-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019090319271429-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192718317-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192721792-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192759581-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192807281-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192814607-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192903640-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019090319290848-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192913997-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192925797-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192932267-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192937303-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192943162-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903192954924-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193001813-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019090319300692-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193011381-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193018663-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193022547-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193042414-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193123566-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193137335-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193148274-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193153235-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193157919-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193201737-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193206306-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193210514-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193214592-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193220498-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193225365-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193238635-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193244609-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193253681-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193259586-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193327946-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193341132-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193357429-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193408363-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193426390-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019090319343883-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193445838-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193451427-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193457493-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193502624-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193507138-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193511624-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193516840-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193521241-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193526139-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193532883-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193553475-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193600403-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193605549-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193609422-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193627223-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193633957-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193638890-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193647351-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193653530-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193658390-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193703784-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193720328-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193729625-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193734581-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019090319373951-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193743535-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193750334-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019090319380651-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193818145-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193824526-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193835951-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193846386-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193851349-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193857345-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193902292-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193910956-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903202416923-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193930488-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019090319393875-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193942914-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193947896-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193953620-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903193958595-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903194004672-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903194009170-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/20190903194017899-1.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/2019090319403420-1.png">
+<meta property="og:updated_time" content="2019-11-16T07:42:20.269Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VMwareVsphere6.x安装文档">
+<meta name="twitter:description" content="1. VMware简介VMware成立于1998年，2003年存储厂商EMC以6.35亿美元收购了VMware；2015年10月，戴尔宣布以670亿美元收购EMC，VMware 2018全年收入79.2亿美元。官网：https://www.vmware.com/cn.html1.1. 主要产品Workstation Pro：面向windows的虚拟化Fusion for Mac：面向Mac的虚拟化">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/10/vmware_vsphere.png">
+  <link rel="canonical" href="http://yoursite.com/2019/10/31/vmwarevsphere6-x-e5-ae-89-e8-a3-85-e6-96-87-e6-a1-a3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>VMwareVsphere6.x安装文档 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/31/vmwarevsphere6-x-e5-ae-89-e8-a3-85-e6-96-87-e6-a1-a3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            VMwareVsphere6.x安装文档
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-31 14:22:40" itemprop="dateCreated datePublished" datetime="2019-10-31T14:22:40+08:00">2019-10-31</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-16 15:42:20" itemprop="dateModified" datetime="2019-11-16T15:42:20+08:00">2019-11-16</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/容器与编排/" itemprop="url" rel="index">
+                    <span itemprop="name">容器与编排</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="http://www.pever.cn/wp-content/uploads/2019/10/vmware_vsphere.png" alt></p><h1 id="1-VMware简介"><a href="#1-VMware简介" class="headerlink" title="1. VMware简介"></a>1. VMware简介</h1><p>VMware成立于1998年，2003年存储厂商EMC以6.35亿美元收购了VMware；2015年10月，戴尔宣布以670亿美元收购EMC，VMware 2018全年收入79.2亿美元。</p><p>官网：<a href="https://www.vmware.com/cn.html" target="_blank" rel="noopener">https://www.vmware.com/cn.html</a></p><h2 id="1-1-主要产品"><a href="#1-1-主要产品" class="headerlink" title="1.1. 主要产品"></a>1.1. 主要产品</h2><p><strong>Workstation Pro</strong>：面向windows的虚拟化<br><strong>Fusion for Mac</strong>：面向Mac的虚拟化</p><a id="more"></a>
+
+
+
+<p><strong>ThinApp</strong>：是一款无代理应用虚拟化解决方案</p>
+<p><strong>Horizon</strong>：用于管理虚拟桌面(VDI)、应用和在线服务的领先平台<br><strong>Horizon Cloud</strong>：用于托管虚拟桌面和应用的灵活计算平台<br><strong>NSX for Horizon</strong>：一款虚拟桌面基础架构VDI(Virtual Destop Infrastructure)网络连接解决方案</p>
+<p><strong>VMware Enterprise PKS</strong>：面向多去企业和服务提供商的生产级Kubernetes<br><strong>VMware vSphere Integrated Containers</strong>：用于传统应用和容器化应用的企业级容器基础架构</p>
+<p><strong>vSAN</strong>：经过闪存优化的vSphere原生存储，适用于私有云和公有云</p>
+<p><strong>VMware vSphere</strong>：业界领先的服务器虚拟化平台，作为基础平台，是任何云环境的理想之选</p>
+<p><strong>VMware vCenter Server</strong>：用于管理跨混全云的vSphere环境的集中式平台</p>
+<blockquote>
+<p>VMware 5版本开始以后取消了原来的ESX版本，所以现在来讲，vSphere就是ESXI，官方文档以vSphere为主</p>
+</blockquote>
+<hr>
+<h1 id="2-部署VMware-vSphere"><a href="#2-部署VMware-vSphere" class="headerlink" title="2. 部署VMware vSphere"></a>2. 部署VMware vSphere</h1><h2 id="2-1-准备DNS服务器"><a href="#2-1-准备DNS服务器" class="headerlink" title="2.1. 准备DNS服务器"></a>2.1. 准备DNS服务器</h2><ul>
+<li>ip: 172.16.66.66</li>
+</ul>
+<ol>
+<li><p>yum安装bind</p>
+<p>yum -y install bind</p>
+</li>
+</ol>
+<ol>
+<li><p>修改配置，允许被查询，如下图</p>
+<p>vim /etc/named.conf</p>
+</li>
+</ol>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/2019090319423726-1.png" alt="[外链图片转存失败(img-SjI2bcOf-1567509736537)(png/2019-09-03-14-33-37.png)]"></p>
+<ol>
+<li><p>添加域，添加下面语句在结尾</p>
+<p>vim /etc/named.rfc1912.zones</p>
+</li>
+</ol>
+<pre><code>zone &quot;vcenter.com&quot; IN {
+    type master;
+    file &quot;vcenter.com.zone&quot;;
+};</code></pre><p>HTMLCopy</p>
+<ol>
+<li><p>添加记录</p>
+<p>vim /var/named/vcenter.com.zone</p>
+</li>
+</ol>
+<pre><code>$TTL 1D
+@ IN SOA master admin (0 1D 1H 1W 3H)
+        NS master
+master A 114.114.114.114
+@ A 172.16.23.41
+* A 172.16.23.41</code></pre><blockquote>
+<p>172.16.23.41是我后面安装windows Server 2016设置的ip</p>
+</blockquote>
+<h2 id="2-2-安装ESXI"><a href="#2-2-安装ESXI" class="headerlink" title="2.2. 安装ESXI"></a>2.2. 安装ESXI</h2><h3 id="2-2-1-新建虚拟机"><a href="#2-2-1-新建虚拟机" class="headerlink" title="2.2.1. 新建虚拟机"></a>2.2.1. 新建虚拟机</h3><ol>
+<li>下载VMware vSphere 6.7</li>
+<li>开始安装，新建虚拟机<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192430819-1.png" alt="[外链图片转存失败(img-kMDcQM6Z-1567509736539)(png/2019-09-03-09-58-28.png)]"></li>
+</ol>
+<hr>
+<ol start="2">
+<li>典型，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192440478-1.png" alt="[外链图片转存失败(img-bDm5NrRc-1567509736540)(png/2019-09-03-09-58-43.png)]"></li>
+</ol>
+<hr>
+<ol start="3">
+<li>稍后安装系统，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192445560-1.png" alt="[外链图片转存失败(img-LkhDCELh-1567509736541)(png/2019-09-03-09-59-10.png)]"></li>
+</ol>
+<hr>
+<ol start="4">
+<li>选择Vmware ESX,ESXi6.x版本<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/2019090319245269-1.png" alt="[外链图片转存失败(img-06XPWB0D-1567509736541)(png/2019-09-03-09-59-50.png)]"></li>
+</ol>
+<hr>
+<ol start="5">
+<li>输入你的虚拟机名称和保存的位置，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192456896-1.png" alt="[外链图片转存失败(img-HgLeDIo6-1567509736542)(png/2019-09-03-10-01-00.png)]"></li>
+</ol>
+<hr>
+<ol start="6">
+<li>指定磁盘容量，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192501912-1.png" alt="[外链图片转存失败(img-MCLP7z2h-1567509736542)(png/2019-09-03-10-01-23.png)]"></li>
+</ol>
+<hr>
+<ol start="7">
+<li>下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192506622-1.png" alt="[外链图片转存失败(img-D6g1Mfqr-1567509736542)(png/2019-09-03-10-01-32.png)]"></li>
+</ol>
+<hr>
+<ol start="8">
+<li>编译虚拟机设置<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192513534-1.png" alt="[外链图片转存失败(img-WB3SMoQi-1567509736543)(png/2019-09-03-10-01-50.png)]"></li>
+</ol>
+<hr>
+<ol start="9">
+<li>如图，4G内存，2核心，开启虚拟化<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192517827-1.png" alt="[外链图片转存失败(img-qav8j608-1567509736543)(png/2019-09-03-10-02-40.png)]"></li>
+</ol>
+<hr>
+<ol start="10">
+<li>选择vSphere6.7的光盘<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192538842-1.png" alt="[外链图片转存失败(img-EEPR3qSf-1567509736544)(png/2019-09-03-10-12-58.png)]"></li>
+</ol>
+<hr>
+<h3 id="2-2-2-开始安装ESXI"><a href="#2-2-2-开始安装ESXI" class="headerlink" title="2.2.2. 开始安装ESXI"></a>2.2.2. 开始安装ESXI</h3><ol start="11">
+<li>启动虚拟机<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192543719-1.png" alt="[外链图片转存失败(img-mYGRsryM-1567509736545)(png/2019-09-03-10-13-47.png)]"></li>
+</ol>
+<hr>
+<ol start="12">
+<li>Enter，继续<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192549807-1.png" alt="[外链图片转存失败(img-ijE49TkF-1567509736545)(png/2019-09-03-10-14-43.png)]"></li>
+</ol>
+<hr>
+<ol start="13">
+<li>按F11同意<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192554145-1.png" alt="[外链图片转存失败(img-84uUM2q2-1567509736546)(png/2019-09-03-10-15-05.png)]"></li>
+</ol>
+<hr>
+<ol start="14">
+<li>Enter继续<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192559491-1.png" alt="[外链图片转存失败(img-jywE7NMn-1567509736546)(png/2019-09-03-10-16-31.png)]"></li>
+</ol>
+<hr>
+<ol start="15">
+<li>选择你的键盘，Enter继续<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192603238-1.png" alt="[外链图片转存失败(img-TQwLB3aU-1567509736547)(png/2019-09-03-10-16-47.png)]"></li>
+</ol>
+<hr>
+<ol start="16">
+<li>输入root密码（需要一定的复杂度），Enter继续<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192610462-1.png" alt="[外链图片转存失败(img-Zs2j8h8x-1567509736547)(png/2019-09-03-10-17-27.png)]"></li>
+</ol>
+<hr>
+<ol start="17">
+<li>F11开始安装<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192645425-1.png" alt="[外链图片转存失败(img-kqCrgH36-1567509736548)(png/2019-09-03-10-18-04.png)]"></li>
+</ol>
+<hr>
+<ol start="18">
+<li>安装完成，重启<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192649197-1.png" alt="[外链图片转存失败(img-etE8uVS4-1567509736548)(png/2019-09-03-10-19-18.png)]"></li>
+</ol>
+<hr>
+<h3 id="2-2-3-配置ESXI"><a href="#2-2-3-配置ESXI" class="headerlink" title="2.2.3. 配置ESXI"></a>2.2.3. 配置ESXI</h3><ol start="19">
+<li>按F2进入配置<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192652933-1.png" alt="[外链图片转存失败(img-GXIHmJBA-1567509736549)(png/2019-09-03-10-23-57.png)]"></li>
+</ol>
+<hr>
+<ol start="20">
+<li>登录<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192657465-1.png" alt="[外链图片转存失败(img-Xkr21sSu-1567509736549)(png/2019-09-03-10-24-23.png)]"></li>
+</ol>
+<hr>
+<ol start="21">
+<li>网络<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/2019090319270442-1.png" alt="[外链图片转存失败(img-q4498rKG-1567509736549)(png/2019-09-03-10-25-06.png)]"></li>
+</ol>
+<hr>
+<ol start="22">
+<li>选择ipv4 configuration<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192709735-1.png" alt="[外链图片转存失败(img-lUIghs2s-1567509736550)(png/2019-09-03-10-27-12.png)]"></li>
+</ol>
+<hr>
+<ol start="23">
+<li>↑↓键到Set static…，Space键确定<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/2019090319271429-1.png" alt="[外链图片转存失败(img-YSRvgEIs-1567509736550)(png/2019-09-03-10-28-04.png)]"></li>
+</ol>
+<hr>
+<ol start="24">
+<li>↑↓键选择，修改ip地址，Enter确定<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192718317-1.png" alt="[外链图片转存失败(img-316PTJwJ-1567509736550)(png/2019-09-03-10-29-16.png)]"></li>
+</ol>
+<hr>
+<ol start="25">
+<li>按ECS退出，按Y键保存设置<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192721792-1.png" alt="[外链图片转存失败(img-qTi5mFMU-1567509736551)(png/2019-09-03-10-30-00.png)]"></li>
+</ol>
+<hr>
+<ol start="26">
+<li>修改ssh，选择Troubleshooting Options，按Enter<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192759581-1.png" alt="[外链图片转存失败(img-XRUmcLwB-1567509736551)(png/2019-09-03-10-25-28.png)]"></li>
+</ol>
+<hr>
+<ol start="27">
+<li>Enter&gt;键更改<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192807281-1.png" alt="[外链图片转存失败(img-09MkKjma-1567509736552)(png/2019-09-03-10-38-30.png)]"></li>
+</ol>
+<hr>
+<ol start="28">
+<li>浏览器登录<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192814607-1.png" alt="[外链图片转存失败(img-GcFNNJXs-1567509736552)(png/2019-09-03-10-42-26.png)]"></li>
+</ol>
+<h3 id="2-2-4-添加网卡"><a href="#2-2-4-添加网卡" class="headerlink" title="2.2.4. 添加网卡"></a>2.2.4. 添加网卡</h3><ol>
+<li>虚拟机添加网卡<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192903640-1.png" alt="[外链图片转存失败(img-flRs3lix-1567509736552)(png/2019-09-03-16-40-30.png)]"></li>
+</ol>
+<hr>
+<ol start="2">
+<li>exsi进入网络配置<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/2019090319290848-1.png" alt="[外链图片转存失败(img-w74LBeFl-1567509736553)(png/2019-09-03-16-40-52.png)]"></li>
+</ol>
+<hr>
+<ol start="3">
+<li>启动这张网卡<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192913997-1.png" alt="[外链图片转存失败(img-z2rYyzKH-1567509736553)(png/2019-09-03-16-41-37.png)]"></li>
+</ol>
+<hr>
+<h2 id="2-3-安装windows-Server2016"><a href="#2-3-安装windows-Server2016" class="headerlink" title="2.3. 安装windows Server2016"></a>2.3. 安装windows Server2016</h2><ol>
+<li>前面创建虚拟机的步骤相同，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192925797-1.png" alt="[外链图片转存失败(img-eg5Urnuo-1567509736553)(png/2019-09-03-11-44-42.png)]"></li>
+</ol>
+<hr>
+<ol start="2">
+<li>现在安装<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192932267-1.png" alt="[外链图片转存失败(img-QUd0w552-1567509736554)(png/2019-09-03-11-44-57.png)]"></li>
+</ol>
+<hr>
+<ol start="3">
+<li>点我没有产品密钥，<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192937303-1.png" alt="[外链图片转存失败(img-yhHJYkSj-1567509736554)(png/2019-09-03-11-45-46.png)]"></li>
+</ol>
+<hr>
+<ol start="4">
+<li>选最后一个，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192943162-1.png" alt="[外链图片转存失败(img-iu37264p-1567509736554)(png/2019-09-03-11-46-16.png)]"></li>
+</ol>
+<hr>
+<ol start="5">
+<li>我同意，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903192954924-1.png" alt="[外链图片转存失败(img-0rbl4BEA-1567509736554)(png/2019-09-03-11-46-41.png)]"></li>
+</ol>
+<hr>
+<ol start="6">
+<li>自定义，<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193001813-1.png" alt="[外链图片转存失败(img-FuURqm4F-1567509736555)(png/2019-09-03-11-46-54.png)]"></li>
+</ol>
+<hr>
+<ol start="7">
+<li>新建分区<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/2019090319300692-1.png" alt="[外链图片转存失败(img-xl2TMzUu-1567509736555)(png/2019-09-03-11-47-07.png)]"></li>
+</ol>
+<hr>
+<ol start="8">
+<li>分1个区就够了，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193011381-1.png" alt="[外链图片转存失败(img-UKvHsKgJ-1567509736555)(png/2019-09-03-11-47-46.png)]"></li>
+</ol>
+<hr>
+<ol start="9">
+<li>开始安装了<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193018663-1.png" alt="[外链图片转存失败(img-aSJk5jJH-1567509736556)(png/2019-09-03-11-51-31.png)]"></li>
+</ol>
+<hr>
+<ol start="10">
+<li>设置密码<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193022547-1.png" alt="[外链图片转存失败(img-NrNJqqHi-1567509736556)(png/2019-09-03-11-52-12.png)]"></li>
+</ol>
+<hr>
+<h3 id="设置IP地址"><a href="#设置IP地址" class="headerlink" title="设置IP地址"></a>设置IP地址</h3><ol start="11">
+<li>登录<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193042414-1.png" alt="[外链图片转存失败(img-ugJuxPJT-1567509736557)(png/2019-09-03-11-52-49.png)]"></li>
+</ol>
+<hr>
+<ol start="12">
+<li>设置IP地址与DNS，DNS写自己建的服务器<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193123566-1.png" alt="[外链图片转存失败(img-TG9qElG1-1567509736557)(png/2019-09-03-12-07-27.png)]"></li>
+</ol>
+<hr>
+<h3 id="安装vCenter"><a href="#安装vCenter" class="headerlink" title="安装vCenter"></a>安装vCenter</h3><ol start="12">
+<li>挂载驱动光盘<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193137335-1.png" alt="[外链图片转存失败(img-fQIf27pk-1567509736558)(png/2019-09-03-11-59-12.png)]"></li>
+</ol>
+<hr>
+<ol start="13">
+<li>运行，<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193148274-1.png" alt="[外链图片转存失败(img-F9ONneTX-1567509736558)(png/2019-09-03-11-59-33.png)]"></li>
+</ol>
+<hr>
+<ol start="14">
+<li>安装<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193153235-1.png" alt="[外链图片转存失败(img-r8CPJlb3-1567509736558)(png/2019-09-03-12-01-54.png)]"></li>
+</ol>
+<hr>
+<ol start="15">
+<li>下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193157919-1.png" alt="[外链图片转存失败(img-07VsreGF-1567509736558)(png/2019-09-03-12-02-16.png)]"></li>
+</ol>
+<hr>
+<ol start="16">
+<li>同意，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193201737-1.png" alt="[外链图片转存失败(img-t8j3QgtQ-1567509736559)(png/2019-09-03-12-02-33.png)]"></li>
+</ol>
+<hr>
+<ol start="17">
+<li>下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193206306-1.png" alt="[外链图片转存失败(img-6XExkgAx-1567509736559)(png/2019-09-03-12-02-53.png)]"></li>
+</ol>
+<hr>
+<ol start="18">
+<li>这个系统名称需要DNS可解析<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193210514-1.png" alt="[外链图片转存失败(img-0vNocaoK-1567509736559)(png/2019-09-03-12-03-25.png)]"></li>
+</ol>
+<hr>
+<ol start="19">
+<li>输入密码，需要一定的复杂度<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193214592-1.png" alt="[外链图片转存失败(img-fLVHU2Ea-1567509736560)(png/2019-09-03-14-22-40.png)]"></li>
+</ol>
+<hr>
+<ol start="20">
+<li>使用本地帐号，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193220498-1.png" alt="[外链图片转存失败(img-qWXgIQsk-1567509736560)(png/2019-09-03-14-23-04.png)]"></li>
+</ol>
+<hr>
+<ol start="21">
+<li>先嵌入式数据库，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193225365-1.png" alt="[外链图片转存失败(img-2PCuV2ig-1567509736561)(png/2019-09-03-14-23-26.png)]"></li>
+</ol>
+<hr>
+<ol start="22">
+<li>部署的端口，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193238635-1.png" alt="[外链图片转存失败(img-TJoMDweO-1567509736561)(png/2019-09-03-14-23-48.png)]"></li>
+</ol>
+<hr>
+<ol start="23">
+<li>选择部署的位置，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193244609-1.png" alt="[外链图片转存失败(img-Nof7JSOl-1567509736561)(png/2019-09-03-14-24-11.png)]"></li>
+</ol>
+<hr>
+<ol start="24">
+<li>加入客户体验提升计划，可选可不选，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193253681-1.png" alt="[外链图片转存失败(img-Mt3QVO9t-1567509736562)(png/2019-09-03-14-24-28.png)]"></li>
+</ol>
+<hr>
+<ol start="25">
+<li>安装<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193259586-1.png" alt="[外链图片转存失败(img-QfQig2ZT-1567509736562)(png/2019-09-03-14-24-44.png)]"></li>
+</ol>
+<hr>
+<ol start="26">
+<li>记住这个，有用<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193327946-1.png" alt="[外链图片转存失败(img-QE8b210n-1567509736563)(png/2019-09-03-16-02-28.png)]"></li>
+</ol>
+<hr>
+<ol start="26">
+<li>安装完成<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193341132-1.png" alt="[外链图片转存失败(img-SNbaOc0e-1567509736563)(png/2019-09-03-14-47-55.png)]"></li>
+</ol>
+<hr>
+<h1 id="3-登录vcenter管理界面"><a href="#3-登录vcenter管理界面" class="headerlink" title="3. 登录vcenter管理界面"></a>3. 登录vcenter管理界面</h1><ol start="27">
+<li>浏览器连接，vcenter.com，如果你本机上没有连接DNS，可以修改hosts文件<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193357429-1.png" alt="[外链图片转存失败(img-qOOdSpIz-1567509736564)(png/2019-09-03-16-01-23.png)]"></li>
+</ol>
+<hr>
+<ol start="28">
+<li>登录<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193408363-1.png" alt="[外链图片转存失败(img-Nw9clCE6-1567509736564)(png/2019-09-03-16-03-48.png)]"></li>
+</ol>
+<hr>
+<h2 id="3-1-添加管理主机"><a href="#3-1-添加管理主机" class="headerlink" title="3.1. 添加管理主机"></a>3.1. 添加管理主机</h2><p><strong>关于克隆的ESXI</strong><br>如果克隆ESXI，添加主机的时候会报错<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193426390-1.png" alt="[外链图片转存失败(img-barwkDfY-1567509736565)(png/2019-09-03-18-06-32.png)]"></p>
+<ol>
+<li>新建数据中心<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/2019090319343883-1.png" alt="[外链图片转存失败(img-lq9UuHVu-1567509736565)(png/2019-09-03-16-01-00.png)]"></li>
+</ol>
+<hr>
+<ol start="2">
+<li>添加主机<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193445838-1.png" alt="[外链图片转存失败(img-gPab0HRv-1567509736566)(png/2019-09-03-16-06-24.png)]"></li>
+</ol>
+<hr>
+<ol start="3">
+<li>写你的ESXI的ip地址<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193451427-1.png" alt="[外链图片转存失败(img-e8lYzzf1-1567509736566)(png/2019-09-03-16-07-00.png)]"></li>
+</ol>
+<hr>
+<ol start="4">
+<li>帐号root，密码你自己写的密码<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193457493-1.png" alt="[外链图片转存失败(img-avZiXdRr-1567509736566)(png/2019-09-03-16-07-53.png)]"></li>
+</ol>
+<hr>
+<ol start="5">
+<li>是，<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193502624-1.png" alt="[外链图片转存失败(img-fd9xof6P-1567509736567)(png/2019-09-03-16-08-08.png)]"></li>
+</ol>
+<hr>
+<ol start="6">
+<li>你的摘要，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193507138-1.png" alt="[外链图片转存失败(img-VLR4BuC5-1567509736567)(png/2019-09-03-16-08-19.png)]"></li>
+</ol>
+<hr>
+<ol start="7">
+<li>许可证，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193511624-1.png" alt="[外链图片转存失败(img-fjcs3xUc-1567509736568)(png/2019-09-03-16-08-35.png)]"></li>
+</ol>
+<hr>
+<ol start="8">
+<li>禁用，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193516840-1.png" alt="[外链图片转存失败(img-ND60Pjym-1567509736568)(png/2019-09-03-16-09-39.png)]"></li>
+</ol>
+<hr>
+<ol start="9">
+<li>位置，没得选，只有一个，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193521241-1.png" alt="[外链图片转存失败(img-9aBYPepP-1567509736568)(png/2019-09-03-16-10-20.png)]"></li>
+</ol>
+<hr>
+<ol start="10">
+<li>Finish<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193526139-1.png" alt="[外链图片转存失败(img-Q1FKghfV-1567509736569)(png/2019-09-03-16-10-30.png)]"></li>
+</ol>
+<hr>
+<ol start="11">
+<li>添加完成<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193532883-1.png" alt="[外链图片转存失败(img-FA0ZxLl2-1567509736569)(png/2019-09-03-16-12-06.png)]"></li>
+</ol>
+<hr>
+<h2 id="3-2-上传镜像"><a href="#3-2-上传镜像" class="headerlink" title="3.2. 上传镜像"></a>3.2. 上传镜像</h2><ol>
+<li>选择存储，新建个文件夹<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193553475-1.png" alt="[外链图片转存失败(img-ajZWqhdk-1567509736570)(png/2019-09-03-17-17-24.png)]"></li>
+</ol>
+<hr>
+<ol start="2">
+<li>输入文件夹名<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193600403-1.png" alt="[外链图片转存失败(img-H9CjypmL-1567509736570)(png/2019-09-03-17-17-36.png)]"></li>
+</ol>
+<hr>
+<ol start="3">
+<li>上传文件<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193605549-1.png" alt="[外链图片转存失败(img-ldbawJ5Z-1567509736570)(png/2019-09-03-17-18-17.png)]"></li>
+</ol>
+<hr>
+<ol start="4">
+<li>上传完成<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193609422-1.png" alt="[外链图片转存失败(img-kOPDHeSI-1567509736571)(png/2019-09-03-17-18-31.png)]"></li>
+</ol>
+<hr>
+<h2 id="3-3-创建虚拟机"><a href="#3-3-创建虚拟机" class="headerlink" title="3.3. 创建虚拟机"></a>3.3. 创建虚拟机</h2><ol>
+<li>添加虚拟机<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193627223-1.png" alt="[外链图片转存失败(img-T4MzHAJH-1567509736571)(png/2019-09-03-16-21-52.png)]"></li>
+</ol>
+<hr>
+<ol start="2">
+<li>创建新的虚拟机<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193633957-1.png" alt="[外链图片转存失败(img-hourtrKo-1567509736572)(png/2019-09-03-16-22-07.png)]"></li>
+</ol>
+<hr>
+<ol start="3">
+<li>起个名字，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193638890-1.png" alt="[外链图片转存失败(img-VIilCECg-1567509736572)(png/2019-09-03-16-22-31.png)]"></li>
+</ol>
+<hr>
+<ol start="4">
+<li>选择计算资源，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193647351-1.png" alt="[外链图片转存失败(img-bdhrurAW-1567509736573)(png/2019-09-03-16-22-46.png)]"></li>
+</ol>
+<hr>
+<ol start="5">
+<li>选择存储，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193653530-1.png" alt="[外链图片转存失败(img-dQW7l7hy-1567509736573)(png/2019-09-03-16-23-09.png)]"></li>
+</ol>
+<hr>
+<ol start="6">
+<li>根据你的版本选择，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193658390-1.png" alt="[外链图片转存失败(img-xyaKavxf-1567509736574)(png/2019-09-03-16-23-38.png)]"></li>
+</ol>
+<hr>
+<ol start="7">
+<li>选择版本，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193703784-1.png" alt="[外链图片转存失败(img-OvDqVdmN-1567509736575)(png/2019-09-03-16-24-21.png)]"></li>
+</ol>
+<hr>
+<ol start="8">
+<li>选择数据存储ISO文件<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193720328-1.png" alt="[外链图片转存失败(img-nH4akz7V-1567509736576)(png/2019-09-03-17-19-21.png)]"></li>
+</ol>
+<hr>
+<ol start="9">
+<li>选择你的镜像，也可以选内置的镜像<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193729625-1.png" alt="[外链图片转存失败(img-6jkD0Lna-1567509736576)(png/2019-09-03-17-24-00.png)]"></li>
+</ol>
+<hr>
+<ol start="10">
+<li>Finish<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193734581-1.png" alt="[外链图片转存失败(img-7YqP20e3-1567509736576)(png/2019-09-03-17-24-35.png)]"></li>
+</ol>
+<hr>
+<ol start="11">
+<li>添加完成<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/2019090319373951-1.png" alt="[外链图片转存失败(img-mgbMpVtD-1567509736577)(png/2019-09-03-17-26-09.png)]"></li>
+</ol>
+<hr>
+<ol start="12">
+<li>打开虚拟机<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193743535-1.png" alt="[外链图片转存失败(img-8YUB71GH-1567509736577)(png/2019-09-03-17-26-42.png)]"></li>
+</ol>
+<hr>
+<h2 id="3-4-虚拟主机迁移"><a href="#3-4-虚拟主机迁移" class="headerlink" title="3.4. 虚拟主机迁移"></a>3.4. 虚拟主机迁移</h2><p>迁移前，保证你添加了2个以上的ESXI主机<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193750334-1.png" alt="[外链图片转存失败(img-gn3FLVNM-1567509736577)(png/2019-09-03-18-17-05.png)]"></p>
+<hr>
+<h3 id="3-4-1-添加网络"><a href="#3-4-1-添加网络" class="headerlink" title="3.4.1. 添加网络"></a>3.4.1. 添加网络</h3><blockquote>
+<ul>
+<li>保证各计算节点都要配置</li>
+</ul>
+</blockquote>
+<ol>
+<li>添加网络<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/2019090319380651-1.png" alt="[外链图片转存失败(img-8wDp68IH-1567509736578)(png/2019-09-03-16-31-14.png)]"></li>
+</ol>
+<hr>
+<ol start="2">
+<li>vmkernel网络适配器<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193818145-1.png" alt="[外链图片转存失败(img-XkI8dRcK-1567509736578)(png/2019-09-03-16-49-23.png)]"></li>
+</ol>
+<hr>
+<ol start="3">
+<li>选择现有交换机，浏览<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193824526-1.png" alt="[外链图片转存失败(img-hvqjPlSv-1567509736578)(png/2019-09-03-16-49-48.png)]"></li>
+</ol>
+<hr>
+<ol start="4">
+<li>只有一个，就他了，确定<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193835951-1.png" alt="[外链图片转存失败(img-Vha1Vfoe-1567509736579)(png/2019-09-03-16-31-53.png)]"></li>
+</ol>
+<hr>
+<ol start="5">
+<li>下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193846386-1.png" alt="[外链图片转存失败(img-gY9OHyCO-1567509736579)(png/2019-09-03-16-50-04.png)]"></li>
+</ol>
+<hr>
+<ol start="6">
+<li>勾选服务vMotion，确定<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193851349-1.png" alt="[外链图片转存失败(img-nSWfEmLK-1567509736579)(png/2019-09-03-16-50-55.png)]"></li>
+</ol>
+<hr>
+<ol start="7">
+<li>设置静态ip地址，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193857345-1.png" alt="[外链图片转存失败(img-wS8H3tZP-1567509736579)(png/2019-09-03-16-55-56.png)]"></li>
+</ol>
+<hr>
+<ol start="8">
+<li>Finish<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193902292-1.png" alt="[外链图片转存失败(img-mmg20hQZ-1567509736580)(png/2019-09-03-16-56-04.png)]"></li>
+</ol>
+<hr>
+<ol start="9">
+<li>创建完成<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193910956-1.png" alt="[外链图片转存失败(img-juUs5SjX-1567509736580)(png/2019-09-03-16-57-03.png)]"></li>
+</ol>
+<hr>
+<h3 id="3-4-2-执行虚拟机迁移"><a href="#3-4-2-执行虚拟机迁移" class="headerlink" title="3.4.2. 执行虚拟机迁移"></a>3.4.2. 执行虚拟机迁移</h3><ol>
+<li><p>迁移前把光盘取消挂载<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903202416923-1.png" alt="在这里插入图片描述"></p>
+</li>
+<li><p>开始迁移<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193930488-1.png" alt="[外链图片转存失败(img-pKeOd8K6-1567509736580)(png/2019-09-03-17-49-13.png)]"></p>
+</li>
+</ol>
+<hr>
+<ol start="2">
+<li>选择更改计算资源和存储<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/2019090319393875-1.png" alt="[外链图片转存失败(img-uGz4KZcw-1567509736580)(png/2019-09-03-18-17-37.png)]"></li>
+</ol>
+<hr>
+<ol start="3">
+<li>选另一个主机<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193942914-1.png" alt="[外链图片转存失败(img-85TfJMv1-1567509736581)(png/2019-09-03-18-55-29.png)]"></li>
+</ol>
+<hr>
+<ol start="4">
+<li>选择存储<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193947896-1.png" alt="[外链图片转存失败(img-sZlxwvK3-1567509736581)(png/2019-09-03-18-55-41.png)]"></li>
+</ol>
+<hr>
+<ol start="5">
+<li>网络选择前面创建的带有vMotion的网络<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193953620-1.png" alt="[外链图片转存失败(img-l7usWc8M-1567509736581)(png/2019-09-03-18-55-57.png)]"></li>
+</ol>
+<hr>
+<ol start="6">
+<li>选vMotion这项，下一步<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903193958595-1.png" alt="[外链图片转存失败(img-4Ktme1tK-1567509736582)(png/2019-09-03-18-56-09.png)]"></li>
+</ol>
+<hr>
+<ol start="7">
+<li>开始迁移<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903194004672-1.png" alt="[外链图片转存失败(img-6T4W5t2x-1567509736582)(png/2019-09-03-18-56-18.png)]"></li>
+</ol>
+<hr>
+<ol start="8">
+<li>正在迁移<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903194009170-1.png" alt="[外链图片转存失败(img-sr75QiM3-1567509736583)(png/2019-09-03-18-56-38.png)]"></li>
+</ol>
+<hr>
+<ol start="9">
+<li>迁移成功<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/20190903194017899-1.png" alt="[外链图片转存失败(img-dCAWm15P-1567509736583)(png/2019-09-03-19-14-07.png)]"></li>
+</ol>
+<hr>
+<ol start="10">
+<li>测试下正常否<br><img src="http://www.pever.cn/wp-content/uploads/2019/10/2019090319403420-1.png" alt="在这里插入图片描述"></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/31/trashed/" rel="next" title="VMwareVsphere6.x安装文档">
+                  <i class="fa fa-chevron-left"></i> VMwareVsphere6.x安装文档
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/31/kvm-e4-b8-80-e8-99-9a-e6-8b-9f-e5-8c-96-e4-bb-8b-e7-bb-8d/" rel="prev" title="KVM(一)_虚拟化介绍">
+                  KVM(一)_虚拟化介绍 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-VMware简介"><span class="nav-number">1.</span> <span class="nav-text">1. VMware简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-主要产品"><span class="nav-number">1.1.</span> <span class="nav-text">1.1. 主要产品</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-部署VMware-vSphere"><span class="nav-number">2.</span> <span class="nav-text">2. 部署VMware vSphere</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-准备DNS服务器"><span class="nav-number">2.1.</span> <span class="nav-text">2.1. 准备DNS服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-安装ESXI"><span class="nav-number">2.2.</span> <span class="nav-text">2.2. 安装ESXI</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-新建虚拟机"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1. 新建虚拟机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-开始安装ESXI"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2.2. 开始安装ESXI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-3-配置ESXI"><span class="nav-number">2.2.3.</span> <span class="nav-text">2.2.3. 配置ESXI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-4-添加网卡"><span class="nav-number">2.2.4.</span> <span class="nav-text">2.2.4. 添加网卡</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-安装windows-Server2016"><span class="nav-number">2.3.</span> <span class="nav-text">2.3. 安装windows Server2016</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#设置IP地址"><span class="nav-number">2.3.1.</span> <span class="nav-text">设置IP地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装vCenter"><span class="nav-number">2.3.2.</span> <span class="nav-text">安装vCenter</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-登录vcenter管理界面"><span class="nav-number">3.</span> <span class="nav-text">3. 登录vcenter管理界面</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-添加管理主机"><span class="nav-number">3.1.</span> <span class="nav-text">3.1. 添加管理主机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-上传镜像"><span class="nav-number">3.2.</span> <span class="nav-text">3.2. 上传镜像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-创建虚拟机"><span class="nav-number">3.3.</span> <span class="nav-text">3.3. 创建虚拟机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-虚拟主机迁移"><span class="nav-number">3.4.</span> <span class="nav-text">3.4. 虚拟主机迁移</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-1-添加网络"><span class="nav-number">3.4.1.</span> <span class="nav-text">3.4.1. 添加网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-2-执行虚拟机迁移"><span class="nav-number">3.4.2.</span> <span class="nav-text">3.4.2. 执行虚拟机迁移</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

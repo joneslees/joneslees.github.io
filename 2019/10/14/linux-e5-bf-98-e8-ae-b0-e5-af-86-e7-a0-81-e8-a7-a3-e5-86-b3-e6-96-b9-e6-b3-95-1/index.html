@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="很多朋友经常会忘记Linux系统的root密码，linux系统忘记root密码的情况该怎么办呢？重新安装系统吗？当然不用！进入单用户模式更改一下root密码即可。步骤如下：重启linux系统3 秒之内要按一下回车，出现如下界面然后输入e在 第二行最后边输入 single，有一个空格。具体方法为按向下尖头移动到第二行，按”e”进入编辑模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 忘记密码解决方法">
+<meta property="og:url" content="http://yoursite.com/2019/10/14/linux-e5-bf-98-e8-ae-b0-e5-af-86-e7-a0-81-e8-a7-a3-e5-86-b3-e6-96-b9-e6-b3-95-1/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="很多朋友经常会忘记Linux系统的root密码，linux系统忘记root密码的情况该怎么办呢？重新安装系统吗？当然不用！进入单用户模式更改一下root密码即可。步骤如下：重启linux系统3 秒之内要按一下回车，出现如下界面然后输入e在 第二行最后边输入 single，有一个空格。具体方法为按向下尖头移动到第二行，按”e”进入编辑模式">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_21.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_22.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_23.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_24.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_25.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_26.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_27.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_28.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_29.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_30.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_31.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_32.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_33.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_34.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_35.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_36.png">
+<meta property="og:updated_time" content="2019-11-16T07:42:20.267Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux 忘记密码解决方法">
+<meta name="twitter:description" content="很多朋友经常会忘记Linux系统的root密码，linux系统忘记root密码的情况该怎么办呢？重新安装系统吗？当然不用！进入单用户模式更改一下root密码即可。步骤如下：重启linux系统3 秒之内要按一下回车，出现如下界面然后输入e在 第二行最后边输入 single，有一个空格。具体方法为按向下尖头移动到第二行，按”e”进入编辑模式">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/10/4_21.png">
+  <link rel="canonical" href="http://yoursite.com/2019/10/14/linux-e5-bf-98-e8-ae-b0-e5-af-86-e7-a0-81-e8-a7-a3-e5-86-b3-e6-96-b9-e6-b3-95-1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Linux 忘记密码解决方法 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/linux-e5-bf-98-e8-ae-b0-e5-af-86-e7-a0-81-e8-a7-a3-e5-86-b3-e6-96-b9-e6-b3-95-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            Linux 忘记密码解决方法
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-10-14 12:33:07" itemprop="dateCreated datePublished" datetime="2019-10-14T12:33:07+08:00">2019-10-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-16 15:42:20" itemprop="dateModified" datetime="2019-11-16T15:42:20+08:00">2019-11-16</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>很多朋友经常会忘记Linux系统的root密码，linux系统忘记root密码的情况该怎么办呢？重新安装系统吗？当然不用！进入单用户模式更改一下root密码即可。</p><p>步骤如下：</p><h3 id="重启linux系统"><a href="#重启linux系统" class="headerlink" title="重启linux系统"></a>重启linux系统</h3><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_21.png" alt="4_21"></p><p>3 秒之内要按一下回车，出现如下界面</p><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_22.png" alt="4_22"></p><p>然后输入e</p><p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_23.png" alt="4_23"></p><p>在 第二行最后边输入 single，有一个空格。具体方法为按向下尖头移动到第二行，按”e”进入编辑模式</p><a id="more"></a>
+
+
+
+
+
+
+
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_24.png" alt="4_24"></p>
+<p>在后边加上single 回车</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_25.png" alt="4_25"></p>
+<p>最后按”b”启动，启动后就进入了单用户模式了</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_26.png" alt="4_26"></p>
+<p>此时已经进入到单用户模式了，你可以更改root密码了。更密码的命令为 passwd</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_27.png" alt="4_27"></p>
+<p>【<strong>使用系统安装光盘的救援模式</strong>】</p>
+<p>救援模式即rescue ，这个模式主要是应用于，系统无法进入的情况。如，grub损坏或者某一个配置文件修改出错。如何使用rescue模式呢？</p>
+<p>光盘启动，按F5 进入rescue模式</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_28.png" alt="4_28"></p>
+<p>输入linux rescue 回车</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_29.png" alt="4_29"></p>
+<p>选择语言，笔者建议你选择英语</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_30.png" alt="4_30"></p>
+<p>选择us 键盘</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_31.png" alt="4_31"></p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_32.png" alt="4_32"></p>
+<p>这里问你是否启动网络，有时候可能会联网调试。我们选no</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_33.png" alt="4_33"></p>
+<p>这里告诉我们，接下来会把系统挂载在/mnt/sysimage 中。</p>
+<p>其中有三个选项:</p>
+<ul>
+<li>Continue 就是挂载后继续下一步。 </li>
+<li>Read-Only 挂载成只读，这样更安全，有时文件系统损坏时，只读模式会防止文件系统近一步损坏。</li>
+<li>Skip就是不挂载，进入一个命令窗口模式。 </li>
+</ul>
+<p>这里我们选择Continue。</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_34.png" alt="4_34"></p>
+<p>至此，系统已经挂载到了/mnt/sysimage中。接下来回车，输入chroot /mnt/sysimage 进入管理员环境。</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_35.png" alt="4_35"></p>
+<p><strong>提示：</strong> 其实也可以到rescue模式下更改root的密码的。这个rescue模式和windows PE系统很相近。</p>
+<p>当运行了chroot /mnt/sysimage/ 后，再ls 看到目录结构和原来系统中的目录结构是一样的。</p>
+<p>没错！现在的环境和原来系统的环境是一模一样的。你可以输入exit 或者按Ctrl + D退出这个环境。然后你再ls 看一下</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/10/4_36.png" alt="4_36"></p>
+<p>这个目录其实就是rescue模式下的目录结构，而我们的系统文件全部在 /mnt/sysimage目录下。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/10/14/linux-e5-bf-98-e8-ae-b0-e5-af-86-e7-a0-81-e8-a7-a3-e5-86-b3-e6-96-b9-e6-b3-95/" rel="next" title="Linux 忘记密码解决方法">
+                  <i class="fa fa-chevron-left"></i> Linux 忘记密码解决方法
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/10/14/linux-e6-96-87-e4-bb-b6-e5-9f-ba-e6-9c-ac-e5-b1-9e-e6-80-a7/" rel="prev" title="Linux 文件基本属性">
+                  Linux 文件基本属性 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#重启linux系统"><span class="nav-number">1.</span> <span class="nav-text">重启linux系统</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

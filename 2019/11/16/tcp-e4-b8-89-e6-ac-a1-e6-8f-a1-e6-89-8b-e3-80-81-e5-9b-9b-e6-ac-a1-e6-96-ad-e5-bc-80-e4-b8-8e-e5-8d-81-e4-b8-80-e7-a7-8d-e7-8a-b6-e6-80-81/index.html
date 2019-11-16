@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.4.1" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="一：OSI 模型 Open System Interconnect开放系统互连参考模型，是由ISO（国际标准化组织）定义的，它是个灵活的、稳健的和可互操作的模型，OSI模型的目的是为了规范不同系统的互联标准，使两个不同的系统能够较容易的通信，而不需要改变底层的硬件或软件的逻辑，OSI模型分为七层，OSI把网络按照层次分为七层，由下到上分别为物理层、数据链路层、网络层、传输层、会话层、表示层、应用层">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TCP三次握手、四次断开与十一种状态">
+<meta property="og:url" content="http://yoursite.com/2019/11/16/tcp-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e3-80-81-e5-9b-9b-e6-ac-a1-e6-96-ad-e5-bc-80-e4-b8-8e-e5-8d-81-e4-b8-80-e7-a7-8d-e7-8a-b6-e6-80-81/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="一：OSI 模型 Open System Interconnect开放系统互连参考模型，是由ISO（国际标准化组织）定义的，它是个灵活的、稳健的和可互操作的模型，OSI模型的目的是为了规范不同系统的互联标准，使两个不同的系统能够较容易的通信，而不需要改变底层的硬件或软件的逻辑，OSI模型分为七层，OSI把网络按照层次分为七层，由下到上分别为物理层、数据链路层、网络层、传输层、会话层、表示层、应用层">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/174027123feffecc688a21a0376dbac5.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20161227104158_28973-2.jpg">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20161222115444_83111-2.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20161224171748_30304-2.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20161223015036_40636-2.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20161223040851_95781-2.png">
+<meta property="og:image" content="http://www.pever.cn/wp-content/uploads/2019/11/20161223054651_23097-2.png">
+<meta property="og:updated_time" content="2019-11-16T07:42:20.269Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TCP三次握手、四次断开与十一种状态">
+<meta name="twitter:description" content="一：OSI 模型 Open System Interconnect开放系统互连参考模型，是由ISO（国际标准化组织）定义的，它是个灵活的、稳健的和可互操作的模型，OSI模型的目的是为了规范不同系统的互联标准，使两个不同的系统能够较容易的通信，而不需要改变底层的硬件或软件的逻辑，OSI模型分为七层，OSI把网络按照层次分为七层，由下到上分别为物理层、数据链路层、网络层、传输层、会话层、表示层、应用层">
+<meta name="twitter:image" content="http://www.pever.cn/wp-content/uploads/2019/11/174027123feffecc688a21a0376dbac5.png">
+  <link rel="canonical" href="http://yoursite.com/2019/11/16/tcp-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e3-80-81-e5-9b-9b-e6-ac-a1-e6-96-ad-e5-bc-80-e4-b8-8e-e5-8d-81-e4-b8-80-e7-a7-8d-e7-8a-b6-e6-80-81/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>TCP三次握手、四次断开与十一种状态 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+        
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-board">
+      
+    
+
+    <a href="/board" rel="section"><i class="fa fa-fw fa-question-circle"></i>Board</a>
+
+  </li>
+      
+    
+      
+      
+        
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+      
+    
+  </ul>
+
+    
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/16/tcp-e4-b8-89-e6-ac-a1-e6-8f-a1-e6-89-8b-e3-80-81-e5-9b-9b-e6-ac-a1-e6-96-ad-e5-bc-80-e4-b8-8e-e5-8d-81-e4-b8-80-e7-a7-8d-e7-8a-b6-e6-80-81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            TCP三次握手、四次断开与十一种状态
+            
+
+          
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              
+                
+              
+
+              <time title="Created: 2019-11-16 11:09:21 / Modified: 15:42:20" itemprop="dateCreated datePublished" datetime="2019-11-16T11:09:21+08:00">2019-11-16</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux基础/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一：OSI 模型 Open System Interconnect开放系统互连参考模型，是由ISO（国际标准化组织）定义的，它是个灵活的、稳健的和可互操作的模型，OSI模型的目的是为了规范不同系统的互联标准，使两个不同的系统能够较容易的通信，而不需要改变底层的硬件或软件的逻辑，OSI模型分为七层，OSI把网络按照层次分为七层，由下到上分别为物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。</p><a id="more"></a>
+<p>1.1：第七层：应用层的功能：</p>
+<p>为应用软件提供接口，使应用程序能够使用网络服务。常见的应用层协议：<br>http(80)、ftp(20/21)、smtp(25)、pop3(110)、telnet(23)、dns(53)等</p>
+<p>1.2：第六层：表示层的功能：  </p>
+<p>数据的编码和解码、数据的加密和解密、数据和压缩和解压缩，常见的标准有JPEG/ASCII等</p>
+<p>1.3：第五层：会话层的功能：</p>
+<p>建立、管理和终止表示层实体之间的会话连接，在设各或节点之间提供会话控制，它在系统之间协调通信过程,并提供3种不同的方式来组织它们之间的通信:单工、半双工和全双工</p>
+<p>1.4：第四层：传输层的功能：</p>
+<p>负责建立端到端的连接，保证报文在端到端之间的传输。提供可靠TCP及不可靠UDP的传输机制,服务点编址、分段与重组、连接控制、流量控制、差错控制。</p>
+<p>1.5：第三层：网络层的功能：</p>
+<p>定义逻辑地址,逻辑寻址，将数据分组从源传输到目的,路径选择、路由发现、维护路由表，功能是隔离广播域；隔离广播,路由选择；维护路由表,寻址及转发,流量管理并连接广域网</p>
+<p>1.6：第二层：数据链路层的功能：</p>
+<p>组帧、物理编址，将数据帧从链路上的一个节点传递到另一个节点，流量控制、差错控制、接入控制</p>
+<p>1.7：第一层：物理层的功能：  </p>
+<p>在介质上传递比特流，定义接口和媒体的物理特性，定义比特的表示、数据传输速率、信号的传输模式（单工、半双工、全双工），定义网络物理拓扑（网状、星型、环型、总线型等）  </p>
+<p>二：TCP 协议简介：</p>
+<p>TCP，全称Transfer Control Protocol，中文名为传输控制协议，它工作在OSI的传输层，提供面向连接的可靠传输服务，TCP的工作主要是建立连接，然后从应用层程序中接收数据并进行传输。TCP采用虚电路连接方式进行工作，在发送数据前它需要在发送方和接收方建立一个连接，数据在发送出去后，发送方会等待接收方给出一个确认性的应答，否则发送方将认为此数据丢失，并重新发送此数据。<br>TCP的报文头部结构：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/174027123feffecc688a21a0376dbac5.png" alt></p>
+<p>三：TCP三次握手：</p>
+<p>在建立连接的时候，所谓的客户端与服务端是相对应的，即要看是谁主动连接的谁，如果A主动连接B那么A就是客户端而B是服务端，如果返过来B主动连接A，那么B就是客户端而A就成了服务端。</p>
+<p>3.1:连接过程：</p>
+<p>第一次握手：客户端发送SYN标志位为1的请求到服务端，并随机生成一个seq 序列号x，其中seq是随机产生的数据包的序列号。</p>
+<p>第二次握手：服务器收到客户端请求并返回SYN=1，ACK=1，seq=y，ack=x+1，其中ACK=1表示是响应报文，seq=y是服务器随机产生的数据包序列号，ack=x+1是确认客户端序列号有效并返回给客户端确认。</p>
+<p>第三次握手：客户端收到服务器的确认ack=x+1有效的验证信息，即在自己发送的序列号基础之上加了1表示服务器收到并返回，表示第二次连接有效，然后客户端恢回复ACK=1，seq=x+1，ack=y+1，这是讲服务器发来+1后的序列号当做自己的seq序列号，确认号ack使用服务器的随机号y再加1即ack=y+1，这样客户端就完成了第三次的验证在讲数据包发给服务器，服务器收到后验证确认号是在自己的seq之上加了1，表示没有问题就开始传输数据。</p>
+<p>注：</p>
+<p>ACK :TCP协议规定，只有ACK=1时有效，也规定连接建立后所有发送的报文的ACK必须为1</p>
+<p>Seq:序号,4字节，范围为0^32—1^32,共4284967296，达到时重新开始计算</p>
+<p>在第三次的时候SYN等于0，因为SYN(SYNchronization) 只i在连接建立时用来同步序号,当SYN=1而ACK=0时,表明这是一个连接请求报文,对方若同意建立连接,则应在响应报文中使SYN=1和ACK=1. 因此, SYN置1就表示这是一个连接请求或连接接受报文，链路建立成功之后就将标志位置为0。</p>
+<p>SYN(synchronous建立联机)             ACK(acknowledgement 确认)<br>PSH(push传送)                    FIN(finish结束)<br>RST(reset重置)                   URG(urgent紧急)<br>Sequence number(顺序号码)            Acknowledge number(确认号码)  </p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20161227104158_28973-2.jpg" alt></p>
+<p>四：TCP的四次断开：</p>
+<p>TCP断开要四次是因为TCP传输数全双工的，即数据是在同一时间内两条数据链路双向互相传输的，因此每个方向都要单独关闭一次，断开需要客户端到服务端断开一次，而服务端到客户端也需要断开一次，这样的断开才是完整的断开，</p>
+<p>第一次断开：客户方发给服务器一个FIN为1的请求，FIN为1表示是一个断开连接的请求，即表示数据传输完毕请求断开，并发送seq序列号和Ack确认号。<br>第二次断开：服务器收到客户端请求并返回ACK标志位为1，Ack为Seq+1等于201，并将对方的Ack作为自己的Seq序列号的确认数据包，biao 接收到请求同意断开。<br>第三次断开：服务器发送ACK=1，FIN=1，Seq等于客户端第一次请求断开的Ack确认号+1，即Seq等于501的断开请求给客户端。</p>
+<p>第四次断开：客户端发送ACK=1，Ack在上一步Seq上+1等于502，并使用在第二次断开中服务器发送的Ack确号201作为本次的序列号发给服务器表示同意断开，服务器收到后验证序列号是第二次的，验证Ack是第三次+1的，确认没有问题后同意断开，然后将端口置为TIME_WAIT状态，等待2 MSL时间后置为关闭状态，被动方收到主动方的报文确认Ack确认号没有问题后将端口置为CLOSED，至此端口g。</p>
+<p>SYN(synchronous建立联机)             ACK(acknowledgement 确认)<br>PSH(push传送)                    FIN(finish结束)<br>RST(reset重置)                    URG(urgent紧急)<br>Sequence number(顺序号码)            Acknowledge number(确认号码)<br>四次断开的图形示意如下：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20161222115444_83111-2.png" alt></p>
+<p>五：TCP端口的十一种连接状态：</p>
+<p>TCP端口一共有十一种状态，CLOSE_WAIT表示是程序y关闭连接，而TIME_WAIT只占用一个socket连接，到时间之后会释放，因此大量的CLOSE_WAIT是比大量的TIME_WAIT影响更大，另外还有FIN_WAIT1和FIN_WAIT2，如果有FIN_WAIT2也表示服务有问题，以下是每个端口状态的含义：</p>
+<p>5.1：CLOSED：端口默认是关闭状态。<br>5.2：LISTEN： 服务器程序开始监听一个端口，就是LISTEN状态。<br>5.3：SYN_RCVD：三次握手的第二次握手后的端口状态，是收到了客户端发送的SYN_SENT数据包之后的状态，这个状态很短暂，正常在服务器上是很少看到的，除非服务器故意不发送最后一次握手数据包，服务器返回给客户端SYN确认之后就会将在自己的端口置为SYN_RCVD。<br>5.4：SYN_SENT：SYN_SENT状态表示客户端已发送SYN=1的请求连接报文，发送之后客户端就会将自己的端口状态置为SYN_SENT。<br>5.5：ESTABLISHED：表示已经连接成功，客户端收到服务器的确认报文会回复服务器，然后就将端口置为ESTABLISHED，服务器第三次收到客户端的Ack确认就会将端口置为ESTABLISHED并开始传输数据。<br>5.6：FIN_WAIT_1：出现在主动关闭方，FIN_WAIT_1状态实际上是当SOCKET在ESTABLISHED状态时，当任意一方想主动关闭连接，向对方发送了FIN=1的断开连接请求报文，此时该SOCKET即 进入到FIN_WAIT_1状态。而当对方回应ACK报文后，则进入到FIN_WAIT_2状态，当然在实际的正常情况下，无论对方何种情况下，都应该马 上回应ACK报文，所以FIN_WAIT_1状态一般是比较难见到的，而FIN_WAIT_2状态还有时常常可以用netstat看到。<br>5.7：FIN_WAIT_2：出现在主动关闭方，当被动方回应FIN_WAIT_1的ACK报文后，则进入到FIN_WAIT_2状态<br>5.8：TIME_WAIT：出现在主动关闭方，表示收到了对方的FIN请求关闭报文，并发送出了ACK报文，就等2MSL后即可回到CLOSED可用状态了。如果FIN_WAIT_1状态下，收到了对方同时带FIN标志和ACK标志的报文时，可以直接进入到TIME_WAIT状态，而无须经过FIN_WAIT_2状态。<br>5.9：CLOSING： 这种状态比较特殊，实际情况中应该是很少见，属于一种比较罕见的例外状态。正常情况下，当你发送FIN报文后，按理来说是应该先收到（或同时收到）对方的 ACK报文，再收到对方的FIN报文。但是CLOSING状态表示你发送FIN报文后，并没有收到对方的ACK报文，反而却也收到了对方的FIN报文。什 么情况下会出现此种情况呢？其实细想一下，也不难得出结论：那就是如果双方几乎在同时close一个SOCKET的话，那么就出现了双方同时发送FIN报 文的情况，也即会出现CLOSING状态，表示双方都正在关闭SOCKET连接。<br>5.10：CLOSE_WAIT： 表示在等待关闭端口，这种状态存在于被动关闭的一方。<br>5.11：LAST_ACK： 是被动关闭方在主动关闭一方在发送FIN报文后，最后等待对方的ACK报文，当再次收到ACK报文后，也即可以进入到CLOSED可用状态了。  </p>
+<p>5.12：区分主动断开和被动端口方的端口状态：</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20161224171748_30304-2.png" alt></p>
+<p>主动端口方：SYN_SENT、FIN_WAIT1、FIN_WAIT2、CLOSING、TIME_WAIT 。<br>被动断开方：LISTEN、SYN_RCVD、CLOSE_WAIT、LAST_ACK 。<br>都具有的：CLOSED 、ESTABLISHED 。  </p>
+<p>5.13：关于优化：</p>
+<p>socket就是一个TCP连接，包括源地址、源端口、目标地址、目标端口和协议(TCP|UDP),0端口是保留不能使用的，因此服务器的最大端口使用数量为63353个，最大65536个端口是因为TCP报文头部有个端口长度为2^16次方等于65536，查看当前打开的端口范围# cat /proc/sys/net/ipv4/ip_local_port_range，单个IP地址能接受的最大并发为六万多，1万个TIME_WAIT大约使用1MB的内存CPU占用更小，因此资源使用很小可以忽略不计，但是会占用一个socket，可以通过在负载上配置多个公网IP地址以提高高并发的问题，   </p>
+<p>[root@localhost ~]# cat /proc/sys/net/ipv4/tcp_tw_recycle<br>0  #用于快速回收处于TIME_WAIT状态的socket以便重新分，在负载服务器不能打开，会导致通过nat上网的后续用户无法打开网页，因为后面的访问用户时间戳小于前面的用户，会导致数据包被负载服务器丢弃，可以在内网使用，但是通常建议关闭。<br>[root@localhost ~]# cat /proc/sys/net/ipv4/tcp_tw_reuse<br>0  #kernel会复用处于TIME_WAIT状态的socket，即允许将TIME_WAIT状态得socket用于直接新的TCP连接，负载服务器建议打开</p>
+<p>[root@localhost ~]# cat /proc/sys/net/ipv4/tcp_timestamps<br>1 #记录数据包的时间戳，判断是新的数据包还是旧的，如果是旧的就丢弃，配合上面两个选项的时候一定要打开才生效。</p>
+<p>六：Apache的工作模式：</p>
+<p>Apache 2.X  支持插入式并行处理模块，称为多路处理模块(Multi-Processing Modules,MPM)，在linux 系统，有3个不同类型的版本可供选择，具体如下：</p>
+<p>6.1：Prefork MPM: 预派生模式，有一个主控制进程，然后生成多个子进程，使用select模型，最大并发1024，每个子进程有一个独立的线程响应用户请求，相对比较占用内存，但是比较稳定，可以设置最大和最小进程数，是最古老的一种模式，也是最稳定的模式，适用于访问量不是很大的场景。</p>
+<p>优点：稳定</p>
+<p>缺点：慢，占用资源，不适用于高并发场景</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20161223015036_40636-2.png" alt></p>
+<p>配置文件原内容：</p>
+<p># prefork MPM<br># StartServers: number of server processes to start<br># MinSpareServers: minimum number of server processes which are kept spare<br># MaxSpareServers: maximum number of server processes which are kept spare<br># MaxRequestWorkers: maximum number of server processes allowed to start<br># MaxConnectionsPerChild: maximum number of connections a server process serves<br>#                         before terminating</p>
+<p>&lt;IfModule mpm_prefork_module&gt;<br>    StartServers           5 #定义apache服务在启动时启动的子进程数量<br>    MinSpareServers         5 #定义最小空闲进程数，空闲进程就是没有处理用户请求的进程数<br>    MaxSpareServers        10 #定义最大空闲进程数<br>    MaxRequestWorkers      250 #定义在prefork模式下的最大并发连接数，表示了apache的最大并发处理能力，超过的连接请求将被排队等候处理。<br>    MaxConnectionsPerChild   0  #进程生命周期内，处理的最大请求数目。达到该数目后，进程将死掉。如果设置为0，表示没有限制。该参数的意义在于，避免了可能存在的内存泄露带来的系统问题。<br></p>
+<p>如果确定合适的MaxRequestWorkers呢？<br>首先，通过top命令查看apache进程占用的资源，主要看%CPU和%MEM这两个指标，例如，每个进程的CPU占用率不超过1%，每个进程的内存占用率不超过2%，考虑内存限制，比较合适的apache进程数量为50个，然后，逐步测试最大值。通过观测得来的CPU和内存的指标有一定的误差，一般可以适当调节这个数值，例如调到1.5或者2倍，再通过峰值场景下的机器是否卡顿来判断是继续上调还是下调。  </p>
+<p>6.2：woker MPM：是一种多进程和多线程混合的模型，有一个控制进程，启动多个子进程，每个子进程里面包含固定的线程，使用线程程来处理请求，当线程不够使用的时候会再启动一个新的子进程，然后在进程里面再启动线程处理请求，由于其使用了线程处理请求，因此可以承受更高的并发。</p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20161223040851_95781-2.png" alt></p>
+<p>优点：相比prefork 占用的内存较少，可以同时处理更多的请求</p>
+<p>缺点：使用keep-alive的长连接方式，某个线程会一直被占据，即使没有传输数据，也需要一直等待到超时才会被释放。如果过多的线程，被这样占据，也会导致在高并发场景下的无服务线程可用。（该问题在prefork模式下，同样会发生）</p>
+<p>配置文件原内容详解：</p>
+<p># worker MPM<br># StartServers: initial number of server processes to start<br># MinSpareThreads: minimum number of worker threads which are kept spare<br># MaxSpareThreads: maximum number of worker threads which are kept spare<br># ThreadsPerChild: constant number of worker threads in each server process<br># MaxRequestWorkers: maximum number of worker threads<br># MaxConnectionsPerChild: maximum number of connections a server process serves<br>#                         before terminating</p>
+<p>&lt;IfModule mpm_worker_module&gt;<br>    StartServers         3   # #定义apache服务在启动时启动的子进程数量，默认是3个<br>    MinSpareThreads      75   # 整个控制进程保持最小数的空闲线程数<br>    MaxSpareThreads      250  # 整个控制进程保持最大数的空闲线程数<br>    #ThreadLimit        64   # 每个子进程可以启动的线程数量上限值，默认没有设置<br>    ThreadsPerChild      25   # 每个子进程启动的线程默认数量，开启启动两个子进程每个子进程25个 线程，就是apache 启动后开启25个线程。<br>    MaxRequestWorkers    400   # 所有子进程加起来的线程数量最大值，数量等于最大启动的进程数*ThreadsPerChild(每个进程的线程数)<br>    MaxConnectionsPerChild   0  # 每个子进程被请求多少次服务后被kill掉重新生成一个新的子进程，为了解决内存回收方面的问题，0为不设置<br></p>
+<p>6.3：event MPM：Apache中最新的模式，属于事件驱动模型(epoll)，每个进程响应多个请求，在现在版本里的已经是稳定可用的模式。它和worker模式很像，最大的区别在于，它解决了keep-alive场景下，长期被占用的线程的资源浪费问题（某些线程因为被keep-alive，空挂在哪里等待，中间几乎没有请求过来，甚至等到超时）。event MPM中，会有一个专门的线程来管理这些keep-alive类型的线程，当有真实请求过来的时候，将请求传递给服务线程，执行完毕后，又允许它释放。这样增强了高并发场景下的请求处理能力。</p>
+<p>event只在有数据发送的时候才开始建立连接，连接请求才会触发工作线程，即使用了TCP的一个选项，叫做延迟接受连接TCP_DEFER_ACCEPT，加了这个选项后，若客户端只进行TCP连接，不发送请求，则不会触发Accept操作，也就不会触发工作线程去干活，进行了简单的防攻击（TCP连接）,可以使用Telnet进行测试验证：<br>主机192.168.10.130为客户端机器，192.168.10.131为apache服务器机器使用event模式：<br>在192.168.10.130上telnet 192.168.10.131 80，然后在192.168.10.130客户端机器上使用netstat查看，发现连接已经建立，处于ESTABLISHED状态，然后再到apache服务器192.168.10.131使用netstat查看，发现是处于SYN_RECV状态。  </p>
+<p><img src="http://www.pever.cn/wp-content/uploads/2019/11/20161223054651_23097-2.png" alt></p>
+<p>优点：单线程响应多请求，占据更少的内存，高并发下表现更优秀，会有一个专门的线程来管理keep-alive类型的线程，当有真实请求过来的时候，将请求传递给服务线程，执行完毕后，又允许它释放<br>缺点：没有线程安全控制<br>配置文件内容：</p>
+<p># event MPM<br># StartServers: initial number of server processes to start<br># MinSpareThreads: minimum number of worker threads which are kept spare<br># MaxSpareThreads: maximum number of worker threads which are kept spare<br># ThreadsPerChild: constant number of worker threads in each server process<br># MaxRequestWorkers: maximum number of worker threads<br># MaxConnectionsPerChild: maximum number of connections a server process serves<br>#                         before terminating<br>&lt;IfModule mpm_event_module&gt;<br>    StartServers           3  #apache服务启动的子进程数，默认3个<br>    MinSpareThreads         75  #控制进程保持最小的空闲线程数<br>    MaxSpareThreads        250  #控制进程保持的最大空闲线程数<br>    ThreadsPerChild         25  #每个子进程启动的线程数<br>    MaxRequestWorkers       400  #并发最大请求数，也就是所有子进程加起来的线程数量，woker模式下的400就是并发400，但是由于是异步处理请求的，因此这里的400比woker模型下的并发处理速度要快很多，因为event省略了工作线程的会话保持。<br>    MaxConnectionsPerChild    0  #每个子进程请求多少次以后被kill掉重新生成一个新的子进程。<br></p>
+<p>七：编译现在apache 2.4.25：</p>
+<p># yum install -y pcre-devel<br># tar xvf apr-1.5.2.tar.gz<br># ./configure –prefix=/usr/local/apr &amp;&amp; make &amp;&amp; make install<br># tar xvf apr-util-1.5.4.tar.gz<br># cd apr-util-1.5.4/<br># ./configure   –prefix=/usr/local/apr-uti –with-apr=/usr/local/apr  &amp;&amp; make &amp;&amp; make install<br># tar xvf  httpd-2.4.25.tar.gz<br># cd httpd-2.4.25/<br>#  ./configure   –prefix=/usr/local/apache2  –sysconfdir=/etc/httpd24  –enable-so –enable-ssl –enable-cgi –enable-rewrite  –with-zlib –with-pcre –with-apr=/usr/local/apr/  –with-apr-util=/usr/local/apr-uti/ –enable-modules=most –enable-mpms-shared=all  –with-mpm=event<br># make &amp;&amp; make install<br># ln -sv /usr/local/apache2/include  /usr/include/httpd<br># ldconfig<br># vim  /etc/profile.d/httpd.sh<br>export PATH=/usr/local/apache/bin:$PATH<br># . /etc/profile.d/httpd.sh<br>[root@localhost ~]# httpd  -V<br>AH00558: httpd: Could not reliably determine the server’s fully qualified domain name, using ::1. Set the ‘ServerName’ directive globally to suppress this message<br>Server version: Apache/2.4.25 (Unix)<br>Server built:   Dec 23 2016 04:52:10<br>Server’s Module Magic Number: 20120211:67<br>Server loaded:  APR 1.5.2, APR-UTIL 1.5.4<br>Compiled using: APR 1.5.2, APR-UTIL 1.5.4<br>Architecture:   64-bit<br>Server MPM:     event<br>  threaded:     yes (fixed thread count)<br>    forked:     yes (variable process count)<br>Server compiled with….<br> -D APR_HAS_SENDFILE<br> -D APR_HAS_MMAP<br> -D APR_HAVE_IPV6 (IPv4-mapped addresses enabled)<br> -D APR_USE_SYSVSEM_SERIALIZE<br> -D APR_USE_PTHREAD_SERIALIZE<br> -D SINGLE_LISTEN_UNSERIALIZED_ACCEPT<br> -D APR_HAS_OTHER_CHILD<br> -D AP_HAVE_RELIABLE_PIPED_LOGS<br> -D DYNAMIC_MODULE_LIMIT=256<br> -D HTTPD_ROOT=”/usr/local/apache2”<br> -D SUEXEC_BIN=”/usr/local/apache2/bin/suexec”<br> -D DEFAULT_PIDLOG=”logs/httpd.pid”<br> -D DEFAULT_SCOREBOARD=”logs/apache_runtime_status”<br> -D DEFAULT_ERRORLOG=”logs/error_log”<br> -D AP_TYPES_CONFIG_FILE=”/etc/httpd24/mime.types”<br> -D SERVER_CONFIG_FILE=”/etc/httpd24/httpd.conf”</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/15/e7-94-b1dubbo-e5-bc-95-e8-b5-b7-e7-9a-84-java-outofmemoryerror-unable-to-create-new-native-thread/" rel="next" title="由dubbo引起的 java OutOfMemoryError unable to create new native thread">
+                  <i class="fa fa-chevron-left"></i> 由dubbo引起的 java OutOfMemoryError unable to create new native thread
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/11/16/mysql-e5-a4-87-e4-bb-bd-e5-b7-a5-e5-85-b7-e4-b9-8bmysqldump/" rel="prev" title="MySql备份工具之Mysqldump">
+                  MySql备份工具之Mysqldump <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+        
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span>
+        
+      </div>
+    
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">
+      
+    Theme – <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+<script src="/js/utils.js?v=7.4.1"></script><script src="/js/motion.js?v=7.4.1"></script>
+<script src="/js/schemes/muse.js?v=7.4.1"></script>
+<script src="/js/next-boot.js?v=7.4.1"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
